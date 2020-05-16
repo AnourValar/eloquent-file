@@ -36,7 +36,7 @@ return [
                     'max_height' => 500,
                     'max_width' => 500,
                     'format' => 'jpg',
-                    'quality' => 85,
+                    'quality' => 82,
                 ]
             ],
         ],
