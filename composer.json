@@ -1,0 +1,28 @@
+{
+    "name": "anourvalar/eloquent-file",
+    "description": "Database (Eloquent) layer for files management",
+    "keywords": ["anourvalar", "laravel", "eloquent", "file", "upload"],
+    "homepage": "https://github.com/AnourValar/eloquent-file",
+    "license": "MIT",
+    "require": {
+        "php": ">=7.1.0",
+        "laravel/framework": ">=6.0.0",
+        "anourvalar/config-helper": "^2.0",
+        "anourvalar/eloquent-validation": ">=1.1",
+        "anourvalar/laravel-atom": "^2.0",
+        "intervention/image": "^2.5"
+    },
+    "autoload": {
+        "psr-4": {"AnourValar\\EloquentFile\\": "src/app/"}
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "AnourValar\\EloquentFile\\Providers\\EloquentFileServiceProvider"
+            ],
+            "aliases": {
+                "EloquentFile": "AnourValar\\EloquentFile\\Facades\\EloquentFileFacade"
+            }
+        }
+    }
+}
