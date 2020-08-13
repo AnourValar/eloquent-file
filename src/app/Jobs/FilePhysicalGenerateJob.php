@@ -93,7 +93,7 @@ class FilePhysicalGenerateJob implements ShouldQueue
      * @param \AnourValar\EloquentFile\FilePhysical $filePhysical
      * @return void
      */
-    private function fireEvents(FilePhysical $filePhysical) : void
+    private function fireEvents(FilePhysical $filePhysical): void
     {
         $class = config('eloquent_file.models.file_virtual');
 
@@ -107,7 +107,7 @@ class FilePhysicalGenerateJob implements ShouldQueue
      * @param array $original
      * @return void
      */
-    private function cleanUp(FilePhysical $filePhysical, array $original) : void
+    private function cleanUp(FilePhysical $filePhysical, array $original): void
     {
         $items = array_diff($original, (array)$filePhysical->path_generate);
 

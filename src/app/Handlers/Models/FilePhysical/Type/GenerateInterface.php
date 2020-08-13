@@ -12,7 +12,7 @@ interface GenerateInterface
      * @param array $typeDetails
      * @return integer
      */
-    public function getBuild(array $typeDetails) : int;
+    public function getBuild(array $typeDetails): int;
 
     /**
      * Generates side files and returns an array of paths (path_generate)
@@ -20,5 +20,5 @@ interface GenerateInterface
      * @param \AnourValar\EloquentFile\FilePhysical $filePhysical
      * @return array|NULL
      */
-    public function generate(FilePhysical $filePhysical) : ?array;
+    public function generate(FilePhysical $filePhysical): ?array;
 }

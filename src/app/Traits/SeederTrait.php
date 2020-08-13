@@ -14,7 +14,7 @@ trait SeederTrait
      * @param string $text
      * @return \AnourValar\EloquentFile\FilePhysical
      */
-    protected function createImage(string $visibility, string $type, string $text = null) : FilePhysical
+    protected function createImage(string $visibility, string $type, string $text = null): FilePhysical
     {
         static $counter;
 

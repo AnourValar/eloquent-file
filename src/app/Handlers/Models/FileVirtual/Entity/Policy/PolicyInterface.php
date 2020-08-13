@@ -12,5 +12,5 @@ interface PolicyInterface
      * @param \AnourValar\EloquentFile\FileVirtual $fileVirtual
      * @return void
      */
-    public function onCreated(FileVirtual $fileVirtual) : void;
+    public function onCreated(FileVirtual $fileVirtual): void;
 }

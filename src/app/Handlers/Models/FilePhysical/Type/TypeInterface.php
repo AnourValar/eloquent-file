@@ -13,7 +13,7 @@ interface TypeInterface
      * @param \Illuminate\Validation\Validator $validator
      * @return void
      */
-    public function validate(array $typeDetails, \Illuminate\Validation\Validator $validator) : void;
+    public function validate(array $typeDetails, \Illuminate\Validation\Validator $validator): void;
 
     /**
      * PhysicalFile is not use (counter == 0)
@@ -21,5 +21,5 @@ interface TypeInterface
      * @param \AnourValar\EloquentFile\FilePhysical $filePhysical
      * @return void
      */
-    public function onZero(FilePhysical $filePhysical) : void;
+    public function onZero(FilePhysical $filePhysical): void;
 }

@@ -10,7 +10,7 @@ class ImageType extends SimpleType implements GenerateInterface
      * {@inheritDoc}
      * @see \AnourValar\EloquentFile\Handlers\Models\FilePhysical\Type\TypeInterface::validate()
      */
-    public function validate(array $typeDetails, \Illuminate\Validation\Validator $validator) : void
+    public function validate(array $typeDetails, \Illuminate\Validation\Validator $validator): void
     {
         $file = $validator->getData()['file'];
 
@@ -32,7 +32,7 @@ class ImageType extends SimpleType implements GenerateInterface
      * {@inheritDoc}
      * @see \AnourValar\EloquentFile\Handlers\Models\FilePhysical\Type\GenerateInterface::getBuild()
      */
-    public function getBuild(array $typeDetails) : int
+    public function getBuild(array $typeDetails): int
     {
         return $typeDetails['build'];
     }
@@ -41,7 +41,7 @@ class ImageType extends SimpleType implements GenerateInterface
      * {@inheritDoc}
      * @see \AnourValar\EloquentFile\Handlers\Models\FilePhysical\Type\GenerateInterface::generate()
      */
-    public function generate(FilePhysical $filePhysical) : array
+    public function generate(FilePhysical $filePhysical): array
     {
         $preview = \Image::make(\Storage::disk($filePhysical->disk)->get($filePhysical->path));
         $typeDetails = $filePhysical->type_details;
@@ -66,7 +66,7 @@ class ImageType extends SimpleType implements GenerateInterface
      * @param string $suffix
      * @return string
      */
-    protected function generatePath(FilePhysical $filePhysical, string $suffix) : string
+    protected function generatePath(FilePhysical $filePhysical, string $suffix): string
     {
         $pathInfo = pathinfo($filePhysical->path);
 

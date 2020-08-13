@@ -220,7 +220,7 @@ abstract class FilePhysical extends Model
     /**
      * @return \AnourValar\EloquentFile\Handlers\Models\FilePhysical\Visibility\VisibilityInterface
      */
-    public function getVisibilityHandler() : VisibilityInterface
+    public function getVisibilityHandler(): VisibilityInterface
     {
         return \App::make(config('eloquent_file.file_physical.visibility')[$this->visibility]['bind']);
     }
@@ -228,7 +228,7 @@ abstract class FilePhysical extends Model
     /**
      * @return \AnourValar\EloquentFile\Handlers\Models\FilePhysical\Type\TypeInterface
      */
-    public function getTypeHandler() : TypeInterface
+    public function getTypeHandler(): TypeInterface
     {
         return \App::make(config('eloquent_file.file_physical.type')[$this->type]['bind']);
     }
@@ -259,7 +259,7 @@ abstract class FilePhysical extends Model
      * @throws \LogicException
      * @return string
      */
-    public function getUrlAttribute() : string
+    public function getUrlAttribute(): string
     {
         $handler = $this->getVisibilityHandler();
         if (! $handler instanceof DirectAccessInterface) {
@@ -275,7 +275,7 @@ abstract class FilePhysical extends Model
      * @throws \LogicException
      * @return array
      */
-    public function getUrlGenerateAttribute() : array
+    public function getUrlGenerateAttribute(): array
     {
         static $result;
         if (! $result) {

@@ -11,7 +11,7 @@ class PublicVisibility implements VisibilityInterface, DirectAccessInterface
      * {@inheritDoc}
      * @see \AnourValar\EloquentFile\Handlers\Models\FilePhysical\Visibility\VisibilityInterface::preventDuplicates()
      */
-    public function preventDuplicates() : bool
+    public function preventDuplicates(): bool
     {
         return true;
     }
@@ -20,7 +20,7 @@ class PublicVisibility implements VisibilityInterface, DirectAccessInterface
      * {@inheritDoc}
      * @see \AnourValar\EloquentFile\Handlers\Models\FilePhysical\Visibility\VisibilityInterface::getDisk()
      */
-    public function getDisk(array $disks, UploadedFile $file) : string
+    public function getDisk(array $disks, UploadedFile $file): string
     {
         shuffle($disks);
 
@@ -31,7 +31,7 @@ class PublicVisibility implements VisibilityInterface, DirectAccessInterface
      * {@inheritDoc}
      * @see \AnourValar\EloquentFile\Handlers\Models\FilePhysical\Visibility\VisibilityInterface::getPath()
      */
-    public function getPath(FilePhysical $filePhysical, UploadedFile $file) : string
+    public function getPath(FilePhysical $filePhysical, UploadedFile $file): string
     {
         if (empty($filePhysical->sha256)) {
             throw new \LogicException('Incorrect usage.');
@@ -57,7 +57,7 @@ class PublicVisibility implements VisibilityInterface, DirectAccessInterface
      * {@inheritDoc}
      * @see \AnourValar\EloquentFile\Handlers\Models\FilePhysical\Visibility\DirectAccessInterface::getUrl()
      */
-    public function getUrl(FilePhysical $filePhysical, string $path = null) : string
+    public function getUrl(FilePhysical $filePhysical, string $path = null): string
     {
         if (is_null($path)) {
             $path = $filePhysical->path;

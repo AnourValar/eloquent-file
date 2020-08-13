@@ -10,7 +10,7 @@ class SimpleType implements TypeInterface
      * {@inheritDoc}
      * @see \AnourValar\EloquentFile\Handlers\Models\FilePhysical\Type\TypeInterface::validate()
      */
-    public function validate(array $typeDetails, \Illuminate\Validation\Validator $validator) : void
+    public function validate(array $typeDetails, \Illuminate\Validation\Validator $validator): void
     {
         //
     }
@@ -19,7 +19,7 @@ class SimpleType implements TypeInterface
      * {@inheritDoc}
      * @see \AnourValar\EloquentFile\Handlers\Models\FilePhysical\Type\TypeInterface::onZero()
      */
-    public function onZero(FilePhysical $filePhysical) : void
+    public function onZero(FilePhysical $filePhysical): void
     {
         try {
             $filePhysical->validateDelete()->delete();

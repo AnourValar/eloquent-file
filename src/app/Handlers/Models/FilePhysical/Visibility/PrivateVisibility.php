@@ -12,7 +12,7 @@ class PrivateVisibility implements VisibilityInterface, ProxyInterface
      * {@inheritDoc}
      * @see \AnourValar\EloquentFile\Handlers\Models\FilePhysical\Visibility\VisibilityInterface::preventDuplicates()
      */
-    public function preventDuplicates() : bool
+    public function preventDuplicates(): bool
     {
         return true;
     }
@@ -21,7 +21,7 @@ class PrivateVisibility implements VisibilityInterface, ProxyInterface
      * {@inheritDoc}
      * @see \AnourValar\EloquentFile\Handlers\Models\FilePhysical\Visibility\VisibilityInterface::getDisk()
      */
-    public function getDisk(array $disks, UploadedFile $file) : string
+    public function getDisk(array $disks, UploadedFile $file): string
     {
         shuffle($disks);
 
@@ -32,7 +32,7 @@ class PrivateVisibility implements VisibilityInterface, ProxyInterface
      * {@inheritDoc}
      * @see \AnourValar\EloquentFile\Handlers\Models\FilePhysical\Visibility\VisibilityInterface::getPath()
      */
-    public function getPath(FilePhysical $filePhysical, UploadedFile $file) : string
+    public function getPath(FilePhysical $filePhysical, UploadedFile $file): string
     {
         if (empty($filePhysical->sha256)) {
             throw new \LogicException('Incorrect usage.');
@@ -51,7 +51,7 @@ class PrivateVisibility implements VisibilityInterface, ProxyInterface
      * {@inheritDoc}
      * @see \AnourValar\EloquentFile\Handlers\Models\FilePhysical\Visibility\ProxyInterface::generateUrl()
      */
-    public function generateUrl(FileVirtual $fileVirtual, bool $guest = false) : string
+    public function generateUrl(FileVirtual $fileVirtual, bool $guest = false): string
     {
         $route = $fileVirtual->filePhysical->visibility_details['download_route'];
         $minutes = $this->expireIn($fileVirtual);
@@ -67,7 +67,7 @@ class PrivateVisibility implements VisibilityInterface, ProxyInterface
      * {@inheritDoc}
      * @see \AnourValar\EloquentFile\Handlers\Models\FilePhysical\Visibility\ProxyInterface::download()
      */
-    public function download(FileVirtual $fileVirtual) : \Symfony\Component\HttpFoundation\Response
+    public function download(FileVirtual $fileVirtual): \Symfony\Component\HttpFoundation\Response
     {
         $pathInfo = pathinfo($fileVirtual->filename);
         if (isset($pathInfo['extension'])) {
@@ -87,7 +87,7 @@ class PrivateVisibility implements VisibilityInterface, ProxyInterface
      * @param \AnourValar\EloquentFile\FileVirtual $fileVirtual
      * @return integer
      */
-    protected function expireIn(FileVirtual $fileVirtual) : int
+    protected function expireIn(FileVirtual $fileVirtual): int
     {
         return ceil($fileVirtual->filePhysical->size / (1024 * 1024)) + 10;
     }

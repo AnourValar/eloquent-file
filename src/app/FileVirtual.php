@@ -265,7 +265,7 @@ abstract class FileVirtual extends Model
     /**
      * @return \AnourValar\EloquentFile\Handlers\Models\FileVirtual\Entity\EntityInterface
      */
-    public function getEntityHandler() : EntityInterface
+    public function getEntityHandler(): EntityInterface
     {
         return \App::make($this->entity_details['bind']);
     }
@@ -273,7 +273,7 @@ abstract class FileVirtual extends Model
     /**
      * @return \AnourValar\EloquentFile\Handlers\Models\FileVirtual\Entity\Policy\PolicyInterface
      */
-    public function getEntityPolicyHandler() : PolicyInterface
+    public function getEntityPolicyHandler(): PolicyInterface
     {
         return \App::make($this->entity_name_details['policy']['bind']);
     }

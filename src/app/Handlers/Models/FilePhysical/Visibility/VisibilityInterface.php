@@ -12,7 +12,7 @@ interface VisibilityInterface
      *
      * @return boolean
      */
-    public function preventDuplicates() : bool;
+    public function preventDuplicates(): bool;
 
     /**
      * Choose a disk
@@ -21,7 +21,7 @@ interface VisibilityInterface
      * @param \Illuminate\Http\UploadedFile $file
      * @return string
      */
-    public function getDisk(array $disks, UploadedFile $file) : string;
+    public function getDisk(array $disks, UploadedFile $file): string;
 
     /**
      * Choose a path (file name)
@@ -30,5 +30,5 @@ interface VisibilityInterface
      * @param \Illuminate\Http\UploadedFile $file
      * @return string
      */
-    public function getPath(FilePhysical $filePhysical, UploadedFile $file) : string;
+    public function getPath(FilePhysical $filePhysical, UploadedFile $file): string;
 }

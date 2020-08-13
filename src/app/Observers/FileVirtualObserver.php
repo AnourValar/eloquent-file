@@ -34,7 +34,7 @@ class FileVirtualObserver
      * @param \AnourValar\EloquentFile\FileVirtual $model
      * @return void
      */
-    private function recalc(FileVirtual $model) : void
+    private function recalc(FileVirtual $model): void
     {
         $class = config('eloquent_file.models.file_virtual');
         $qty = $class::where('file_physical_id', '=', $model->file_physical_id)->count();

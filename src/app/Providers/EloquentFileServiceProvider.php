@@ -56,7 +56,7 @@ class EloquentFileServiceProvider extends ServiceProvider
     /**
      * @return void
      */
-    private function addFileExtRule() : void
+    private function addFileExtRule(): void
     {
         \Validator::extend('file_ext', function ($attribute, $value, $parameters, $validator)
         {
@@ -82,7 +82,7 @@ class EloquentFileServiceProvider extends ServiceProvider
     /**
      * @return void
      */
-    private function addFileNotExtRule() : void
+    private function addFileNotExtRule(): void
     {
         \Validator::extend('file_not_ext', function ($attribute, $value, $parameters, $validator)
         {

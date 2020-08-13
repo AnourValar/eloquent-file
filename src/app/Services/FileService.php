@@ -19,7 +19,7 @@ class FileService
      * @throws \LogicException
      * @return \AnourValar\EloquentFile\FileVirtual
      */
-    public function upload(?UploadedFile $file, FileVirtual $fileVirtual, string $fileValidationKey = null) : FileVirtual
+    public function upload(?UploadedFile $file, FileVirtual $fileVirtual, string $fileValidationKey = null): FileVirtual
     {
         if (! is_null($fileVirtual->file_physical_id)) {
             throw new \LogicException('Attribute "file_physical_id" must be null.');
@@ -50,7 +50,7 @@ class FileService
      * @param string $fileValidationKey
      * @return \AnourValar\EloquentFile\FilePhysical
      */
-    public function uploadPhysical(?UploadedFile $file, $visibility, $type, string $fileValidationKey = null) : FilePhysical
+    public function uploadPhysical(?UploadedFile $file, $visibility, $type, string $fileValidationKey = null): FilePhysical
     {
         $class = config('eloquent_file.models.file_physical');
         $model = new $class;
@@ -137,7 +137,7 @@ class FileService
      * @param \Illuminate\Http\UploadedFile $file
      * @return \AnourValar\EloquentFile\FileVirtual
      */
-    public function link(FileVirtual $fileVirtual, UploadedFile $file = null) : FileVirtual
+    public function link(FileVirtual $fileVirtual, UploadedFile $file = null): FileVirtual
     {
         // Get the lock
         $this->lock($fileVirtual->physical);
@@ -166,7 +166,7 @@ class FileService
      * @throws \LogicException
      * @return void
      */
-    public function lock(?FilePhysical $filePhysical) : void
+    public function lock(?FilePhysical $filePhysical): void
     {
         if (! $filePhysical) {
             return;
@@ -186,7 +186,7 @@ class FileService
      * @throws \AnourValar\EloquentValidation\Exceptions\ValidationException
      * @return void
      */
-    private function validate(FilePhysical $filePhysical, ?UploadedFile $file, ?string $fileValidationKey) : void
+    private function validate(FilePhysical $filePhysical, ?UploadedFile $file, ?string $fileValidationKey): void
     {
         $validator = \Validator::make(
             ['file' => $file],

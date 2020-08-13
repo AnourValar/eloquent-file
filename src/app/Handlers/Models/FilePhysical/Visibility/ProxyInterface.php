@@ -13,7 +13,7 @@ interface ProxyInterface
      * @param boolean $guest
      * @return string
      */
-    public function generateUrl(FileVirtual $fileVirtual, bool $guest = false) : string;
+    public function generateUrl(FileVirtual $fileVirtual, bool $guest = false): string;
 
     /**
      * Downloading (proxying) a file
@@ -21,5 +21,5 @@ interface ProxyInterface
      * @param \AnourValar\EloquentFile\FileVirtual $fileVirtual
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function download(FileVirtual $fileVirtual) : \Symfony\Component\HttpFoundation\Response;
+    public function download(FileVirtual $fileVirtual): \Symfony\Component\HttpFoundation\Response;
 }

@@ -13,5 +13,5 @@ interface DirectAccessInterface
      * @param string $path
      * @return string
      */
-    public function getUrl(FilePhysical $filePhysical, string $path = null) : string;
+    public function getUrl(FilePhysical $filePhysical, string $path = null): string;
 }

@@ -11,7 +11,7 @@ class UserEntity implements EntityInterface
      * {@inheritDoc}
      * @see \AnourValar\EloquentFile\Handlers\Models\FileVirtual\Entity\EntityInterface::canDownload()
      */
-    public function canDownload(FileVirtual $fileVirtual, ?Authenticatable $user) : bool
+    public function canDownload(FileVirtual $fileVirtual, ?Authenticatable $user): bool
     {
         return true;
     }
@@ -20,7 +20,7 @@ class UserEntity implements EntityInterface
      * {@inheritDoc}
      * @see \AnourValar\EloquentFile\Handlers\Models\FileVirtual\Entity\EntityInterface::validate()
      */
-    public function validate(FileVirtual $fileVirtual, \Illuminate\Validation\Validator $validator) : void
+    public function validate(FileVirtual $fileVirtual, \Illuminate\Validation\Validator $validator): void
     {
         $class = config('auth.providers.users.model');
 

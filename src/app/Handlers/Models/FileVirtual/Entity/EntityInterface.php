@@ -14,7 +14,7 @@ interface EntityInterface
      * @param \Illuminate\Contracts\Auth\Authenticatable $user
      * @return boolean
      */
-    public function canDownload(FileVirtual $fileVirtual, ?Authenticatable $user) : bool;
+    public function canDownload(FileVirtual $fileVirtual, ?Authenticatable $user): bool;
 
     /**
      * Validation: entity, entity_id, name
@@ -23,5 +23,5 @@ interface EntityInterface
      * @param \Illuminate\Validation\Validator $validator
      * @return void
      */
-    public function validate(FileVirtual $fileVirtual, \Illuminate\Validation\Validator $validator) : void;
+    public function validate(FileVirtual $fileVirtual, \Illuminate\Validation\Validator $validator): void;
 }

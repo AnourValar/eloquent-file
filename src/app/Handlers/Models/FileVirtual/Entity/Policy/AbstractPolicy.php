@@ -11,7 +11,7 @@ abstract class AbstractPolicy
      * @param \AnourValar\EloquentFile\FileVirtual $fileVirtual
      * @return \Illuminate\Database\Eloquent\Collection
      */
-    protected function getOriginalCollection(FileVirtual $fileVirtual) : Collection
+    protected function getOriginalCollection(FileVirtual $fileVirtual): Collection
     {
         $class = config('eloquent_file.models.file_virtual');
 
