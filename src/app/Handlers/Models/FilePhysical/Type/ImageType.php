@@ -62,6 +62,15 @@ class ImageType extends SimpleType implements GenerateInterface
     }
 
     /**
+     * {@inheritDoc}
+     * @see \AnourValar\EloquentFile\Handlers\Models\FilePhysical\Type\GenerateInterface::keepOriginal()
+     */
+    public function keepOriginal(FilePhysical $filePhysical): bool
+    {
+        return true;
+    }
+
+    /**
      * @param \AnourValar\EloquentFile\FilePhysical $filePhysical
      * @param string $suffix
      * @return string

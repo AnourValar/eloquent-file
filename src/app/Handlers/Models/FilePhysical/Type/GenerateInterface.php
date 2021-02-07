@@ -21,4 +21,12 @@ interface GenerateInterface
      * @return array|NULL
      */
     public function generate(FilePhysical $filePhysical): ?array;
+
+    /**
+     * Keep original file
+     *
+     * @param \AnourValar\EloquentFile\FilePhysical $filePhysical
+     * @return boolean
+     */
+    public function keepOriginal(FilePhysical $filePhysical): bool;
 }

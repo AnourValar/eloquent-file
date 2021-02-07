@@ -55,7 +55,7 @@ abstract class FilePhysical extends Model
         'visibility' => ['required', 'max:30', 'config:eloquent_file.file_physical.visibility'],
         'type' => ['required', 'max:30', 'config:eloquent_file.file_physical.type'],
         'disk' => ['required', 'max:30', 'config:filesystems.disks'],
-        'path' => ['required', 'max:200'],
+        'path' => ['nullable', 'max:200'],
         'sha256' => ['required', 'min:64', 'max:64'],
         'size' => ['required', 'integer', 'min:0'],
         'mime_type' => ['nullable', 'max:100'],
@@ -264,6 +264,10 @@ abstract class FilePhysical extends Model
         $handler = $this->getVisibilityHandler();
         if (! $handler instanceof DirectAccessInterface) {
             throw new \LogicException('Direct access is not allowed for this file.');
+        }
+
+        if (! $this->path) {
+            throw new \LogicException('Original file is not exists.');
         }
 
         return $handler->getUrl($this);

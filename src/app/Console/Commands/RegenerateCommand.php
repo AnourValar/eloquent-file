@@ -52,6 +52,10 @@ class RegenerateCommand extends Command
 
             $build = $handler->getBuild($typeDetails);
             foreach ($class::where('type', '=', $type)->where('build', '<', $build)->cursor() as $item) {
+                if (! $item->path) {
+                    continue;
+                }
+
                 \AnourValar\EloquentFile\Jobs\FilePhysicalGenerateJob::dispatch($item);
             }
         }

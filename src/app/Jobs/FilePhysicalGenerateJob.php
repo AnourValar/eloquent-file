@@ -61,6 +61,9 @@ class FilePhysicalGenerateJob implements ShouldQueue
                     if ($filePhysical->build == $build) {
                         return;
                     }
+                    if (! $filePhysical->path) {
+                        return;
+                    }
 
                     $original = (array)$filePhysical->path_generate;
 
@@ -73,8 +76,7 @@ class FilePhysicalGenerateJob implements ShouldQueue
                         ->validate()
                         ->save();
 
-                    $this->fireEvents($filePhysical);
-                    $this->cleanUp($filePhysical, $original);
+                    $this->cleanUp($filePhysical, $original)->fireEvents($filePhysical);
                 } catch (\Illuminate\Validation\ValidationException $e) {
                     \Log::error($e->getMessage(), [$e->validator->errors()->all(), $e->validator->getData()]);
 
@@ -91,23 +93,10 @@ class FilePhysicalGenerateJob implements ShouldQueue
 
     /**
      * @param \AnourValar\EloquentFile\FilePhysical $filePhysical
-     * @return void
-     */
-    private function fireEvents(FilePhysical $filePhysical): void
-    {
-        $class = config('eloquent_file.models.file_virtual');
-
-        foreach ($class::where('file_physical_id', '=', $filePhysical->id)->get() as $item) {
-            event(new \AnourValar\EloquentFile\Events\FileVirtualChanged($item));
-        }
-    }
-
-    /**
-     * @param \AnourValar\EloquentFile\FilePhysical $filePhysical
      * @param array $original
-     * @return void
+     * @return \AnourValar\EloquentFile\Jobs\FilePhysicalGenerateJob
      */
-    private function cleanUp(FilePhysical $filePhysical, array $original): void
+    private function cleanUp(FilePhysical &$filePhysical, array $original): self
     {
         $items = array_diff($original, (array)$filePhysical->path_generate);
 
@@ -116,5 +105,31 @@ class FilePhysicalGenerateJob implements ShouldQueue
                 \Storage::disk($filePhysical->disk)->delete($item);
             }
         }
+
+        if (! $filePhysical->getTypeHandler()->keepOriginal($filePhysical)) {
+            if (\Storage::disk($filePhysical->disk)->exists($filePhysical->path)) {
+                \Storage::disk($filePhysical->disk)->delete($filePhysical->path);
+            }
+
+            $filePhysical->path = null;
+            $filePhysical->save();
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param \AnourValar\EloquentFile\FilePhysical $filePhysical
+     * @return \AnourValar\EloquentFile\Jobs\FilePhysicalGenerateJob
+     */
+    private function fireEvents(FilePhysical $filePhysical): self
+    {
+        $class = config('eloquent_file.models.file_virtual');
+
+        foreach ($class::where('file_physical_id', '=', $filePhysical->id)->get() as $item) {
+            event(new \AnourValar\EloquentFile\Events\FileVirtualChanged($item));
+        }
+
+        return $this;
     }
 }
