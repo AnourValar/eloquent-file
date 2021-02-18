@@ -51,7 +51,7 @@ class PrivateVisibility implements VisibilityInterface, ProxyInterface
      * {@inheritDoc}
      * @see \AnourValar\EloquentFile\Handlers\Models\FilePhysical\Visibility\ProxyInterface::generateUrl()
      */
-    public function generateUrl(FileVirtual $fileVirtual, bool $guest = false): string
+    public function generateUrl(FileVirtual $fileVirtual): string
     {
         $route = $fileVirtual->filePhysical->visibility_details['download_route'];
         $minutes = $this->expireIn($fileVirtual);
@@ -59,7 +59,7 @@ class PrivateVisibility implements VisibilityInterface, ProxyInterface
         return \URL::temporarySignedRoute(
             $route,
             now()->addMinutes($minutes),
-            ['file_virtual' => $fileVirtual->id, 'guest' => (int)$guest]
+            ['file_virtual' => $fileVirtual->id]
         );
     }
 

@@ -10,10 +10,9 @@ interface ProxyInterface
      * Generate URL to the file
      *
      * @param \AnourValar\EloquentFile\FileVirtual $fileVirtual
-     * @param boolean $guest
      * @return string
      */
-    public function generateUrl(FileVirtual $fileVirtual, bool $guest = false): string;
+    public function generateUrl(FileVirtual $fileVirtual): string;
 
     /**
      * Downloading (proxying) a file

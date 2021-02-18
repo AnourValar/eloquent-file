@@ -13,11 +13,13 @@ trait ControllerProxyTrait
      * Downloading (proxying) a file
      *
      * @param Request $request
-     * @param \AnourValar\EloquentFile\FileVirtual $fileVirtual
      * @return mixed
      */
-    public function downloadFile(Request $request, \AnourValar\EloquentFile\FileVirtual $fileVirtual)
+    public function downloadFile(Request $request)
     {
+        $class = config('eloquent_file.models.file_virtual');
+        $fileVirtual = $class::findOrFail($request->route('file_virtual'));
+
         $visibilityHandler = $fileVirtual->filePhysical->getVisibilityHandler();
         if (! $visibilityHandler instanceof ProxyInterface) {
             return Response::deny(trans('eloquent-file::auth.proxy.unsupported'));
@@ -27,7 +29,7 @@ trait ControllerProxyTrait
             return Response::deny(trans('eloquent-file::auth.proxy.invalid'));
         }
 
-        if (!$request->route('guest') && !$fileVirtual->getEntityHandler()->canDownload($fileVirtual, $request->user())) {
+        if (! $fileVirtual->getEntityHandler()->canDownload($fileVirtual, $request->user())) {
             return Response::deny(trans('eloquent-file::auth.proxy.not_authorized'));
         }
 
@@ -38,12 +40,13 @@ trait ControllerProxyTrait
      * URL Generation
      *
      * @param Request $request
-     * @param \AnourValar\EloquentFile\FileVirtual $fileVirtual
-     * @param boolean $guest
      * @return mixed
      */
-    public function generateFileUrl(Request $request, \AnourValar\EloquentFile\FileVirtual $fileVirtual, bool $guest = false)
+    public function generateFileUrl(Request $request)
     {
+        $class = config('eloquent_file.models.file_virtual');
+        $fileVirtual = $class::findOrFail($request->route('file_virtual'));
+
         $visibilityHandler = $fileVirtual->filePhysical->getVisibilityHandler();
         if (! $visibilityHandler instanceof ProxyInterface) {
             return Response::deny(trans('eloquent-file::auth.proxy.unsupported'));
@@ -53,6 +56,6 @@ trait ControllerProxyTrait
             return Response::deny(trans('eloquent-file::auth.proxy.not_authorized'));
         }
 
-        return ['url' => $visibilityHandler->generateUrl($fileVirtual, $guest)];
+        return ['url' => $visibilityHandler->generateUrl($fileVirtual)];
     }
 }
