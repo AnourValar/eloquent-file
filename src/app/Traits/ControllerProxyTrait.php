@@ -18,7 +18,7 @@ trait ControllerProxyTrait
     public function downloadFile(Request $request)
     {
         $class = config('eloquent_file.models.file_virtual');
-        $fileVirtual = $class::findOrFail($request->route('file_virtual'));
+        $fileVirtual = $class::findOrFail((int) $request->route('file_virtual'));
 
         $visibilityHandler = $fileVirtual->filePhysical->getVisibilityHandler();
         if (! $visibilityHandler instanceof ProxyInterface) {
@@ -45,7 +45,7 @@ trait ControllerProxyTrait
     public function generateFileUrl(Request $request)
     {
         $class = config('eloquent_file.models.file_virtual');
-        $fileVirtual = $class::findOrFail($request->route('file_virtual'));
+        $fileVirtual = $class::findOrFail((int) $request->route('file_virtual'));
 
         $visibilityHandler = $fileVirtual->filePhysical->getVisibilityHandler();
         if (! $visibilityHandler instanceof ProxyInterface) {
