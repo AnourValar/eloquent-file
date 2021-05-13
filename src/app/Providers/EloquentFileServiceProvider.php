@@ -65,8 +65,8 @@ class EloquentFileServiceProvider extends ServiceProvider
             }
 
             return (
-                in_array(mb_strtolower($value->getClientOriginalExtension()), $parameters) &&
-                in_array(mb_strtolower($value->extension()), $parameters)
+                in_array(mb_strtolower($value->getClientOriginalExtension()), $parameters, true) &&
+                in_array(mb_strtolower($value->extension()), $parameters, true)
             );
         });
 
@@ -91,8 +91,8 @@ class EloquentFileServiceProvider extends ServiceProvider
             }
 
             return (
-                !in_array(mb_strtolower($value->getClientOriginalExtension()), $parameters) &&
-                !in_array(mb_strtolower($value->extension()), $parameters)
+                !in_array(mb_strtolower($value->getClientOriginalExtension()), $parameters, true) &&
+                !in_array(mb_strtolower($value->extension()), $parameters, true)
             );
         });
 
