@@ -127,7 +127,10 @@ class FilePhysicalGenerateJob implements ShouldQueue
         $class = config('eloquent_file.models.file_virtual');
 
         foreach ($class::where('file_physical_id', '=', $filePhysical->id)->get() as $item) {
-            event(new \AnourValar\EloquentFile\Events\FileVirtualChanged($item));
+            \Atom::onCommit(function () use ($item)
+            {
+                event(new \AnourValar\EloquentFile\Events\FileVirtualChanged($item));
+            }, $filePhysical->getConnectionName());
         }
 
         return $this;

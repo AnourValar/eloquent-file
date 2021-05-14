@@ -32,6 +32,7 @@ return [
                 'rules' => ['max:10240', 'image', 'file_ext:jpg,jpeg,png,bmp,gif', 'dimensions:min_width=100,min_height=100'],
 
                 'build' => 1,
+                'keep_original' => true,
                 'preview' => [
                     'max_height' => 500,
                     'max_width' => 500,
@@ -48,6 +49,7 @@ return [
                 'bind' => AnourValar\EloquentFile\Handlers\Models\FileVirtual\Entity\UserEntity::class,
                 'name' => [
                     'avatar' => [
+                        'title' => 'eloquent-file::file_virtual.entity.user.name.avatar',
                         'policy' => ['bind' => AnourValar\EloquentFile\Handlers\Models\FileVirtual\Entity\Policy\UniquePolicy::class],
                         'visibility' => 'public',
                         'type' => 'image',

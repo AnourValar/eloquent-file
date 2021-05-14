@@ -27,15 +27,18 @@ class FileService
 
         $visibility = null;
         $type = null;
+        $title = null;
         if (is_string($fileVirtual->entity) && is_string($fileVirtual->name)) {
             $details = config("eloquent_file.file_virtual.entity.{$fileVirtual->entity}.name.{$fileVirtual->name}");
             if ($details) {
                 $visibility = $details['visibility'];
                 $type = $details['type'];
+
+                $title = isset($details['title']) ? trans($details['title']) : null;
             }
         }
 
-        $filePhysical = $this->uploadPhysical($file, $visibility, $type, $fileValidationKey);
+        $filePhysical = $this->uploadPhysical($file, $visibility, $type, $fileValidationKey, $title);
         $fileVirtual->file_physical_id = $filePhysical->id;
 
         return $this->link($fileVirtual, $file);
@@ -48,9 +51,10 @@ class FileService
      * @param mixed $visibility
      * @param mixed $type
      * @param string $fileValidationKey
+     * @param string $title
      * @return \AnourValar\EloquentFile\FilePhysical
      */
-    public function uploadPhysical(?UploadedFile $file, $visibility, $type, string $fileValidationKey = null): FilePhysical
+    public function uploadPhysical(?UploadedFile $file, $visibility, $type, string $fileValidationKey = null, string $title = null): FilePhysical
     {
         $class = config('eloquent_file.models.file_physical');
         $model = new $class;
@@ -65,7 +69,7 @@ class FileService
             isset(config('eloquent_file.file_physical.visibility')[$model->visibility])
         ) {
             // Validation
-            $this->validate($model, $file, $fileValidationKey);
+            $this->validate($model, $file, $fileValidationKey, $title);
 
             // Fill: sha256, size, mime_type
             $model->sha256 = hash_file('sha256', $file->getRealPath());
@@ -183,20 +187,21 @@ class FileService
      * @param \AnourValar\EloquentFile\FilePhysical $filePhysical
      * @param \Illuminate\Http\UploadedFile $file
      * @param string $fileValidationKey
+     * @param string $title
      * @throws \AnourValar\EloquentValidation\Exceptions\ValidationException
      * @return void
      */
-    private function validate(FilePhysical $filePhysical, ?UploadedFile $file, ?string $fileValidationKey): void
+    private function validate(FilePhysical $filePhysical, ?UploadedFile $file, ?string $fileValidationKey, ?string $title): void
     {
-        $validator = \Validator::make(
-            ['file' => $file],
-            ['file' => array_merge(['required', 'file'], $filePhysical->type_details['rules'])]
-        );
+        $validator = \Validator
+            ::make(['file' => $file], ['file' => array_merge(['required', 'file'], $filePhysical->type_details['rules'])])
+            ->setAttributeNames(['file' => $title]);
 
         $passes = $validator->passes();
         if ($passes) {
             $validator = \Validator
                 ::make(['file' => $file], [])
+                ->setAttributeNames(['file' => $title])
                 ->after(function ($validator) use ($filePhysical)
                 {
                     static $triggered;

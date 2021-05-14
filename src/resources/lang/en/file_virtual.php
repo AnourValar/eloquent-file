@@ -19,6 +19,14 @@ return [
     'file_physical_id_incorrect_visibility' => 'The physical file has an invalid visibility.',
     'file_physical_id_incorrect_type' => 'The physical file has an invalid type.',
 
+    'entity' => [
+        'user' => [
+            'name' => [
+                'avatar' => 'Avatar',
+            ],
+        ],
+    ],
+
     'entity_handlers' => [
         'user' => [
             'entity_id_not_exists' => 'User not exists.',

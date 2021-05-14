@@ -19,6 +19,14 @@ return [
     'file_physical_id_incorrect_visibility' => 'Физический файл имеет недопустимую область.',
     'file_physical_id_incorrect_type' => 'Физический файл имеет недопустимый тип.',
 
+    'entity' => [
+        'user' => [
+            'name' => [
+                'avatar' => 'Аватар',
+            ],
+        ],
+    ],
+
     'entity_handlers' => [
         'user' => [
             'entity_id_not_exists' => 'Несуществующий пользователь.',

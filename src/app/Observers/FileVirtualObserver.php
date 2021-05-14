@@ -46,6 +46,9 @@ class FileVirtualObserver
             $filePhysical->getTypeHandler()->onZero($filePhysical);
         }
 
-        event(new \AnourValar\EloquentFile\Events\FileVirtualChanged($model));
+        \Atom::onCommit(function () use ($model)
+        {
+            event(new \AnourValar\EloquentFile\Events\FileVirtualChanged($model));
+        }, $model->getConnectionName());
     }
 }

@@ -67,7 +67,7 @@ class ImageType extends SimpleType implements GenerateInterface
      */
     public function keepOriginal(FilePhysical $filePhysical): bool
     {
-        return true;
+        return $filePhysical->type_details['keep_original'];
     }
 
     /**
