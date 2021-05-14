@@ -14,7 +14,7 @@ abstract class FilePhysical extends Model
     /**
      * The connection name for the model.
      *
-     * @var string
+     * @var string|null
      */
     protected $connection;
 
@@ -81,15 +81,6 @@ abstract class FilePhysical extends Model
     ];
 
     /**
-     * The attributes that should be mutated to dates.
-     *
-     * @var array
-     */
-    protected $dates = [
-
-    ];
-
-    /**
      * The attributes that should be hidden for serialization.
      *
      * @var array
@@ -109,7 +100,7 @@ abstract class FilePhysical extends Model
     ];
 
     /**
-     * The attributes that should be cast to native types.
+     * The attributes that should be cast.
      *
      * @var array
      */
