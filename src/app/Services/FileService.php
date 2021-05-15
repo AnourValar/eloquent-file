@@ -194,7 +194,10 @@ class FileService
     private function validate(FilePhysical $filePhysical, ?UploadedFile $file, ?string $fileValidationKey, ?string $title): void
     {
         $validator = \Validator
-            ::make(['file' => $file], ['file' => array_merge(['required', 'file'], $filePhysical->type_details['rules'])])
+            ::make(
+                ['file' => $file],
+                ['file' => array_merge(['required', 'file', 'bail'], $filePhysical->type_details['rules'])]
+            )
             ->setAttributeNames(['file' => $title]);
 
         $passes = $validator->passes();

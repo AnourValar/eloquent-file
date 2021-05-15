@@ -29,7 +29,7 @@ return [
 
             'image' => [
                 'bind' => AnourValar\EloquentFile\Handlers\Models\FilePhysical\Type\ImageType::class,
-                'rules' => ['max:10240', 'image', 'file_ext:jpg,jpeg,png,bmp,gif', 'dimensions:min_width=100,min_height=100'],
+                'rules' => ['max:10240', 'file_ext:jpg,jpeg,png,bmp,gif', 'image', 'dimensions:min_width=100,min_height=100'],
 
                 'build' => 1,
                 'keep_original' => true,
