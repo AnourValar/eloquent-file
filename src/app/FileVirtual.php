@@ -183,7 +183,7 @@ abstract class FileVirtual extends Model
     public function saveValidation(\Illuminate\Validation\Validator $validator)
     {
         // name
-        if (! $this->entity_name_details) {
+        if (! $this->name_details) {
             $validator->errors()->add(
                 'name',
                 trans(
@@ -209,7 +209,7 @@ abstract class FileVirtual extends Model
                 return;
             }
 
-            if ($filePhysical->visibility != $this->entity_name_details['visibility']) {
+            if ($filePhysical->visibility != $this->name_details['visibility']) {
                 $validator->errors()->add(
                     'file_physical_id',
                     trans('eloquent-file::file_virtual.file_physical_id_incorrect_visibility')
@@ -218,7 +218,7 @@ abstract class FileVirtual extends Model
                 return;
             }
 
-            if ($filePhysical->type != $this->entity_name_details['type']) {
+            if ($filePhysical->type != $this->name_details['type']) {
                 $validator->errors()->add(
                     'file_physical_id',
                     trans('eloquent-file::file_virtual.file_physical_id_incorrect_type')
@@ -266,7 +266,7 @@ abstract class FileVirtual extends Model
      */
     public function getEntityPolicyHandler(): PolicyInterface
     {
-        return \App::make($this->entity_name_details['policy']['bind']);
+        return \App::make($this->name_details['policy']['bind']);
     }
 
     /**
@@ -280,12 +280,22 @@ abstract class FileVirtual extends Model
     }
 
     /**
-     * Virtual attribute: entity_name_details
+     * Virtual attribute: name_details
      *
      * @return array
      */
-    public function getEntityNameDetailsAttribute()
+    public function getNameDetailsAttribute()
     {
         return config("eloquent_file.file_virtual.entity.{$this->entity}.name.{$this->name}");
+    }
+
+    /**
+     * Virtual attribute: name_title
+     *
+     * @return string
+     */
+    public function getNameTitleAttribute()
+    {
+        return trans($this->name_details['title']);
     }
 }
