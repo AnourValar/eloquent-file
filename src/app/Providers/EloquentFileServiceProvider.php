@@ -17,9 +17,6 @@ class EloquentFileServiceProvider extends ServiceProvider
         $this->mergeConfigFrom(__DIR__.'/../../config/eloquent_file.php', 'eloquent_file');
         $this->publishes([ __DIR__.'/../../config/eloquent_file.php' => config_path('eloquent_file.php')], 'config');
 
-        // factories
-        $this->loadFactoriesFrom(__DIR__.'/../../database/factories');
-
         // migrations
         //$this->loadMigrationsFrom(__DIR__.'/../../database/migrations');
         $this->publishes([__DIR__.'/../../database/migrations/' => database_path('migrations')], 'migrations');

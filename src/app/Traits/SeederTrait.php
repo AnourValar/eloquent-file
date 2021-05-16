@@ -2,19 +2,18 @@
 
 namespace AnourValar\EloquentFile\Traits;
 
-use AnourValar\EloquentFile\FilePhysical;
+use AnourValar\EloquentFile\FileVirtual;
 
 trait SeederTrait
 {
     /**
      * Create an image
      *
-     * @param string $visibility
-     * @param string $type
+     * @param \AnourValar\EloquentFile\FileVirtual $fileVirtual
      * @param string $text
-     * @return \AnourValar\EloquentFile\FilePhysical
+     * @return \AnourValar\EloquentFile\FileVirtual
      */
-    protected function createImage(string $visibility, string $type, string $text = null): FilePhysical
+    protected function createImage(FileVirtual $fileVirtual, string $text = null): FileVirtual
     {
         static $counter;
 
@@ -24,7 +23,7 @@ trait SeederTrait
         }
 
         $class = config('eloquent_file.models.file_physical');
-        return \DB::connection((new $class)->getConnectionName())->transaction(function () use ($text, $visibility, $type)
+        return \DB::connection((new $class)->getConnectionName())->transaction(function () use ($fileVirtual, $text)
         {
             $fileName = tempnam(sys_get_temp_dir(), 'fake_');
 
@@ -40,10 +39,9 @@ trait SeederTrait
                 })
                 ->save($fileName, '80', 'jpg');
 
-            return \App::make(\AnourValar\EloquentFile\Services\FileService::class)->uploadPhysical(
-                new \Illuminate\Http\UploadedFile($fileName, \Str::slug($text).'.jpg', 'image/jpeg', null, true),
-                $visibility,
-                $type
+            return \App::make(\AnourValar\EloquentFile\Services\FileService::class)->upload(
+                new \Illuminate\Http\UploadedFile($fileName, $fileVirtual->name.'.jpg', 'image/jpeg', null, true),
+                $fileVirtual
             );
         });
     }
