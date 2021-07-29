@@ -47,22 +47,6 @@ abstract class FilePhysical extends Model
     public $timestamps = true;
 
     /**
-     * Validation rules
-     *
-     * @var array
-     */
-    protected $rules = [
-        'visibility' => ['required', 'max:30', 'config:eloquent_file.file_physical.visibility'],
-        'type' => ['required', 'max:30', 'config:eloquent_file.file_physical.type'],
-        'disk' => ['required', 'max:30', 'config:filesystems.disks'],
-        'path' => ['nullable', 'max:200'],
-        'sha256' => ['required', 'min:64', 'max:64'],
-        'size' => ['required', 'integer', 'min:0'],
-        'mime_type' => ['nullable', 'max:100'],
-        'build' => ['nullable', 'integer', 'min:1'],
-    ];
-
-    /**
      * Trim columns
      *
      * @var array
@@ -179,12 +163,31 @@ abstract class FilePhysical extends Model
     }
 
     /**
+     * Get the validation rules
+     *
+     * @return array
+     */
+    public function saveRules()
+    {
+        return [
+            'visibility' => ['required', 'max:30', 'config:eloquent_file.file_physical.visibility'],
+            'type' => ['required', 'max:30', 'config:eloquent_file.file_physical.type'],
+            'disk' => ['required', 'max:30', 'config:filesystems.disks'],
+            'path' => ['nullable', 'max:200'],
+            'sha256' => ['required', 'min:64', 'max:64'],
+            'size' => ['required', 'integer', 'min:0'],
+            'mime_type' => ['nullable', 'max:100'],
+            'build' => ['nullable', 'integer', 'min:1'],
+        ];
+    }
+
+    /**
      * "Save" after-validation
      *
      * @param \Illuminate\Validation\Validator $validator
      * @return void
      */
-    public function saveValidation(\Illuminate\Validation\Validator $validator)
+    public function saveAfterValidation(\Illuminate\Validation\Validator $validator)
     {
         // ...
     }
@@ -195,7 +198,7 @@ abstract class FilePhysical extends Model
      * @param \Illuminate\Validation\Validator $validator
      * @return void
      */
-    public function deleteValidation(\Illuminate\Validation\Validator $validator)
+    public function deleteAfterValidation(\Illuminate\Validation\Validator $validator)
     {
 
     }

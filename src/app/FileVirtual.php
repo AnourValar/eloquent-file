@@ -46,22 +46,6 @@ abstract class FileVirtual extends Model
     public $timestamps = true;
 
     /**
-     * Validation rules
-     *
-     * @var array
-     */
-    protected $rules = [
-        'file_physical_id' => ['required', 'integer'],
-        'entity' => ['required', 'max:30', 'config:eloquent_file.file_virtual.entity'],
-        'entity_id' => ['required', 'integer'],
-        'name' => ['required', 'max:40'],
-        'filename' => ['required', 'min:1', 'max:100'],
-        'content_type' => ['nullable', 'max:100'],
-        'title' => ['nullable', 'max:150'],
-        'archived_at' => ['nullable', 'date'],
-    ];
-
-    /**
      * Trim columns
      *
      * @var array
@@ -175,12 +159,31 @@ abstract class FileVirtual extends Model
     }
 
     /**
+     * Get the validation rules
+     *
+     * @return array
+     */
+    public function saveRules()
+    {
+        return [
+            'file_physical_id' => ['required', 'integer'],
+            'entity' => ['required', 'max:30', 'config:eloquent_file.file_virtual.entity'],
+            'entity_id' => ['required', 'integer'],
+            'name' => ['required', 'max:40'],
+            'filename' => ['required', 'min:1', 'max:100'],
+            'content_type' => ['nullable', 'max:100'],
+            'title' => ['nullable', 'max:150'],
+            'archived_at' => ['nullable', 'date'],
+        ];
+    }
+
+    /**
      * "Save" after-validation
      *
      * @param \Illuminate\Validation\Validator $validator
      * @return void
      */
-    public function saveValidation(\Illuminate\Validation\Validator $validator)
+    public function saveAfterValidation(\Illuminate\Validation\Validator $validator)
     {
         // name
         if (! $this->name_details) {
@@ -240,7 +243,7 @@ abstract class FileVirtual extends Model
      * @param \Illuminate\Validation\Validator $validator
      * @return void
      */
-    public function deleteValidation(\Illuminate\Validation\Validator $validator)
+    public function deleteAfterValidation(\Illuminate\Validation\Validator $validator)
     {
 
     }
