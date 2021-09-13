@@ -13,7 +13,7 @@ class ArchivePolicy extends AbstractPolicy implements PolicyInterface
     public function onCreated(FileVirtual $fileVirtual): void
     {
         foreach ($this->getOriginalCollection($fileVirtual) as $item) {
-            $item->archived_at = \Carbon\Carbon::now();
+            $item->archived_at = now();
             $item->validate()->save();
         }
     }
