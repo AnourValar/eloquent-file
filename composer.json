@@ -6,7 +6,7 @@
     "license": "MIT",
     "require": {
         "php": ">=7.1.0",
-        "laravel/framework": ">=6.0.0",
+        "laravel/framework": ">=8.0.0",
         "anourvalar/eloquent-validation": "^2.0",
         "anourvalar/laravel-atom": "^2.1",
         "intervention/image": "^2.5"

@@ -7,6 +7,16 @@ use Illuminate\Support\ServiceProvider;
 class EloquentFileServiceProvider extends ServiceProvider
 {
     /**
+     * Register any application services.
+     *
+     * @return void
+     */
+    public function register()
+    {
+
+    }
+
+    /**
      * Bootstrap any application services.
      *
      * @return void
@@ -38,16 +48,6 @@ class EloquentFileServiceProvider extends ServiceProvider
         // validation rules
         $this->addFileExtRule();
         $this->addFileNotExtRule();
-    }
-
-    /**
-     * Register any application services.
-     *
-     * @return void
-     */
-    public function register()
-    {
-
     }
 
     /**

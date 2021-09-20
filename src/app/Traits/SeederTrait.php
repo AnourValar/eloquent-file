@@ -39,10 +39,13 @@ trait SeederTrait
                 })
                 ->save($fileName, '80', 'jpg');
 
-            return \App::make(\AnourValar\EloquentFile\Services\FileService::class)->upload(
+            $fileVirtual = \App::make(\AnourValar\EloquentFile\Services\FileService::class)->upload(
                 new \Illuminate\Http\UploadedFile($fileName, $fileVirtual->name.'.jpg', 'image/jpeg', null, true),
                 $fileVirtual
             );
+
+            unlink($fileName);
+            return $fileVirtual;
         });
     }
 }

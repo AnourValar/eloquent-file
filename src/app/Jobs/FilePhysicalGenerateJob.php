@@ -6,10 +6,11 @@ use AnourValar\EloquentFile\FilePhysical;
 use Illuminate\Bus\Queueable;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 
-class FilePhysicalGenerateJob implements ShouldQueue
+class FilePhysicalGenerateJob implements ShouldQueue, ShouldBeUnique
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
@@ -17,6 +18,13 @@ class FilePhysicalGenerateJob implements ShouldQueue
      * @var \AnourValar\EloquentFile\FilePhysical
      */
     private $filePhysical;
+
+    /**
+     * Delete the job if its models no longer exist.
+     *
+     * @var bool
+     */
+    public $deleteWhenMissingModels = true;
 
     /**
      * Create a new job instance.
@@ -37,6 +45,16 @@ class FilePhysicalGenerateJob implements ShouldQueue
     public function middleware()
     {
         return [];
+    }
+
+    /**
+     * The unique ID of the job.
+     *
+     * @return string
+     */
+    public function uniqueId()
+    {
+        return $this->filePhysical->id;
     }
 
     /**
