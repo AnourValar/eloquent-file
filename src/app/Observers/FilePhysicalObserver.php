@@ -27,16 +27,16 @@ class FilePhysicalObserver
      */
     public function deleted(\AnourValar\EloquentFile\FilePhysical $model)
     {
-        foreach (array_merge([$model->path], (array)$model->path_generate) as $item) {
-            if (! mb_strlen($item)) {
+        foreach (array_merge([['disk' => $model->disk, 'path' => $model->path]], (array) $model->path_generate) as $item) {
+            if (! mb_strlen($item['path'])) {
                 continue;
             }
 
             \Atom::onCommit(
-                function () use ($model, $item)
+                function () use ($item)
                 {
-                    if (\Storage::disk($model->disk)->exists($item)) {
-                        \Storage::disk($model->disk)->delete($item);
+                    if (\Storage::disk($item['disk'])->exists($item['path'])) {
+                        \Storage::disk($item['disk'])->delete($item['path']);
                     }
                 },
                 $model->getConnectionName()

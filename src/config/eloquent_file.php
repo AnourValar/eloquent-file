@@ -38,6 +38,7 @@ return [
                     'max_width' => 500,
                     'format' => 'jpg',
                     'quality' => 82,
+                    'alt_disks' => false,
                 ]
             ],
         ],
@@ -50,7 +51,10 @@ return [
                 'name' => [
                     'avatar' => [
                         'title' => 'eloquent-file::file_virtual.entity.user.name.avatar',
-                        'policy' => ['bind' => AnourValar\EloquentFile\Handlers\Models\FileVirtual\Entity\Policy\UniquePolicy::class],
+                        'policy' => [
+                            'bind' => AnourValar\EloquentFile\Handlers\Models\FileVirtual\Entity\Policy\UniquePolicy::class,
+                            'limit' => 0,
+                        ],
                         'visibility' => 'public',
                         'type' => 'image',
                     ],

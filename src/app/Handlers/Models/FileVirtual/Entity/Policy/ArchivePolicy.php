@@ -4,7 +4,7 @@ namespace AnourValar\EloquentFile\Handlers\Models\FileVirtual\Entity\Policy;
 
 use AnourValar\EloquentFile\FileVirtual;
 
-class ArchivePolicy extends AbstractPolicy implements PolicyInterface
+class ArchivePolicy extends AbstractPolicy
 {
     /**
      * {@inheritDoc}

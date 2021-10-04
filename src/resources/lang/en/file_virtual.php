@@ -28,6 +28,8 @@ return [
     ],
 
     'entity_handlers' => [
+        'over_limit' => 'Number of files ":name" cannot exceed :limit.',
+
         'user' => [
             'entity_id_not_exists' => 'User not exists.',
         ],

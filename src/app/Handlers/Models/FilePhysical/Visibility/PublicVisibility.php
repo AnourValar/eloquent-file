@@ -57,12 +57,16 @@ class PublicVisibility implements VisibilityInterface, DirectAccessInterface
      * {@inheritDoc}
      * @see \AnourValar\EloquentFile\Handlers\Models\FilePhysical\Visibility\DirectAccessInterface::getUrl()
      */
-    public function getUrl(FilePhysical $filePhysical, string $path = null): string
+    public function getUrl(FilePhysical $filePhysical, string $generate = null): string
     {
-        if (is_null($path)) {
+        if (is_null($generate)) {
+            $disk = $filePhysical->disk;
             $path = $filePhysical->path;
+        } else {
+            $disk = $filePhysical->path_generate[$generate]['disk'];
+            $path = $filePhysical->path_generate[$generate]['path'];
         }
 
-        return url(\Storage::disk($filePhysical->disk)->url($path));
+        return url( \Storage::disk($disk)->url($path) );
     }
 }

@@ -7,6 +7,15 @@ use AnourValar\EloquentFile\FileVirtual;
 interface PolicyInterface
 {
     /**
+     * Validation
+     *
+     * @param \AnourValar\EloquentFile\FileVirtual $fileVirtual
+     * @param \Illuminate\Validation\Validator $validator
+     * @return void
+     */
+    public function validate(FileVirtual $fileVirtual, \Illuminate\Validation\Validator $validator): void;
+
+    /**
      * Apply retention policy
      *
      * @param \AnourValar\EloquentFile\FileVirtual $fileVirtual

@@ -55,8 +55,17 @@ class ImageType extends SimpleType implements GenerateInterface
             })
             ->encode($typeDetails['preview']['format'], $typeDetails['preview']['quality']);
 
-        $pathGenerate = ['preview' => $this->generatePath($filePhysical, '_preview')];
-        \Storage::disk($filePhysical->disk)->put($pathGenerate['preview'], $preview);
+        $pathGenerate = [];
+        if ($typeDetails['preview']['alt_disks']) {
+            $disks = $typeDetails['preview']['alt_disks'];
+            shuffle($disks);
+            $pathGenerate['preview']['disk'] = $disks[0];
+        } else {
+            $pathGenerate['preview']['disk'] = $filePhysical->disk;
+        }
+        $pathGenerate['preview']['path'] = $this->generatePath($filePhysical, '_preview');
+
+        \Storage::disk($pathGenerate['preview']['disk'])->put($pathGenerate['preview']['path'], $preview);
 
         return $pathGenerate;
     }

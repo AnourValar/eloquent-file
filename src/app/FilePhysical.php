@@ -275,23 +275,16 @@ abstract class FilePhysical extends Model
      */
     public function getUrlGenerateAttribute(): array
     {
-        static $result;
-        if (! $result) {
-            $result = [];
+        $handler = $this->getVisibilityHandler();
+        if (! $handler instanceof DirectAccessInterface) {
+            throw new \LogicException('Direct access is not allowed for this file.');
         }
 
-        if (! isset($result[$this->id])) {
-            $handler = $this->getVisibilityHandler();
-            if (! $handler instanceof DirectAccessInterface) {
-                throw new \LogicException('Direct access is not allowed for this file.');
-            }
-
-            $result[$this->id] = [];
-            foreach ((array)$this->path_generate as $key => $value) {
-                $result[$this->id][$key] = $handler->getUrl($this, $value);
-            }
+        $result = [];
+        foreach (array_keys((array) $this->path_generate) as $generate) {
+            $result[$generate] = $handler->getUrl($this, $generate);
         }
 
-        return $result[$this->id];
+        return $result;
     }
 }

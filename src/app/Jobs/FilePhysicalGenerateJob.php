@@ -83,7 +83,7 @@ class FilePhysicalGenerateJob implements ShouldQueue, ShouldBeUnique
                         return;
                     }
 
-                    $original = (array)$filePhysical->path_generate;
+                    $original = (array) $filePhysical->path_generate;
 
                     $filePhysical
                         ->fields('build', 'path_generate')
@@ -116,11 +116,14 @@ class FilePhysicalGenerateJob implements ShouldQueue, ShouldBeUnique
      */
     private function cleanUp(FilePhysical &$filePhysical, array $original): self
     {
-        $items = array_diff($original, (array)$filePhysical->path_generate);
+        $new = (array) $filePhysical->path_generate;
+        foreach ($original as $name => $item) {
+            if (isset($new[$name]) && $new[$name] == $item) {
+                continue;
+            }
 
-        foreach ($items as $item) {
-            if (\Storage::disk($filePhysical->disk)->exists($item)) {
-                \Storage::disk($filePhysical->disk)->delete($item);
+            if (\Storage::disk($item['disk'])->exists($item['path'])) {
+                \Storage::disk($item['disk'])->delete($item['path']);
             }
         }
 
