@@ -63,7 +63,7 @@ class ImageType extends SimpleType implements GenerateInterface
         } else {
             $pathGenerate['preview']['disk'] = $filePhysical->disk;
         }
-        $pathGenerate['preview']['path'] = $this->generatePath($filePhysical, '_preview');
+        $pathGenerate['preview']['path'] = $this->generatePath($filePhysical, "_preview.{$typeDetails['preview']['format']}");
 
         \Storage::disk($pathGenerate['preview']['disk'])->put($pathGenerate['preview']['path'], $preview);
 
@@ -87,20 +87,10 @@ class ImageType extends SimpleType implements GenerateInterface
     protected function generatePath(FilePhysical $filePhysical, string $suffix): string
     {
         $pathInfo = pathinfo($filePhysical->path);
-
-        if ($pathInfo['dirname'] == '.') {
-            $pathInfo['dirname'] = '';
-        }
-        if (mb_strlen($pathInfo['dirname'])) {
-            $pathInfo['dirname'] .= '/';
+        if (isset($pathInfo['extension']) && mb_strlen($pathInfo['extension'])) {
+            return mb_substr($filePhysical->path, 0, -(mb_strlen($pathInfo['extension']) + 1)) . $suffix;
         }
 
-        if (isset($pathInfo['extension'])) {
-            $pathInfo['extension'] = '.'.$pathInfo['extension'];
-        } else {
-            $pathInfo['extension'] = '';
-        }
-
-        return $pathInfo['dirname'].$pathInfo['filename'].$suffix.$pathInfo['extension'];
+        return $filePhysical->path . $suffix;
     }
 }

@@ -15,10 +15,18 @@ interface ProxyInterface
     public function generateUrl(FileVirtual $fileVirtual): string;
 
     /**
-     * Downloading (proxying) a file
+     * Download (proxying) a file
      *
      * @param \AnourValar\EloquentFile\FileVirtual $fileVirtual
      * @return \Symfony\Component\HttpFoundation\Response
      */
     public function download(FileVirtual $fileVirtual): \Symfony\Component\HttpFoundation\Response;
+
+    /**
+     * Retrieve (proxying) a file
+     *
+     * @param \AnourValar\EloquentFile\FileVirtual $fileVirtual
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
+    public function inline(FileVirtual $fileVirtual): \Symfony\Component\HttpFoundation\Response;
 }

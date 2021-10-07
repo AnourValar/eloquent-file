@@ -3,59 +3,100 @@
 namespace AnourValar\EloquentFile\Traits;
 
 use AnourValar\EloquentFile\Handlers\Models\FilePhysical\Visibility\ProxyInterface;
-use Illuminate\Auth\Access\Response;
 use Illuminate\Http\Request;
 
 trait ControllerProxyTrait
 {
     /**
-     * @see \Illuminate\Routing\Middleware\ValidateSignature::class
-     * Downloading (proxying) a file
+     * Downloading (proxying) a file via authorization
      *
      * @param Request $request
-     * @return mixed
+     * @param boolean $download
+     * @throws \Illuminate\Auth\Access\AuthorizationException
+     * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function downloadFile(Request $request)
+    public function authorizedProxy(Request $request, bool $download = true)
     {
-        $class = config('eloquent_file.models.file_virtual');
-        $fileVirtual = $class::findOrFail((int) $request->route('file_virtual'));
+        $fileVirtual = $this->extractFileVirtualFrom($request);
 
         $visibilityHandler = $fileVirtual->filePhysical->getVisibilityHandler();
         if (! $visibilityHandler instanceof ProxyInterface) {
-            return Response::deny(trans('eloquent-file::auth.proxy.unsupported'));
-        }
-
-        if (! $request->hasValidSignature()) {
-            return Response::deny(trans('eloquent-file::auth.proxy.invalid'));
+            throw new \Illuminate\Auth\Access\AuthorizationException(trans('eloquent-file::auth.proxy.unsupported'));
         }
 
         if (! $fileVirtual->getEntityHandler()->canDownload($fileVirtual, $request->user())) {
-            return Response::deny(trans('eloquent-file::auth.proxy.not_authorized'));
+            throw new \Illuminate\Auth\Access\AuthorizationException(trans('eloquent-file::auth.proxy.not_authorized'));
         }
 
-        return $visibilityHandler->download($fileVirtual);
+        if ($download) {
+            return $visibilityHandler->download($fileVirtual);
+        }
+        return $visibilityHandler->inline($fileVirtual);
     }
 
     /**
-     * URL Generation
+     * Downloading (proxying) a file via signed url
+     * @see \Illuminate\Routing\Middleware\ValidateSignature::class
      *
      * @param Request $request
-     * @return mixed
+     * @param boolean $download
+     * @throws \Illuminate\Auth\Access\AuthorizationException
+     * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function generateFileUrl(Request $request)
+    public function guestProxy(Request $request, bool $download = true)
     {
-        $class = config('eloquent_file.models.file_virtual');
-        $fileVirtual = $class::findOrFail((int) $request->route('file_virtual'));
+        $fileVirtual = $this->extractFileVirtualFrom($request);
 
         $visibilityHandler = $fileVirtual->filePhysical->getVisibilityHandler();
         if (! $visibilityHandler instanceof ProxyInterface) {
-            return Response::deny(trans('eloquent-file::auth.proxy.unsupported'));
+            throw new \Illuminate\Auth\Access\AuthorizationException(trans('eloquent-file::auth.proxy.unsupported'));
+        }
+
+        if (! $request->hasValidSignature()) {
+            throw new \Illuminate\Auth\Access\AuthorizationException(trans('eloquent-file::auth.proxy.invalid'));
+        }
+
+        if ($download) {
+            return $visibilityHandler->download($fileVirtual);
+        }
+        return $visibilityHandler->inline($fileVirtual);
+    }
+
+    /**
+     * Generates a temporary link for downloading
+     *
+     * @param Request $request
+     * @throws \Illuminate\Auth\Access\AuthorizationException
+     * @return string
+     */
+    public function guestUrl(Request $request): string
+    {
+        $fileVirtual = $this->extractFileVirtualFrom($request);
+
+        $visibilityHandler = $fileVirtual->filePhysical->getVisibilityHandler();
+        if (! $visibilityHandler instanceof ProxyInterface) {
+            throw new \Illuminate\Auth\Access\AuthorizationException(trans('eloquent-file::auth.proxy.unsupported'));
         }
 
         if (! $fileVirtual->getEntityHandler()->canDownload($fileVirtual, $request->user())) {
-            return Response::deny(trans('eloquent-file::auth.proxy.not_authorized'));
+            throw new \Illuminate\Auth\Access\AuthorizationException(trans('eloquent-file::auth.proxy.not_authorized'));
         }
 
-        return ['url' => $visibilityHandler->generateUrl($fileVirtual)];
+        return $visibilityHandler->generateUrl($fileVirtual);
+    }
+
+    /**
+     * @param Request $request
+     * @return \AnourValar\EloquentFile\FileVirtual
+     */
+    protected function extractFileVirtualFrom(Request $request): \AnourValar\EloquentFile\FileVirtual
+    {
+        $fileVirtual = $request->route('file_virtual');
+        if (is_scalar($fileVirtual)) {
+            $class = config('eloquent_file.models.file_virtual');
+            $fileVirtual = $class::findOrFail((int) $fileVirtual);
+        }
+
+        return $fileVirtual;
     }
 }

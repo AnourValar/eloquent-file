@@ -69,16 +69,28 @@ class PrivateVisibility implements VisibilityInterface, ProxyInterface
      */
     public function download(FileVirtual $fileVirtual): \Symfony\Component\HttpFoundation\Response
     {
-        $pathInfo = pathinfo($fileVirtual->filename);
-        if (isset($pathInfo['extension'])) {
-            $filename = \Str::slug($pathInfo['filename']) . '.' . \Str::slug($pathInfo['extension']);
-        } else {
-            $filename = \Str::slug($pathInfo['filename']);
-        }
-
         return \Storage
             ::disk($fileVirtual->filePhysical->disk)
-            ->download($fileVirtual->filePhysical->path, $filename, ['Content-Type' => $fileVirtual->content_type]);
+            ->download(
+                $fileVirtual->filePhysical->path,
+                $this->getFileName($fileVirtual),
+                ['Content-Type' => $fileVirtual->content_type]
+            );
+    }
+
+    /**
+     * {@inheritDoc}
+     * @see \AnourValar\EloquentFile\Handlers\Models\FilePhysical\Visibility\ProxyInterface::inline()
+     */
+    public function inline(FileVirtual $fileVirtual): \Symfony\Component\HttpFoundation\Response
+    {
+        return \Storage
+            ::disk($fileVirtual->filePhysical->disk)
+            ->response(
+                $fileVirtual->filePhysical->path,
+                $this->getFileName($fileVirtual),
+                ['Content-Type' => $fileVirtual->content_type]
+            );
     }
 
     /**
@@ -90,5 +102,21 @@ class PrivateVisibility implements VisibilityInterface, ProxyInterface
     protected function expireIn(FileVirtual $fileVirtual): int
     {
         return ceil($fileVirtual->filePhysical->size / (1024 * 1024)) + 10;
+    }
+
+    /**
+     * @param \AnourValar\EloquentFile\FileVirtual $fileVirtual
+     * @return string
+     */
+    protected function getFileName(FileVirtual $fileVirtual): string
+    {
+        $pathInfo = pathinfo($fileVirtual->filename);
+        if (isset($pathInfo['extension']) && mb_strlen($pathInfo['extension'])) {
+            $fileName = \Str::slug($pathInfo['filename']) . '.' . \Str::slug($pathInfo['extension']);
+        } else {
+            $fileName = \Str::slug($pathInfo['filename']);
+        }
+
+        return $fileName;
     }
 }
