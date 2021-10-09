@@ -45,6 +45,41 @@ class FileService
     }
 
     /**
+     * Delete files
+     *
+     * @param array $attributes
+     * @param mixed $prefix
+     * @return void
+     */
+    public function delete(array $attributes, $prefix = null): void
+    {
+        $class = config('eloquent_file.models.file_virtual');
+
+        try {
+            $attributes = \Validator
+                ::make(
+                    $attributes,
+                    [
+                        'entity' => ['required', 'string', 'min:1', 'max:200'],
+                        'entity_id' => ['required', 'integer', 'min:1'],
+                        'name' => ['required', 'string', 'min:1', 'max:200'],
+                        'id' => ['nullable', 'not_empty', 'integer', 'min:1'],
+
+                    ]
+                )
+                ->setAttributeNames((new $class)->getAttributeNames())
+                ->validate();
+        } catch (\IIluminate\Validation\ValidationException $e) {
+            throw new ValidationException($e->validator, null, 'default', $prefix);
+        }
+
+        foreach ($class::with('filePhysical')->where($attributes)->get() as $fileVirtual) {
+            $this->lock($fileVirtual->filePhysical);
+            $fileVirtual->validateDelete($prefix)->delete();
+        }
+    }
+
+    /**
      * Upload file
      *
      * @param \Illuminate\Http\UploadedFile $file
