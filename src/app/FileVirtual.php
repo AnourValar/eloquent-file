@@ -78,7 +78,7 @@ abstract class FileVirtual extends Model
      * @var array
      */
     protected $attributes = [
-
+        'weight' => 0,
     ];
 
     /**
@@ -95,6 +95,7 @@ abstract class FileVirtual extends Model
         'filename' => 'string',
         'content_type' => 'string',
         'title' => 'string',
+        'weight' => 'integer',
         'archived_at' => 'datetime',
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
@@ -173,6 +174,7 @@ abstract class FileVirtual extends Model
             'filename' => ['required', 'min:1', 'max:100'],
             'content_type' => ['nullable', 'max:100'],
             'title' => ['nullable', 'max:150'],
+            'weight' => ['required', 'integer', 'min:0', 'max:65535'],
             'archived_at' => ['nullable', 'date'],
         ];
     }

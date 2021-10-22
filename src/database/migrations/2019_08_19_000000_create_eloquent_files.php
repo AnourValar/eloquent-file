@@ -41,6 +41,7 @@ class CreateEloquentFiles extends Migration
             $table->string('filename', 100);
             $table->string('content_type', 100)->nullable();
             $table->string('title', 150)->nullable();
+            $table->unsignedSmallInteger('weight')->index();
             $table->timestamp('archived_at')->nullable()->index();
             $table->timestamps();
 

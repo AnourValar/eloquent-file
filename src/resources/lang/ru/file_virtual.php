@@ -10,6 +10,7 @@ return [
         'filename' => 'Имя',
         'content_type' => 'Тип контента',
         'title' => 'Описание',
+        'weight' => 'Вес',
         'archived_at' => 'Дата архивации',
         'created_at' => 'Дата создания',
         'updated_at' => 'Дата изменения',

@@ -10,6 +10,7 @@ return [
         'filename' => 'Filename',
         'content_type' => 'Content type',
         'title' => 'Title',
+        'weight' => 'Weight',
         'archived_at' => 'Archived at',
         'created_at' => 'Created at',
         'updated_at' => 'Updated at',
