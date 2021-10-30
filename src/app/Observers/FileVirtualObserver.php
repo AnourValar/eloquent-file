@@ -20,6 +20,19 @@ class FileVirtualObserver
     }
 
     /**
+     * Handle the "updated" event.
+     *
+     * @param  \AnourValar\EloquentFile\FileVirtual  $model
+     * @return void
+     */
+    public function updated(FileVirtual $model)
+    {
+        if ($model->isDirty('weight')) {
+            event(new \AnourValar\EloquentFile\Events\FileVirtualChanged($model));
+        }
+    }
+
+    /**
      * Handle the "deleted" event.
      *
      * @param  \AnourValar\EloquentFile\FileVirtual  $model

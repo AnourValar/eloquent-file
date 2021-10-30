@@ -174,7 +174,7 @@ abstract class FileVirtual extends Model
             'filename' => ['required', 'min:1', 'max:100'],
             'content_type' => ['nullable', 'max:100'],
             'title' => ['nullable', 'max:150'],
-            'weight' => ['required', 'integer', 'min:0', 'max:65535'],
+            'weight' => ['required', 'integer', 'min:0', 'max:32767'],
             'archived_at' => ['nullable', 'date'],
         ];
     }
