@@ -51,7 +51,7 @@ abstract class FileVirtual extends Model
      * @var array
      */
     protected $trim = [
-        'entity', 'name', 'filename', 'content_type', 'title',
+        'entity', 'name', 'filename', 'content_type', 'title', 'details',
     ];
 
     /**
@@ -60,7 +60,7 @@ abstract class FileVirtual extends Model
      * @var array
      */
     protected $nullable = [
-        'content_type', 'title',
+        'content_type', 'title', 'details',
     ];
 
     /**
@@ -96,6 +96,7 @@ abstract class FileVirtual extends Model
         'content_type' => 'string',
         'title' => 'string',
         'weight' => 'integer',
+        'details' => 'json',
         'archived_at' => 'datetime',
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
@@ -237,6 +238,17 @@ abstract class FileVirtual extends Model
         if ($this->isDirty('entity', 'entity_id', 'name')) {
             $this->getEntityPolicyHandler()->validate($this, $validator);
             $this->getEntityHandler()->validate($this, $validator);
+        }
+
+        // details
+        if ($this->isDirty('entity', 'entity_id', 'name', 'details')) {
+            $handler = $this->getEntityHandler();
+
+            if ($handler instanceof \AnourValar\EloquentFile\Handlers\Models\FileVirtual\Entity\DetailsInterface) {
+                $handler->validateDetails($this, $validator);
+            } elseif (! is_null($this->details)) {
+                $validator->errors()->add('details', trans('eloquent-file::file_virtual.details_not_supported'));
+            }
         }
     }
 
