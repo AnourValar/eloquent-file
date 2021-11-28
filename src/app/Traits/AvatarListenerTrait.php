@@ -11,12 +11,13 @@ trait AvatarListenerTrait
      *
      * @param \AnourValar\EloquentFile\FileVirtual $fileVirtual
      * @param string $generateKey
-     * @return array|NULL
+     * @return array|null
      */
     protected function avatarSchema(FileVirtual $fileVirtual, $generateKey = 'preview'): ?array
     {
         $model = \App\FileVirtual
-            ::where('entity', '=', $fileVirtual['entity'])
+            ::with('filePhysical')
+            ->where('entity', '=', $fileVirtual['entity'])
             ->where('entity_id', '=', $fileVirtual['entity_id'])
             ->where('name', '=', $fileVirtual['name'])
             ->whereNull('archived_at')
@@ -26,8 +27,8 @@ trait AvatarListenerTrait
 
         if (! $model) {
             $avatar = null;
-        } elseif (isset($model->filePhysical->url_generate[$generateKey])) {
-            $avatar = ['generated' => true, 'url' => $model->filePhysical->url_generate[$generateKey]];
+        } elseif (isset($model->url_generate[$generateKey])) {
+            $avatar = ['generated' => true, 'url' => $model->url_generate[$generateKey]];
         } else {
             $avatar = ['generated' => false];
         }

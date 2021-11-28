@@ -2,7 +2,7 @@
 
 namespace AnourValar\EloquentFile\Traits;
 
-use AnourValar\EloquentFile\Handlers\Models\FilePhysical\Visibility\ProxyInterface;
+use AnourValar\EloquentFile\Handlers\Models\FilePhysical\Visibility\ProxyAccessInterface;
 use Illuminate\Http\Request;
 
 trait ControllerProxyTrait
@@ -20,18 +20,22 @@ trait ControllerProxyTrait
         $fileVirtual = $this->extractFileVirtualFrom($request);
 
         $visibilityHandler = $fileVirtual->filePhysical->getVisibilityHandler();
-        if (! $visibilityHandler instanceof ProxyInterface) {
+        if (! $visibilityHandler instanceof ProxyAccessInterface) {
             throw new \Illuminate\Auth\Access\AuthorizationException(trans('eloquent-file::auth.proxy.unsupported'));
         }
 
-        if (! $fileVirtual->getEntityHandler()->canDownload($fileVirtual, $request->user())) {
+        if (! $request->hasValidSignature()) {
+            throw new \Illuminate\Auth\Access\AuthorizationException(trans('eloquent-file::auth.proxy.invalid'));
+        }
+
+        if (! $fileVirtual->getEntityHandler()->canAccess($fileVirtual, $request->user())) {
             throw new \Illuminate\Auth\Access\AuthorizationException(trans('eloquent-file::auth.proxy.not_authorized'));
         }
 
         if ($download) {
-            return $visibilityHandler->download($fileVirtual);
+            return $visibilityHandler->proxyDownload($fileVirtual);
         }
-        return $visibilityHandler->inline($fileVirtual);
+        return $visibilityHandler->proxyInline($fileVirtual);
     }
 
     /**
@@ -48,7 +52,7 @@ trait ControllerProxyTrait
         $fileVirtual = $this->extractFileVirtualFrom($request);
 
         $visibilityHandler = $fileVirtual->filePhysical->getVisibilityHandler();
-        if (! $visibilityHandler instanceof ProxyInterface) {
+        if (! $visibilityHandler instanceof ProxyAccessInterface) {
             throw new \Illuminate\Auth\Access\AuthorizationException(trans('eloquent-file::auth.proxy.unsupported'));
         }
 
@@ -57,9 +61,9 @@ trait ControllerProxyTrait
         }
 
         if ($download) {
-            return $visibilityHandler->download($fileVirtual);
+            return $visibilityHandler->proxyDownload($fileVirtual);
         }
-        return $visibilityHandler->inline($fileVirtual);
+        return $visibilityHandler->proxyInline($fileVirtual);
     }
 
     /**
@@ -74,15 +78,15 @@ trait ControllerProxyTrait
         $fileVirtual = $this->extractFileVirtualFrom($request);
 
         $visibilityHandler = $fileVirtual->filePhysical->getVisibilityHandler();
-        if (! $visibilityHandler instanceof ProxyInterface) {
+        if (! $visibilityHandler instanceof ProxyAccessInterface) {
             throw new \Illuminate\Auth\Access\AuthorizationException(trans('eloquent-file::auth.proxy.unsupported'));
         }
 
-        if (! $fileVirtual->getEntityHandler()->canDownload($fileVirtual, $request->user())) {
+        if (! $fileVirtual->getEntityHandler()->canAccess($fileVirtual, $request->user())) {
             throw new \Illuminate\Auth\Access\AuthorizationException(trans('eloquent-file::auth.proxy.not_authorized'));
         }
 
-        return $visibilityHandler->generateUrl($fileVirtual);
+        return $visibilityHandler->proxyUrl($fileVirtual);
     }
 
     /**

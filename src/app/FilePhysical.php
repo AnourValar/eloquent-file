@@ -264,7 +264,7 @@ abstract class FilePhysical extends Model
             throw new \LogicException('Original file is not exists.');
         }
 
-        return $handler->getUrl($this);
+        return $handler->directUrl($this);
     }
 
     /**
@@ -282,7 +282,7 @@ abstract class FilePhysical extends Model
 
         $result = [];
         foreach (array_keys((array) $this->path_generate) as $generate) {
-            $result[$generate] = $handler->getUrl($this, $generate);
+            $result[$generate] = $handler->directUrl($this, $generate);
         }
 
         return $result;

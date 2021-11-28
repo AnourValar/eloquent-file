@@ -10,14 +10,14 @@ return [
         'visibility' => [
             'private' => [
                 'bind' => AnourValar\EloquentFile\Handlers\Models\FilePhysical\Visibility\PrivateVisibility::class,
-                'disks' => ['private'],
+                'disks' => explode(',', env('ELOQUENT_FILE_PRIVATE', 'private')),
 
                 'download_route' => 'file.download',
             ],
 
             'public' => [
                 'bind' => AnourValar\EloquentFile\Handlers\Models\FilePhysical\Visibility\PublicVisibility::class,
-                'disks' => ['public'],
+                'disks' => explode(',', env('ELOQUENT_FILE_PUBLIC', 'public')),
             ],
         ],
 
@@ -50,6 +50,7 @@ return [
                 'bind' => AnourValar\EloquentFile\Handlers\Models\FileVirtual\Entity\UserEntity::class,
                 'name' => [
                     'avatar' => [
+                        'bind' => AnourValar\EloquentFile\Handlers\Models\FileVirtual\Name\SimpleName::class,
                         'title' => 'eloquent-file::file_virtual.entity.user.name.avatar',
                         'policy' => [
                             'bind' => AnourValar\EloquentFile\Handlers\Models\FileVirtual\Entity\Policy\UniquePolicy::class,

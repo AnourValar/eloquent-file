@@ -8,13 +8,13 @@ use Illuminate\Contracts\Auth\Authenticatable;
 interface EntityInterface
 {
     /**
-     * Can a user get a direct link to a file
+     * Can the user access to the file
      *
      * @param \AnourValar\EloquentFile\FileVirtual $fileVirtual
      * @param \Illuminate\Contracts\Auth\Authenticatable $user
      * @return boolean
      */
-    public function canDownload(FileVirtual $fileVirtual, ?Authenticatable $user): bool;
+    public function canAccess(FileVirtual $fileVirtual, ?Authenticatable $user): bool;
 
     /**
      * Validation: entity, entity_id, name

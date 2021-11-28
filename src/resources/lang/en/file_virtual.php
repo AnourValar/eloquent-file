@@ -20,7 +20,6 @@ return [
     'file_physical_id_not_exists' => 'File not exists.',
     'file_physical_id_incorrect_visibility' => 'The physical file has an invalid visibility.',
     'file_physical_id_incorrect_type' => 'The physical file has an invalid type.',
-    'details_not_supported' => 'Details are not available for a file.',
 
     'entity' => [
         'user' => [

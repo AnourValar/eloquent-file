@@ -18,7 +18,7 @@ interface GenerateInterface
      * Generates side files and returns an array of paths (path_generate)
      *
      * @param \AnourValar\EloquentFile\FilePhysical $filePhysical
-     * @return array|NULL
+     * @return array|null
      */
     public function generate(FilePhysical $filePhysical): ?array;
 

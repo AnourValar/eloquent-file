@@ -24,7 +24,7 @@ interface VisibilityInterface
     public function getDisk(array $disks, UploadedFile $file): string;
 
     /**
-     * Choose a path (file name)
+     * Choose a path (filename)
      *
      * @param \AnourValar\EloquentFile\FilePhysical $filePhysical
      * @param \Illuminate\Http\UploadedFile $file

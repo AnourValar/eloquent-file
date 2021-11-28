@@ -33,7 +33,7 @@ class RegenerateCommand extends Command
     /**
      * Execute the console command.
      *
-     * @return void
+     * @return integer
      */
     public function handle()
     {
@@ -61,5 +61,6 @@ class RegenerateCommand extends Command
         }
 
         $bar->finish();
+        return Command::SUCCESS;
     }
 }

@@ -6,7 +6,7 @@ use AnourValar\EloquentFile\FilePhysical;
 use AnourValar\EloquentFile\FileVirtual;
 use Illuminate\Http\UploadedFile;
 
-class PrivateVisibility implements VisibilityInterface, ProxyInterface
+class PrivateVisibility implements VisibilityInterface, ProxyAccessInterface
 {
     /**
      * {@inheritDoc}
@@ -49,9 +49,9 @@ class PrivateVisibility implements VisibilityInterface, ProxyInterface
      * @see \Illuminate\Routing\Middleware\ValidateSignature::class
      *
      * {@inheritDoc}
-     * @see \AnourValar\EloquentFile\Handlers\Models\FilePhysical\Visibility\ProxyInterface::generateUrl()
+     * @see \AnourValar\EloquentFile\Handlers\Models\FilePhysical\Visibility\ProxyAccessInterface::proxyUrl()
      */
-    public function generateUrl(FileVirtual $fileVirtual): string
+    public function proxyUrl(FileVirtual $fileVirtual): string
     {
         $route = $fileVirtual->filePhysical->visibility_details['download_route'];
         $minutes = $this->expireIn($fileVirtual);
@@ -65,9 +65,9 @@ class PrivateVisibility implements VisibilityInterface, ProxyInterface
 
     /**
      * {@inheritDoc}
-     * @see \AnourValar\EloquentFile\Handlers\Models\FilePhysical\Visibility\ProxyInterface::download()
+     * @see \AnourValar\EloquentFile\Handlers\Models\FilePhysical\Visibility\ProxyAccessInterface::proxyDownload()
      */
-    public function download(FileVirtual $fileVirtual): \Symfony\Component\HttpFoundation\Response
+    public function proxyDownload(FileVirtual $fileVirtual): \Symfony\Component\HttpFoundation\Response
     {
         return \Storage
             ::disk($fileVirtual->filePhysical->disk)
@@ -80,9 +80,9 @@ class PrivateVisibility implements VisibilityInterface, ProxyInterface
 
     /**
      * {@inheritDoc}
-     * @see \AnourValar\EloquentFile\Handlers\Models\FilePhysical\Visibility\ProxyInterface::inline()
+     * @see \AnourValar\EloquentFile\Handlers\Models\FilePhysical\Visibility\ProxyAccessInterface::proxyInline()
      */
-    public function inline(FileVirtual $fileVirtual): \Symfony\Component\HttpFoundation\Response
+    public function proxyInline(FileVirtual $fileVirtual): \Symfony\Component\HttpFoundation\Response
     {
         return \Storage
             ::disk($fileVirtual->filePhysical->disk)

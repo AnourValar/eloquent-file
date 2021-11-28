@@ -11,19 +11,20 @@ trait SeederTrait
      *
      * @param \AnourValar\EloquentFile\FileVirtual $fileVirtual
      * @param string $text
-     * @return \AnourValar\EloquentFile\FileVirtual
+     * @return void
      */
-    protected function createImage(FileVirtual $fileVirtual, string $text = null): FileVirtual
+    protected function createImage(FileVirtual &$fileVirtual, string $text = null): void
     {
         static $counter;
-
         if (is_null($text)) {
             $counter++;
             $text = $counter;
         }
 
+        $fileVirtual->forceFill($fileVirtual->getNameHandler()->generateFake($fileVirtual->entity, $fileVirtual->name));
+
         $class = config('eloquent_file.models.file_physical');
-        return \DB::connection((new $class)->getConnectionName())->transaction(function () use ($fileVirtual, $text)
+        \DB::connection((new $class)->getConnectionName())->transaction(function () use ($fileVirtual, $text)
         {
             $fileName = tempnam(sys_get_temp_dir(), 'fake_');
 
@@ -39,13 +40,39 @@ trait SeederTrait
                 })
                 ->save($fileName, '80', 'jpg');
 
-            $fileVirtual = \App::make(\AnourValar\EloquentFile\Services\FileService::class)->upload(
+            \App::make(\AnourValar\EloquentFile\Services\FileService::class)->upload(
                 new \Illuminate\Http\UploadedFile($fileName, $fileVirtual->name.'.jpg', 'image/jpeg', null, true),
                 $fileVirtual
             );
 
             unlink($fileName);
-            return $fileVirtual;
+        });
+    }
+
+    /**
+     * Create a file from the list
+     *
+     * @param \AnourValar\EloquentFile\FileVirtual $fileVirtual
+     * @param string $path
+     * @param array $files
+     * @param string|null string $mime
+     * @return void
+     */
+    protected function createFromList(FileVirtual &$fileVirtual, string $path, array $files, string $mime = null): void
+    {
+        $files = array_values($files);
+        shuffle($files);
+        $file = $path . $files[0];
+
+        $fileVirtual->forceFill($fileVirtual->getNameHandler()->generateFake($fileVirtual->entity, $fileVirtual->name));
+
+        $class = config('eloquent_file.models.file_physical');
+        \DB::connection((new $class)->getConnectionName())->transaction(function () use ($fileVirtual, $file, $mime)
+        {
+            \App::make(\AnourValar\EloquentFile\Services\FileService::class)->upload(
+                new \Illuminate\Http\UploadedFile($file, basename($file), $mime, null, true),
+                $fileVirtual
+            );
         });
     }
 }

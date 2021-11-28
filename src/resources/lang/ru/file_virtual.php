@@ -20,7 +20,6 @@ return [
     'file_physical_id_not_exists' => 'Несуществующий файл.',
     'file_physical_id_incorrect_visibility' => 'Физический файл имеет недопустимую область.',
     'file_physical_id_incorrect_type' => 'Физический файл имеет недопустимый тип.',
-    'details_not_supported' => 'Детали недоступны для файла.',
 
     'entity' => [
         'user' => [

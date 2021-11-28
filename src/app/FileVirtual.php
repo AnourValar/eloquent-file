@@ -5,6 +5,8 @@ namespace AnourValar\EloquentFile;
 use AnourValar\EloquentFile\Handlers\Models\FileVirtual\Entity\EntityInterface;
 use AnourValar\EloquentFile\Handlers\Models\FileVirtual\Entity\Policy\PolicyInterface;
 use Illuminate\Database\Eloquent\Model;
+use AnourValar\EloquentFile\Handlers\Models\FileVirtual\Name\NameInterface;
+use AnourValar\EloquentFile\Handlers\Models\FilePhysical\Visibility\ProxyAccessInterface;
 
 abstract class FileVirtual extends Model
 {
@@ -174,8 +176,9 @@ abstract class FileVirtual extends Model
             'name' => ['required', 'max:40'],
             'filename' => ['required', 'min:1', 'max:100'],
             'content_type' => ['nullable', 'max:100'],
-            'title' => ['nullable', 'max:150'],
+            'title' => ['nullable', 'string', 'max:150'],
             'weight' => ['required', 'integer', 'min:0', 'max:32767'],
+            'details' => ['nullable'],
             'archived_at' => ['nullable', 'date'],
         ];
     }
@@ -240,15 +243,10 @@ abstract class FileVirtual extends Model
             $this->getEntityHandler()->validate($this, $validator);
         }
 
-        // details
-        if ($this->isDirty('entity', 'entity_id', 'name', 'details')) {
-            $handler = $this->getEntityHandler();
+        // entity, entity_id, name, title, details
+        if ($this->isDirty('entity', 'entity_id', 'name', 'title', 'details')) {
 
-            if ($handler instanceof \AnourValar\EloquentFile\Handlers\Models\FileVirtual\Entity\DetailsInterface) {
-                $handler->validateDetails($this, $validator);
-            } elseif (! is_null($this->details)) {
-                $validator->errors()->add('details', trans('eloquent-file::file_virtual.details_not_supported'));
-            }
+            $this->getNameHandler()->validate($this, $validator);
         }
     }
 
@@ -272,11 +270,27 @@ abstract class FileVirtual extends Model
     }
 
     /**
+     * @return \Illuminate\Database\Eloquent\Relations\MorphTo
+     */
+    public function entitable()
+    {
+        return $this->morphTo('entity', 'entity');
+    }
+
+    /**
      * @return \AnourValar\EloquentFile\Handlers\Models\FileVirtual\Entity\EntityInterface
      */
     public function getEntityHandler(): EntityInterface
     {
         return \App::make($this->entity_details['bind']);
+    }
+
+    /**
+     * @return \AnourValar\EloquentFile\Handlers\Models\FileVirtual\Name\NameInterface
+     */
+    public function getNameHandler(): NameInterface
+    {
+        return \App::make($this->name_details['bind']);
     }
 
     /**
@@ -315,5 +329,59 @@ abstract class FileVirtual extends Model
     public function getNameTitleAttribute()
     {
         return trans($this->name_details['title']);
+    }
+
+    /**
+     * Virtual attribute: url
+     *
+     * @throws \LogicException
+     * @return string
+     */
+    public function getUrlAttribute(): string
+    {
+        if (! $this->relationLoaded('filePhysical')) {
+            throw new \LogicException('The filePhysical relation must be eager loaded.');
+        }
+
+        return $this->filePhysical->url;
+    }
+
+    /**
+     * Virtual attribute: url_generate
+     *
+     * @throws \LogicException
+     * @return array
+     */
+    public function getUrlGenerateAttribute(): array
+    {
+        if (! $this->relationLoaded('filePhysical')) {
+            throw new \LogicException('The filePhysical relation must be eager loaded.');
+        }
+
+        return $this->filePhysical->url_generate;
+    }
+
+    /**
+     * Virtual attribute: url_proxy
+     *
+     * @throws \LogicException
+     * @return string
+     */
+    public function getUrlProxyAttribute(): string
+    {
+        if (! $this->relationLoaded('filePhysical')) {
+            throw new \LogicException('The filePhysical relation must be eager loaded.');
+        }
+
+        $handler = $this->filePhysical->getVisibilityHandler();
+        if (! $handler instanceof ProxyAccessInterface) {
+            throw new \LogicException('Proxy access is not allowed for this file.');
+        }
+
+        if (! $this->filePhysical->path) {
+            throw new \LogicException('Original file is not exists.');
+        }
+
+        return $handler->proxyUrl($this);
     }
 }

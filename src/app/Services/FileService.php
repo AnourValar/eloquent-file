@@ -17,12 +17,15 @@ class FileService
      * @param \AnourValar\EloquentFile\FileVirtual $fileVirtual
      * @param string $fileValidationKey
      * @throws \LogicException
-     * @return \AnourValar\EloquentFile\FileVirtual
+     * @return void
      */
-    public function upload(?UploadedFile $file, FileVirtual $fileVirtual, string $fileValidationKey = null): FileVirtual
+    public function upload(?UploadedFile $file, FileVirtual &$fileVirtual, string $fileValidationKey = null): void
     {
         if (! is_null($fileVirtual->file_physical_id)) {
             throw new \LogicException('Attribute "file_physical_id" must be null.');
+        }
+        if ($fileVirtual->exists) {
+            throw new \LogicException('FileVirtual must not be persisted.');
         }
 
         $visibility = null;
@@ -41,7 +44,7 @@ class FileService
         $filePhysical = $this->uploadPhysical($file, $visibility, $type, $fileValidationKey, $title);
         $fileVirtual->file_physical_id = $filePhysical->id;
 
-        return $this->link($fileVirtual, $file);
+        $this->link($fileVirtual, $file);
     }
 
     /**
@@ -49,9 +52,9 @@ class FileService
      *
      * @param array $attributes
      * @param mixed $prefix
-     * @return void
+     * @return integer
      */
-    public function delete(array $attributes, $prefix = null): void
+    public function delete(array $attributes, $prefix = null): int
     {
         $class = config('eloquent_file.models.file_virtual');
 
@@ -72,10 +75,15 @@ class FileService
             throw new ValidationException($e->validator, null, 'default', $prefix);
         }
 
+        $counter = 0;
         foreach ($class::with('filePhysical')->where($attributes)->get() as $fileVirtual) {
             $this->lock($fileVirtual->filePhysical);
             $fileVirtual->validateDelete($prefix)->delete();
+
+            $counter++;
         }
+
+        return $counter;
     }
 
     /**
@@ -173,9 +181,9 @@ class FileService
      *
      * @param \AnourValar\EloquentFile\FileVirtual $fileVirtual
      * @param \Illuminate\Http\UploadedFile $file
-     * @return \AnourValar\EloquentFile\FileVirtual
+     * @return void
      */
-    public function link(FileVirtual $fileVirtual, UploadedFile $file = null): FileVirtual
+    public function link(FileVirtual &$fileVirtual, UploadedFile $file = null): void
     {
         // Get the lock
         $this->lock($fileVirtual->physical);
@@ -193,8 +201,6 @@ class FileService
 
         // Validation & save
         $fileVirtual->validate()->save();
-
-        return $fileVirtual;
     }
 
     /**
