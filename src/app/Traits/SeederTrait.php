@@ -60,11 +60,18 @@ trait SeederTrait
      */
     protected function createFromList(FileVirtual &$fileVirtual, string $path, array $files, string $mime = null): void
     {
+        static $cache;
+
         $files = array_values($files);
         shuffle($files);
         $file = $path . $files[0];
 
         $fileVirtual->forceFill($fileVirtual->getNameHandler()->generateFake($fileVirtual->entity, $fileVirtual->name));
+
+        if (isset($cache[$file.$mime])) {
+            $fileVirtual->forceFill($cache[$file.$mime])->validate()->save();
+            return;
+        }
 
         $class = config('eloquent_file.models.file_physical');
         \DB::connection((new $class)->getConnectionName())->transaction(function () use ($fileVirtual, $file, $mime)
@@ -74,5 +81,7 @@ trait SeederTrait
                 $fileVirtual
             );
         });
+
+        $cache[$file.$mime] = $fileVirtual->only(['file_physical_id', 'filename', 'content_type']);
     }
 }
