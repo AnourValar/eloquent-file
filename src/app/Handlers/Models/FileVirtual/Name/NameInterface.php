@@ -16,6 +16,14 @@ interface NameInterface
     public function validate(FileVirtual $fileVirtual, \Illuminate\Validation\Validator $validator): void;
 
     /**
+     * Canonization the details (casting, etc)
+     *
+     * @param mixed $details
+     * @return mixed
+     */
+    public function canonizeDetails($details);
+
+    /**
      * Generates fake attributes: title, details ...
      *
      * @param string $entity

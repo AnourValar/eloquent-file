@@ -52,7 +52,7 @@ class FileService
      *
      * @param array $attributes
      * @param mixed $prefix
-     * @return integer
+     * @return int
      */
     public function delete(array $attributes, $prefix = null): int
     {

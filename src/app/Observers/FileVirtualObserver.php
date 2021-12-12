@@ -7,6 +7,19 @@ use AnourValar\EloquentFile\FileVirtual;
 class FileVirtualObserver
 {
     /**
+     * Handle the "saving" event.
+     *
+     * @param  \AnourValar\EloquentFile\FileVirtual  $model
+     * @return void
+     */
+    public function saving(FileVirtual $model)
+    {
+        if (!is_null($model->details) && $model->isDirty('details')) {
+            $model->details = $model->getNameHandler()->canonizeDetails($model->details);
+        }
+    }
+
+    /**
      * Handle the "created" event.
      *
      * @param  \AnourValar\EloquentFile\FileVirtual  $model

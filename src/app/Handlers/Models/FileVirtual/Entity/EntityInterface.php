@@ -12,7 +12,7 @@ interface EntityInterface
      *
      * @param \AnourValar\EloquentFile\FileVirtual $fileVirtual
      * @param \Illuminate\Contracts\Auth\Authenticatable $user
-     * @return boolean
+     * @return bool
      */
     public function canAccess(FileVirtual $fileVirtual, ?Authenticatable $user): bool;
 

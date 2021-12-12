@@ -10,7 +10,7 @@ interface VisibilityInterface
     /**
      * Uniqueness of physical files
      *
-     * @return boolean
+     * @return bool
      */
     public function preventDuplicates(): bool;
 

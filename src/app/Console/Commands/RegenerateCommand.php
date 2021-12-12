@@ -33,7 +33,7 @@ class RegenerateCommand extends Command
     /**
      * Execute the console command.
      *
-     * @return integer
+     * @return int
      */
     public function handle()
     {

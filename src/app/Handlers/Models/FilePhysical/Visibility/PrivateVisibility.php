@@ -97,7 +97,7 @@ class PrivateVisibility implements VisibilityInterface, ProxyAccessInterface
      * Returns the number of minutes during which the url will be actual
      *
      * @param \AnourValar\EloquentFile\FileVirtual $fileVirtual
-     * @return integer
+     * @return int
      */
     protected function expireIn(FileVirtual $fileVirtual): int
     {

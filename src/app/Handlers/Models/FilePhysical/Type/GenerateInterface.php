@@ -10,7 +10,7 @@ interface GenerateInterface
      * Returns the build (version) of the generator
      *
      * @param array $typeDetails
-     * @return integer
+     * @return int
      */
     public function getBuild(array $typeDetails): int;
 
@@ -26,7 +26,7 @@ interface GenerateInterface
      * Keep original file
      *
      * @param \AnourValar\EloquentFile\FilePhysical $filePhysical
-     * @return boolean
+     * @return bool
      */
     public function keepOriginal(FilePhysical $filePhysical): bool;
 }

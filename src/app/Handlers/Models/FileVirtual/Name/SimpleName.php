@@ -19,6 +19,15 @@ class SimpleName implements NameInterface
 
     /**
      * {@inheritDoc}
+     * @see \AnourValar\EloquentFile\Handlers\Models\FileVirtual\Name\NameInterface::canonizeDetails()
+     */
+    public function canonizeDetails($details)
+    {
+        return $details;
+    }
+
+    /**
+     * {@inheritDoc}
      * @see \AnourValar\EloquentFile\Handlers\Models\FileVirtual\Name\NameInterface::generateFake()
      */
     public function generateFake(string $entity, string $name): array

@@ -11,7 +11,7 @@ trait ControllerProxyTrait
      * Downloading (proxying) a file via authorization
      *
      * @param Request $request
-     * @param boolean $download
+     * @param bool $download
      * @throws \Illuminate\Auth\Access\AuthorizationException
      * @return \Symfony\Component\HttpFoundation\Response
      */
@@ -43,7 +43,7 @@ trait ControllerProxyTrait
      * @see \Illuminate\Routing\Middleware\ValidateSignature::class
      *
      * @param Request $request
-     * @param boolean $download
+     * @param bool $download
      * @throws \Illuminate\Auth\Access\AuthorizationException
      * @return \Symfony\Component\HttpFoundation\Response
      */
