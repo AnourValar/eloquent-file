@@ -195,7 +195,7 @@ class FileService
             }
 
             if (is_null($fileVirtual->content_type)) {
-                $fileVirtual->content_type = $file->getMimeType(); //$file->getClientMimeType();
+                $fileVirtual->content_type = mb_strtolower((string) $file->getMimeType());
             }
         }
 
