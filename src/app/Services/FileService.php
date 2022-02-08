@@ -116,7 +116,7 @@ class FileService
             // Fill: sha256, size, mime_type
             $model->sha256 = hash_file('sha256', $file->getRealPath());
             $model->size = $file->getSize();
-            $model->mime_type = $file->getMimeType();
+            $model->mime_type = mb_strtolower((string) $file->getMimeType());
 
             // Get the lock
             $this->lock($model);
