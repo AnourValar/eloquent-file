@@ -24,9 +24,9 @@ trait ControllerProxyTrait
             throw new \Illuminate\Auth\Access\AuthorizationException(trans('eloquent-file::auth.proxy.unsupported'));
         }
 
-        if (! $request->hasValidSignature()) {
+        /*if (! $request->hasValidSignature()) {
             throw new \Illuminate\Auth\Access\AuthorizationException(trans('eloquent-file::auth.proxy.invalid'));
-        }
+        }*/
 
         if (! $fileVirtual->getEntityHandler()->canAccess($fileVirtual, $request->user())) {
             throw new \Illuminate\Auth\Access\AuthorizationException(trans('eloquent-file::auth.proxy.not_authorized'));
@@ -64,29 +64,6 @@ trait ControllerProxyTrait
             return $visibilityHandler->proxyDownload($fileVirtual);
         }
         return $visibilityHandler->proxyInline($fileVirtual);
-    }
-
-    /**
-     * Generates a temporary link for downloading
-     *
-     * @param Request $request
-     * @throws \Illuminate\Auth\Access\AuthorizationException
-     * @return string
-     */
-    public function guestUrl(Request $request): string
-    {
-        $fileVirtual = $this->extractFileVirtualFrom($request);
-
-        $visibilityHandler = $fileVirtual->filePhysical->getVisibilityHandler();
-        if (! $visibilityHandler instanceof ProxyAccessInterface) {
-            throw new \Illuminate\Auth\Access\AuthorizationException(trans('eloquent-file::auth.proxy.unsupported'));
-        }
-
-        if (! $fileVirtual->getEntityHandler()->canAccess($fileVirtual, $request->user())) {
-            throw new \Illuminate\Auth\Access\AuthorizationException(trans('eloquent-file::auth.proxy.not_authorized'));
-        }
-
-        return $visibilityHandler->proxyUrl($fileVirtual);
     }
 
     /**
