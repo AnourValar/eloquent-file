@@ -24,4 +24,13 @@ interface EntityInterface
      * @return void
      */
     public function validate(FileVirtual $fileVirtual, \Illuminate\Validation\Validator $validator): void;
+
+    /**
+     * Validation (delete)
+     *
+     * @param \AnourValar\EloquentFile\FileVirtual $fileVirtual
+     * @param \Illuminate\Validation\Validator $validator
+     * @return void
+     */
+    public function validateDelete(FileVirtual $fileVirtual, \Illuminate\Validation\Validator $validator): void;
 }

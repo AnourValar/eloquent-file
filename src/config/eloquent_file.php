@@ -33,13 +33,15 @@ return [
 
                 'build' => 1,
                 'keep_original' => true,
-                'preview' => [
-                    'max_height' => 500,
-                    'max_width' => 500,
-                    'format' => 'jpg',
-                    'quality' => 82,
-                    'alt_disks' => false,
-                ]
+                'generate' => [
+                    'preview' => [
+                        'max_height' => 500,
+                        'max_width' => 500,
+                        'format' => 'jpg',
+                        'quality' => 82,
+                        'alt_disks' => false,
+                    ],
+                ],
             ],
         ],
     ],

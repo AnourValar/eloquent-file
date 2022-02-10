@@ -258,7 +258,7 @@ abstract class FileVirtual extends Model
      */
     public function deleteAfterValidation(\Illuminate\Validation\Validator $validator)
     {
-
+        $this->getEntityHandler()->validateDelete($this, $validator);
     }
 
     /**

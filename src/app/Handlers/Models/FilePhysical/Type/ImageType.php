@@ -43,29 +43,35 @@ class ImageType extends SimpleType implements GenerateInterface
      */
     public function generate(FilePhysical $filePhysical): array
     {
-        $preview = \Image::make(\Storage::disk($filePhysical->disk)->get($filePhysical->path));
-        $typeDetails = $filePhysical->type_details;
-
-        $preview = $preview
-            ->orientate()
-            ->resize($typeDetails['preview']['max_width'], $typeDetails['preview']['max_height'], function ($constraint)
-            {
-                $constraint->aspectRatio();
-                $constraint->upsize();
-            })
-            ->encode($typeDetails['preview']['format'], $typeDetails['preview']['quality']);
-
         $pathGenerate = [];
-        if ($typeDetails['preview']['alt_disks']) {
-            $disks = $typeDetails['preview']['alt_disks'];
-            shuffle($disks);
-            $pathGenerate['preview']['disk'] = $disks[0];
-        } else {
-            $pathGenerate['preview']['disk'] = $filePhysical->disk;
-        }
-        $pathGenerate['preview']['path'] = $this->generatePath($filePhysical, "_preview.{$typeDetails['preview']['format']}");
+        $original = null;
 
-        \Storage::disk($pathGenerate['preview']['disk'])->put($pathGenerate['preview']['path'], $preview);
+        foreach ($filePhysical->type_details['generate'] as $name => $details) {
+            if (! $original) {
+                $original = \Storage::disk($filePhysical->disk)->get($filePhysical->path);
+            }
+
+            $generate = \Image
+                ::make($original)
+                ->orientate()
+                ->resize($details['max_width'], $details['max_height'], function ($constraint)
+                {
+                    $constraint->aspectRatio();
+                    $constraint->upsize();
+                })
+                ->encode($details['format'], $details['quality']);
+
+            if ($details['alt_disks']) {
+                $disks = $details['alt_disks'];
+                shuffle($disks);
+                $pathGenerate[$name]['disk'] = $disks[0];
+            } else {
+                $pathGenerate[$name]['disk'] = $filePhysical->disk;
+            }
+            $pathGenerate[$name]['path'] = $this->generatePath($filePhysical, sprintf("_%s.%s", $name, $details['format']));
+
+            \Storage::disk($pathGenerate[$name]['disk'])->put($pathGenerate[$name]['path'], $generate);
+        }
 
         return $pathGenerate;
     }
