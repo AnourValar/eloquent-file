@@ -10,10 +10,10 @@ trait AvatarListenerTrait
      * Get schema with entity's avatar
      *
      * @param \AnourValar\EloquentFile\FileVirtual $fileVirtual
-     * @param string $generateKey
+     * @param string|array $generateKeys
      * @return array|null
      */
-    protected function avatarSchema(FileVirtual $fileVirtual, $generateKey = 'preview'): ?array
+    protected function avatarSchema(FileVirtual $fileVirtual, $generateKeys = 'preview'): ?array
     {
         $model = \App\FileVirtual
             ::with('filePhysical')
@@ -22,17 +22,20 @@ trait AvatarListenerTrait
             ->where('name', '=', $fileVirtual['name'])
             ->whereNull('archived_at')
             ->orderBy('weight', 'DESC')
-            ->orderBy('id', 'DESC')
+            ->orderBy('id', 'ASC')
             ->first();
 
         if (! $model) {
-            $avatar = null;
-        } elseif (isset($model->url_generate[$generateKey])) {
-            $avatar = ['generated' => true, 'url' => $model->url_generate[$generateKey]];
-        } else {
-            $avatar = ['generated' => false];
+            return null;
         }
 
-        return $avatar;
+        $urlGenerate = $model->url_generate;
+        foreach ((array) $generateKeys as $key) {
+            if (isset($urlGenerate[$key])) {
+                return ['generated' => true, 'url' => $urlGenerate[$key]];
+            }
+        }
+
+        return ['generated' => false];
     }
 }
