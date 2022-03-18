@@ -5,10 +5,10 @@
     "homepage": "https://github.com/AnourValar/eloquent-file",
     "license": "MIT",
     "require": {
-        "php": ">=7.1.0",
-        "laravel/framework": ">=8.0.0",
-        "anourvalar/eloquent-validation": "^2.0",
-        "anourvalar/laravel-atom": "^2.1",
+        "php": ">=8.0",
+        "laravel/framework": ">=9.0",
+        "anourvalar/eloquent-validation": "^2.4",
+        "anourvalar/laravel-atom": "^2.4",
         "intervention/image": "^2.5"
     },
     "autoload": {

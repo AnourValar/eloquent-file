@@ -4,9 +4,10 @@ namespace AnourValar\EloquentFile;
 
 use AnourValar\EloquentFile\Handlers\Models\FileVirtual\Entity\EntityInterface;
 use AnourValar\EloquentFile\Handlers\Models\FileVirtual\Entity\Policy\PolicyInterface;
-use Illuminate\Database\Eloquent\Model;
 use AnourValar\EloquentFile\Handlers\Models\FileVirtual\Name\NameInterface;
 use AnourValar\EloquentFile\Handlers\Models\FilePhysical\Visibility\ProxyAccessInterface;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 
 abstract class FileVirtual extends Model
 {
@@ -75,7 +76,7 @@ abstract class FileVirtual extends Model
     ];
 
     /**
-     * The model's attributes. (default)
+     * The model's attributes.
      *
      * @var array
      */
@@ -304,84 +305,102 @@ abstract class FileVirtual extends Model
     /**
      * Virtual attribute: entity_details
      *
-     * @return array
+     * @return \Illuminate\Database\Eloquent\Casts\Attribute
      */
-    public function getEntityDetailsAttribute()
+    protected function entityDetails(): Attribute
     {
-        return config("eloquent_file.file_virtual.entity.{$this->entity}");
+        return Attribute::make(
+            get: fn ($value) => config("eloquent_file.file_virtual.entity.{$this->entity}"),
+        );
     }
 
     /**
      * Virtual attribute: name_details
      *
-     * @return array
+     * @return \Illuminate\Database\Eloquent\Casts\Attribute
      */
-    public function getNameDetailsAttribute()
+    protected function nameDetails(): Attribute
     {
-        return config("eloquent_file.file_virtual.entity.{$this->entity}.name.{$this->name}");
+        return Attribute::make(
+            get: fn ($value) => config("eloquent_file.file_virtual.entity.{$this->entity}.name.{$this->name}"),
+        );
     }
 
     /**
      * Virtual attribute: name_title
      *
-     * @return string
+     * @return \Illuminate\Database\Eloquent\Casts\Attribute
      */
-    public function getNameTitleAttribute()
+    protected function nameTitle(): Attribute
     {
-        return trans($this->name_details['title']);
+        return Attribute::make(
+            get: fn ($value) => trans($this->name_details['title']),
+        );
     }
 
     /**
      * Virtual attribute: url
      *
-     * @throws \LogicException
-     * @return string
+     * @return \Illuminate\Database\Eloquent\Casts\Attribute
      */
-    public function getUrlAttribute(): string
+    protected function url(): Attribute
     {
-        if (! $this->relationLoaded('filePhysical')) {
-            throw new \LogicException('The filePhysical relation must be eager loaded.');
-        }
+        return Attribute::make(
+            get: function ($query)
+            {
+                if (! $this->relationLoaded('filePhysical')) {
+                    throw new \LogicException('The filePhysical relation must be eager loaded.');
+                }
 
-        return $this->filePhysical->url;
+                return $this->filePhysical->url;
+            }
+        );
     }
 
     /**
      * Virtual attribute: url_generate
      *
-     * @throws \LogicException
-     * @return array
+     * @return \Illuminate\Database\Eloquent\Casts\Attribute
      */
-    public function getUrlGenerateAttribute(): array
+    protected function urlGenerate(): Attribute
     {
-        if (! $this->relationLoaded('filePhysical')) {
-            throw new \LogicException('The filePhysical relation must be eager loaded.');
-        }
+        return Attribute::make(
+            get: function ($query)
+            {
+                if (! $this->relationLoaded('filePhysical')) {
+                    throw new \LogicException('The filePhysical relation must be eager loaded.');
+                }
 
-        return $this->filePhysical->url_generate;
+                return $this->filePhysical->url_generate;
+            }
+        );
     }
 
     /**
      * Virtual attribute: url_proxy
      *
-     * @throws \LogicException
-     * @return string
+     * @return \Illuminate\Database\Eloquent\Casts\Attribute
      */
-    public function getUrlProxyAttribute(): string
+    protected function urlProxy(): Attribute
     {
-        if (! $this->relationLoaded('filePhysical')) {
-            throw new \LogicException('The filePhysical relation must be eager loaded.');
-        }
+        return Attribute::make(
+            get: function ($query)
+            {
+                if (! $this->relationLoaded('filePhysical')) {
+                    throw new \LogicException('The filePhysical relation must be eager loaded.');
+                }
 
-        $handler = $this->filePhysical->getVisibilityHandler();
-        if (! $handler instanceof ProxyAccessInterface) {
-            throw new \LogicException('Proxy access is not allowed for this file.');
-        }
+                $handler = $this->filePhysical->getVisibilityHandler();
+                if (! $handler instanceof ProxyAccessInterface) {
+                    throw new \LogicException('Proxy access is not allowed for this file.');
+                }
 
-        if (! $this->filePhysical->path) {
-            throw new \LogicException('Original file is not exists.');
-        }
+                if (! $this->filePhysical->path) {
+                    throw new \LogicException('Original file is not exists.');
+                }
 
-        return $handler->proxyUrl($this);
+                return $handler->proxyUrl($this);
+            }
+        );
     }
 }

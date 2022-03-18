@@ -6,6 +6,7 @@ use AnourValar\EloquentFile\Handlers\Models\FilePhysical\Visibility\DirectAccess
 use AnourValar\EloquentFile\Handlers\Models\FilePhysical\Visibility\VisibilityInterface;
 use AnourValar\EloquentFile\Handlers\Models\FilePhysical\Type\TypeInterface;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 
 abstract class FilePhysical extends Model
 {
@@ -75,7 +76,7 @@ abstract class FilePhysical extends Model
     ];
 
     /**
-     * The model's attributes. (default)
+     * The model's attributes.
      *
      * @var array
      */
@@ -230,61 +231,73 @@ abstract class FilePhysical extends Model
     /**
      * Virtual attribute: visibility_details
      *
-     * @return array
+     * @return \Illuminate\Database\Eloquent\Casts\Attribute
      */
-    public function getVisibilityDetailsAttribute()
+    protected function visibilityDetails(): Attribute
     {
-        return config("eloquent_file.file_physical.visibility.{$this->visibility}");
+        return Attribute::make(
+            get: fn ($value) => config("eloquent_file.file_physical.visibility.{$this->visibility}"),
+        );
     }
 
     /**
      * Virtual attribute: type_details
      *
-     * @return array
+     * @return \Illuminate\Database\Eloquent\Casts\Attribute
      */
-    public function getTypeDetailsAttribute()
+    protected function typeDetails(): Attribute
     {
-        return config("eloquent_file.file_physical.type.{$this->type}");
+        return Attribute::make(
+            get: fn ($value) => config("eloquent_file.file_physical.type.{$this->type}"),
+        );
     }
 
     /**
      * Virtual attribute: url
      *
-     * @throws \LogicException
-     * @return string
+     * @return \Illuminate\Database\Eloquent\Casts\Attribute
      */
-    public function getUrlAttribute(): string
+    protected function url(): Attribute
     {
-        $handler = $this->getVisibilityHandler();
-        if (! $handler instanceof DirectAccessInterface) {
-            throw new \LogicException('Direct access is not allowed for this file.');
-        }
+        return Attribute::make(
+            get: function ($value)
+            {
+                $handler = $this->getVisibilityHandler();
+                if (! $handler instanceof DirectAccessInterface) {
+                    throw new \LogicException('Direct access is not allowed for this file.');
+                }
 
-        if (! $this->path) {
-            throw new \LogicException('Original file is not exists.');
-        }
+                if (! $this->path) {
+                    throw new \LogicException('Original file is not exists.');
+                }
 
-        return $handler->directUrl($this);
+                return $handler->directUrl($this);
+            }
+        );
     }
 
     /**
      * Virtual attribute: url_generate
      *
-     * @throws \LogicException
-     * @return array
+     * @return \Illuminate\Database\Eloquent\Casts\Attribute
      */
-    public function getUrlGenerateAttribute(): array
+    protected function urlGenerate(): Attribute
     {
-        $handler = $this->getVisibilityHandler();
-        if (! $handler instanceof DirectAccessInterface) {
-            throw new \LogicException('Direct access is not allowed for this file.');
-        }
+        return Attribute::make(
+            get: function ($query)
+            {
+                $handler = $this->getVisibilityHandler();
+                if (! $handler instanceof DirectAccessInterface) {
+                    throw new \LogicException('Direct access is not allowed for this file.');
+                }
 
-        $result = [];
-        foreach (array_keys((array) $this->path_generate) as $generate) {
-            $result[$generate] = $handler->directUrl($this, $generate);
-        }
+                $result = [];
+                foreach (array_keys((array) $this->path_generate) as $generate) {
+                    $result[$generate] = $handler->directUrl($this, $generate);
+                }
 
-        return $result;
+                return $result;
+            }
+        );
     }
 }

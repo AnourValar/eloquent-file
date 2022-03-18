@@ -33,7 +33,7 @@ class EloquentFileServiceProvider extends ServiceProvider
 
         // langs
         $this->loadTranslationsFrom(__DIR__.'/../../resources/lang/', 'eloquent-file');
-        $this->publishes([__DIR__.'/../../resources/lang/' => resource_path('lang/vendor/eloquent-file')]);
+        $this->publishes([__DIR__.'/../../resources/lang/' => lang_path('vendor/eloquent-file')]);
 
         // models
         $this->publishes([__DIR__.'/../../resources/stubs/' => app_path()], 'models');
