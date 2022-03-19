@@ -15,7 +15,7 @@ return new class extends Migration
     {
         Schema::connection(null)->create('file_physicals', function (Blueprint $table)
         {
-            $table->bigIncrements('id');
+            $table->id();
             $table->string('visibility', 30)->nullable();
             $table->string('type', 30)->nullable();
             $table->string('disk', 30)->nullable();
@@ -33,7 +33,7 @@ return new class extends Migration
 
         Schema::connection(null)->create('file_virtuals', function (Blueprint $table)
         {
-            $table->bigIncrements('id');
+            $table->id();
             $table->unsignedBigInteger('file_physical_id')->index();
             $table->string('entity', 30);
             $table->unsignedBigInteger('entity_id');

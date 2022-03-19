@@ -9,6 +9,12 @@ use Illuminate\Http\UploadedFile;
 class PrivateVisibility implements VisibilityInterface, ProxyAccessInterface
 {
     /**
+     * @var string
+     */
+    public const METHOD_SIGNED = 'signed';
+    public const METHOD_AUTHORIZE = 'authorize';
+
+    /**
      * {@inheritDoc}
      * @see \AnourValar\EloquentFile\Handlers\Models\FilePhysical\Visibility\VisibilityInterface::preventDuplicates()
      */
@@ -46,21 +52,27 @@ class PrivateVisibility implements VisibilityInterface, ProxyAccessInterface
     }
 
     /**
-     * @see \Illuminate\Routing\Middleware\ValidateSignature::class
-     *
      * {@inheritDoc}
      * @see \AnourValar\EloquentFile\Handlers\Models\FilePhysical\Visibility\ProxyAccessInterface::proxyUrl()
      */
     public function proxyUrl(FileVirtual $fileVirtual): string
     {
-        $route = $fileVirtual->filePhysical->visibility_details['download_route'];
-        $minutes = $this->expireIn($fileVirtual);
+        $route = $fileVirtual->filePhysical->visibility_details['proxy_route'];
+        $method = $fileVirtual->filePhysical->visibility_details['proxy_route_method'];
 
-        return \URL::temporarySignedRoute(
-            $route,
-            now()->addMinutes($minutes),
-            ['file_virtual' => $fileVirtual->id]
-        );
+        if ($method === static::METHOD_SIGNED) {
+            return \URL::temporarySignedRoute(
+                $route,
+                now()->addMinutes($this->expireIn($fileVirtual)),
+                ['file_virtual' => $fileVirtual->id]
+            );
+        }
+
+        if ($method === static::METHOD_AUTHORIZE) {
+            return route($route, ['file_virtual' => $fileVirtual->id]);
+        }
+
+        throw new \LogicException('Option "proxy_route_method" must be set properly.');
     }
 
     /**

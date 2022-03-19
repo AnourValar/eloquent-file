@@ -12,7 +12,8 @@ return [
                 'bind' => AnourValar\EloquentFile\Handlers\Models\FilePhysical\Visibility\PrivateVisibility::class,
                 'disks' => explode(',', env('ELOQUENT_FILE_PRIVATE', 'private')),
 
-                'download_route' => 'file.download',
+                'proxy_route' => 'file.download',
+                'proxy_route_method' => AnourValar\EloquentFile\Handlers\Models\FilePhysical\Visibility\PrivateVisibility::METHOD_SIGNED,
             ],
 
             'public' => [

@@ -8,14 +8,14 @@ use Illuminate\Http\Request;
 trait ControllerProxyTrait
 {
     /**
-     * Downloading (proxying) a file via authorization
+     * Retrieve (proxying) a file via authorization
      *
      * @param Request $request
      * @param bool $download
      * @throws \Illuminate\Auth\Access\AuthorizationException
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function authorizedProxy(Request $request, bool $download = true)
+    public function proxyAuthorized(Request $request, bool $download = true)
     {
         $fileVirtual = $this->extractFileVirtualFrom($request);
 
@@ -23,10 +23,6 @@ trait ControllerProxyTrait
         if (! $visibilityHandler instanceof ProxyAccessInterface) {
             throw new \Illuminate\Auth\Access\AuthorizationException(trans('eloquent-file::auth.proxy.unsupported'));
         }
-
-        /*if (! $request->hasValidSignature()) {
-            throw new \Illuminate\Auth\Access\AuthorizationException(trans('eloquent-file::auth.proxy.invalid'));
-        }*/
 
         if (! $fileVirtual->getEntityHandler()->canAccess($fileVirtual, $request->user())) {
             throw new \Illuminate\Auth\Access\AuthorizationException(trans('eloquent-file::auth.proxy.not_authorized'));
@@ -39,7 +35,7 @@ trait ControllerProxyTrait
     }
 
     /**
-     * Downloading (proxying) a file via signed url
+     * Retrieve (proxying) a file via signed url
      * @see \Illuminate\Routing\Middleware\ValidateSignature::class
      *
      * @param Request $request
@@ -47,7 +43,7 @@ trait ControllerProxyTrait
      * @throws \Illuminate\Auth\Access\AuthorizationException
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function guestProxy(Request $request, bool $download = true)
+    public function proxySigned(Request $request, bool $download = true)
     {
         $fileVirtual = $this->extractFileVirtualFrom($request);
 
