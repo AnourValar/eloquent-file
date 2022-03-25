@@ -46,7 +46,7 @@ class RegenerateCommand extends Command
                     continue;
                 }
 
-                \AnourValar\EloquentFile\Jobs\FilePhysicalGenerateJob::dispatch($item);
+                $handler->dispatch($item);
             }
         }
 

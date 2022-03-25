@@ -29,4 +29,12 @@ interface GenerateInterface
      * @return bool
      */
     public function keepOriginal(FilePhysical $filePhysical): bool;
+
+    /**
+     * Send job to a queue
+     *
+     * @param \AnourValar\EloquentFile\FilePhysical $filePhysical
+     * @return void
+     */
+    public function dispatch(FilePhysical $filePhysical): void;
 }

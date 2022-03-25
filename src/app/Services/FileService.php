@@ -167,7 +167,7 @@ class FileService
             \Atom::onCommit(
                 function () use ($model)
                 {
-                    \AnourValar\EloquentFile\Jobs\FilePhysicalGenerateJob::dispatch($model);
+                    $model->getTypeHandler()->dispatch($model);
                 },
                 $model->getConnectionName()
             );
