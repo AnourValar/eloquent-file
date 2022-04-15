@@ -264,11 +264,11 @@ abstract class FilePhysical extends Model
             {
                 $handler = $this->getVisibilityHandler();
                 if (! $handler instanceof DirectAccessInterface) {
-                    throw new \LogicException('Direct access is not allowed for this file.');
+                    return null;
                 }
 
                 if (! $this->path) {
-                    throw new \LogicException('Original file is not exists.');
+                    return null;
                 }
 
                 return $handler->directUrl($this);
@@ -288,7 +288,7 @@ abstract class FilePhysical extends Model
             {
                 $handler = $this->getVisibilityHandler();
                 if (! $handler instanceof DirectAccessInterface) {
-                    throw new \LogicException('Direct access is not allowed for this file.');
+                    return null;
                 }
 
                 $result = [];

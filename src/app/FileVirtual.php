@@ -228,7 +228,7 @@ abstract class FileVirtual extends Model
                 return;
             }
 
-            if ($filePhysical->type != $this->name_details['type']) {
+            if (! in_array($filePhysical->type, $this->name_details['types'], true)) {
                 $validator->errors()->add(
                     'file_physical_id',
                     trans('eloquent-file::file_virtual.file_physical_id_incorrect_type')
@@ -392,11 +392,11 @@ abstract class FileVirtual extends Model
 
                 $handler = $this->filePhysical->getVisibilityHandler();
                 if (! $handler instanceof ProxyAccessInterface) {
-                    throw new \LogicException('Proxy access is not allowed for this file.');
+                    return null;
                 }
 
                 if (! $this->filePhysical->path) {
-                    throw new \LogicException('Original file is not exists.');
+                    return null;
                 }
 
                 return $handler->proxyUrl($this);

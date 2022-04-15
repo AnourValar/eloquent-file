@@ -8,8 +8,8 @@
         "php": ">=8.0",
         "laravel/framework": ">=9.0",
         "anourvalar/eloquent-validation": "^2.4",
-        "anourvalar/laravel-atom": "^2.4",
-        "intervention/image": "^2.5"
+        "anourvalar/laravel-atom": "^2.5",
+        "intervention/image": "^2.7"
     },
     "autoload": {
         "psr-4": {"AnourValar\\EloquentFile\\": "src/app/"}

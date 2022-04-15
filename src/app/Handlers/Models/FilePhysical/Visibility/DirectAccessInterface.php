@@ -11,7 +11,7 @@ interface DirectAccessInterface
      *
      * @param \AnourValar\EloquentFile\FilePhysical $filePhysical
      * @param string $generate
-     * @return string
+     * @return string|null
      */
-    public function directUrl(FilePhysical $filePhysical, string $generate = null): string;
+    public function directUrl(FilePhysical $filePhysical, string $generate = null): ?string;
 }

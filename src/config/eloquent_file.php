@@ -60,7 +60,7 @@ return [
                             'limit' => 0,
                         ],
                         'visibility' => 'public',
-                        'type' => 'image',
+                        'types' => ['*' => 'image'],
                     ],
                 ],
             ],

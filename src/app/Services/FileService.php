@@ -35,7 +35,24 @@ class FileService
             $details = config("eloquent_file.file_virtual.entity.{$fileVirtual->entity}.name.{$fileVirtual->name}");
             if ($details) {
                 $visibility = $details['visibility'];
-                $type = $details['type'];
+
+                foreach ($details['types'] as $key => $value) {
+                    if ($key == '*') {
+                        $type = $value;
+                        break;
+                    }
+
+                    if ($file
+                        && (
+                            !mb_strlen($file->getClientOriginalExtension())
+                            || $key === '.' . mb_strtolower($file->getClientOriginalExtension())
+                        )
+                        && $key === '.' . mb_strtolower($file->extension())
+                    ) {
+                        $type = $value;
+                        break;
+                    }
+                }
 
                 $title = isset($details['title']) ? trans($details['title']) : null;
             }
@@ -217,7 +234,7 @@ class FileService
         }
 
         if (! isset($filePhysical->visibility, $filePhysical->type, $filePhysical->sha256)) {
-            throw new \LogicException();
+            throw new \LogicException('Incorrect usage.');
         }
 
         \Atom::lockFilePhysical($filePhysical->visibility, $filePhysical->type, $filePhysical->sha256);

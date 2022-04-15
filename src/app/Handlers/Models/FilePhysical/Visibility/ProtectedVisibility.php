@@ -12,10 +12,10 @@ class ProtectedVisibility extends PrivateVisibility implements DirectAccessInter
      * {@inheritDoc}
      * @see \AnourValar\EloquentFile\Handlers\Models\FilePhysical\Visibility\DirectAccessInterface::directUrl()
      */
-    public function directUrl(FilePhysical $filePhysical, string $generate = null): string
+    public function directUrl(FilePhysical $filePhysical, string $generate = null): ?string
     {
         if (is_null($generate)) {
-            throw new \LogicException('Direct access is not allowed for this file.');
+            return null;
         } else {
             $disk = $filePhysical->path_generate[$generate]['disk'];
             $path = $filePhysical->path_generate[$generate]['path'];
