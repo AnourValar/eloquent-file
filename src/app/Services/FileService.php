@@ -65,13 +65,13 @@ class FileService
     }
 
     /**
-     * Delete files
+     * Collect fileVirtuals
      *
      * @param array $attributes
      * @param mixed $prefix
-     * @return int
+     * @return \Illuminate\Database\Eloquent\Collection
      */
-    public function delete(array $attributes, $prefix = null): int
+    public function collect(array $attributes, $prefix = null): \Illuminate\Database\Eloquent\Collection
     {
         $class = config('eloquent_file.models.file_virtual');
 
@@ -92,8 +92,20 @@ class FileService
             throw new ValidationException($e->validator, null, 'default', $prefix);
         }
 
+        return $class::with('filePhysical')->where($attributes)->get();
+    }
+
+    /**
+     * Delete files
+     *
+     * @param array $attributes
+     * @param mixed $prefix
+     * @return int
+     */
+    public function delete(array $attributes, $prefix = null): int
+    {
         $counter = 0;
-        foreach ($class::with('filePhysical')->where($attributes)->get() as $fileVirtual) {
+        foreach ($this->collect($attributes, $prefix) as $fileVirtual) {
             $this->lock($fileVirtual->filePhysical);
             $fileVirtual->validateDelete($prefix)->delete();
 
