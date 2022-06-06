@@ -13,7 +13,7 @@ class SimpleName implements NameInterface
     public function validate(FileVirtual $fileVirtual, \Illuminate\Validation\Validator $validator): void
     {
         $validator->addRules([
-            'details' => ['prohibited'],
+            'details' => ['nullable', 'prohibited'],
         ]);
     }
 

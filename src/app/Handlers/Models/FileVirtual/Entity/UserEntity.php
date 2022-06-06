@@ -24,7 +24,13 @@ class UserEntity implements EntityInterface
     {
         $class = config('auth.providers.users.model');
 
-        if (! $class::find($fileVirtual->entity_id)) {
+        if (in_array(\Illuminate\Database\Eloquent\SoftDeletes::class, class_uses($class))) {
+             $user = $class::withTrashed()->find($fileVirtual->entity_id);
+        } else {
+            $user = $class::find($fileVirtual->entity_id);
+        }
+
+        if (! $user) {
             $validator->errors()->add(
                 'entity_id',
                 trans('eloquent-file::file_virtual.entity_handlers.user.entity_id_not_exists')
