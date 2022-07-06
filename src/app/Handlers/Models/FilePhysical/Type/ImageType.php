@@ -61,13 +61,7 @@ class ImageType extends SimpleType implements GenerateInterface
                 })
                 ->encode($details['format'], $details['quality']);
 
-            if ($details['alt_disks']) {
-                $disks = $details['alt_disks'];
-                shuffle($disks);
-                $pathGenerate[$name]['disk'] = $disks[0];
-            } else {
-                $pathGenerate[$name]['disk'] = $filePhysical->disk;
-            }
+            $pathGenerate[$name]['disk'] = $details['alt_disks'] ? $this->getAltDisk($details['alt_disks']) : $filePhysical->disk;
             $pathGenerate[$name]['path'] = $this->generatePath($filePhysical, sprintf("_%s.%s", $name, $details['format']));
 
             \Storage::disk($pathGenerate[$name]['disk'])->put($pathGenerate[$name]['path'], $generate);
@@ -107,5 +101,16 @@ class ImageType extends SimpleType implements GenerateInterface
         }
 
         return $filePhysical->path . $suffix;
+    }
+
+    /**
+     * @param array $disks
+     * @return string
+     */
+    protected function getAltDisk(array $disks): string
+    {
+        shuffle($disks);
+
+        return $disks[0];
     }
 }

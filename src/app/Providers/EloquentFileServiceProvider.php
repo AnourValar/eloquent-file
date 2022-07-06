@@ -13,7 +13,8 @@ class EloquentFileServiceProvider extends ServiceProvider
      */
     public function register()
     {
-
+        // config
+        $this->mergeConfigFrom(__DIR__.'/../../config/eloquent_file.php', 'eloquent_file');
     }
 
     /**
@@ -24,7 +25,6 @@ class EloquentFileServiceProvider extends ServiceProvider
     public function boot()
     {
         // config
-        $this->mergeConfigFrom(__DIR__.'/../../config/eloquent_file.php', 'eloquent_file');
         $this->publishes([ __DIR__.'/../../config/eloquent_file.php' => config_path('eloquent_file.php')], 'config');
 
         // migrations

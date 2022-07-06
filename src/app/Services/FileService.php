@@ -168,10 +168,6 @@ class FileService
 
             // Fill: disk
             $disks = config('eloquent_file.file_physical.visibility')[$model->visibility]['disks'];
-            if (! is_array($disks)) {
-                $disks = explode(',', $disks);
-                $disks = array_map('trim', $disks);
-            }
             $model->disk = $model->getVisibilityHandler()->getDisk($disks, $file);
 
             // Fill: path
