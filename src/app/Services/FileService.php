@@ -11,7 +11,36 @@ use Illuminate\Http\UploadedFile;
 class FileService
 {
     /**
-     * Upload file and create virtual file
+     * Create UploadedFile from a buffer
+     *
+     * @param string $binary
+     * @param string $fileName
+     * @param FileVirtual $fileVirtual
+     * @param string $fileValidationKey
+     * @return \Illuminate\Http\UploadedFile
+     */
+    public function prepareFromBuffer(string $binary, string $fileName = null, string $mimeType = null): UploadedFile
+    {
+        $temp = tmpfile();
+        \App::terminating(function () use ($temp)
+        {
+            fclose($temp);
+        });
+        fwrite($temp, $binary);
+
+        $fullPath = stream_get_meta_data($temp)['uri'];
+
+        return new UploadedFile(
+            $fullPath,
+            $fileName ?? basename($fullPath),
+            $mimeType, // mimeType
+            null, // error
+            true // mark as test (since it's not a real HTTP request)
+        );
+    }
+
+    /**
+     * Upload file and create a fileVirtual
      *
      * @param \Illuminate\Http\UploadedFile $file
      * @param \AnourValar\EloquentFile\FileVirtual $fileVirtual
@@ -202,7 +231,7 @@ class FileService
     }
 
     /**
-     * Refill and create fileVirtual
+     * Refill and create a fileVirtual
      *
      * @param \AnourValar\EloquentFile\FileVirtual $fileVirtual
      * @param \Illuminate\Http\UploadedFile $file
