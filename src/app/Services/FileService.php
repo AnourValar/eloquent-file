@@ -240,7 +240,7 @@ class FileService
     public function link(FileVirtual &$fileVirtual, UploadedFile $file = null): void
     {
         // Get the lock
-        $this->lock($fileVirtual->physical);
+        $this->lock($fileVirtual->filePhysical);
 
         // Refill
         if ($file) {

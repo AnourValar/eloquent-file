@@ -110,7 +110,7 @@ abstract class FileVirtual extends Model
      *
      * @var array
      */
-    protected $calculated = [
+    protected $computed = [
 
     ];
 
@@ -190,7 +190,7 @@ abstract class FileVirtual extends Model
      * @param \Illuminate\Validation\Validator $validator
      * @return void
      */
-    public function saveAfterValidation(\Illuminate\Validation\Validator $validator)
+    public function saveAfterValidation(\Illuminate\Validation\Validator $validator): void
     {
         // name
         if (! $this->name_details) {
@@ -257,7 +257,7 @@ abstract class FileVirtual extends Model
      * @param \Illuminate\Validation\Validator $validator
      * @return void
      */
-    public function deleteAfterValidation(\Illuminate\Validation\Validator $validator)
+    public function deleteAfterValidation(\Illuminate\Validation\Validator $validator): void
     {
         $this->getEntityHandler()->validateDelete($this, $validator);
     }
@@ -265,7 +265,7 @@ abstract class FileVirtual extends Model
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function filePhysical()
+    public function filePhysical(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(config('eloquent_file.models.file_physical'));
     }
@@ -273,7 +273,7 @@ abstract class FileVirtual extends Model
     /**
      * @return \Illuminate\Database\Eloquent\Relations\MorphTo
      */
-    public function entitable()
+    public function entitable(): \Illuminate\Database\Eloquent\Relations\MorphTo
     {
         return $this->morphTo('entity', 'entity');
     }

@@ -110,7 +110,7 @@ abstract class FilePhysical extends Model
      *
      * @var array
      */
-    protected $calculated = [
+    protected $computed = [
         'counter',
     ];
 
@@ -188,7 +188,7 @@ abstract class FilePhysical extends Model
      * @param \Illuminate\Validation\Validator $validator
      * @return void
      */
-    public function saveAfterValidation(\Illuminate\Validation\Validator $validator)
+    public function saveAfterValidation(\Illuminate\Validation\Validator $validator): void
     {
         // ...
     }
@@ -199,7 +199,7 @@ abstract class FilePhysical extends Model
      * @param \Illuminate\Validation\Validator $validator
      * @return void
      */
-    public function deleteAfterValidation(\Illuminate\Validation\Validator $validator)
+    public function deleteAfterValidation(\Illuminate\Validation\Validator $validator): void
     {
 
     }
@@ -207,7 +207,7 @@ abstract class FilePhysical extends Model
     /**
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
-    public function fileVirtuals()
+    public function fileVirtuals(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany(config('eloquent_file.models.file_virtual'));
     }
