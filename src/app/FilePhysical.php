@@ -5,6 +5,7 @@ namespace AnourValar\EloquentFile;
 use AnourValar\EloquentFile\Handlers\Models\FilePhysical\Visibility\DirectAccessInterface;
 use AnourValar\EloquentFile\Handlers\Models\FilePhysical\Visibility\VisibilityInterface;
 use AnourValar\EloquentFile\Handlers\Models\FilePhysical\Type\TypeInterface;
+use AnourValar\EloquentValidation\ValidatorHelper;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 

@@ -7,7 +7,7 @@
     "require": {
         "php": ">=8.0",
         "laravel/framework": ">=9.0",
-        "anourvalar/eloquent-validation": "^3.0",
+        "anourvalar/eloquent-validation": "^3.1",
         "anourvalar/laravel-atom": "^2.7",
         "intervention/image": "^2.7"
     },

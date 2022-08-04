@@ -6,6 +6,7 @@ use AnourValar\EloquentFile\Handlers\Models\FileVirtual\Entity\EntityInterface;
 use AnourValar\EloquentFile\Handlers\Models\FileVirtual\Entity\Policy\PolicyInterface;
 use AnourValar\EloquentFile\Handlers\Models\FileVirtual\Name\NameInterface;
 use AnourValar\EloquentFile\Handlers\Models\FilePhysical\Visibility\ProxyAccessInterface;
+use AnourValar\EloquentValidation\ValidatorHelper;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 
@@ -300,6 +301,18 @@ abstract class FileVirtual extends Model
     public function getEntityPolicyHandler(): PolicyInterface
     {
         return \App::make($this->name_details['policy']['bind']);
+    }
+
+    /**
+     * Mutator: details
+     *
+     * @return \Illuminate\Database\Eloquent\Casts\Attribute
+     */
+    protected function details(): Attribute
+    {
+        return Attribute::make(
+            set: fn ($value) => (new ValidatorHelper())->mutateJsonb($value),
+        );
     }
 
     /**
