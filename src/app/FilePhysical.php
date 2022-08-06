@@ -2,12 +2,11 @@
 
 namespace AnourValar\EloquentFile;
 
+use AnourValar\EloquentFile\Handlers\Models\FilePhysical\Type\TypeInterface;
 use AnourValar\EloquentFile\Handlers\Models\FilePhysical\Visibility\DirectAccessInterface;
 use AnourValar\EloquentFile\Handlers\Models\FilePhysical\Visibility\VisibilityInterface;
-use AnourValar\EloquentFile\Handlers\Models\FilePhysical\Type\TypeInterface;
-use AnourValar\EloquentValidation\ValidatorHelper;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Casts\Attribute;
+use Illuminate\Database\Eloquent\Model;
 
 abstract class FilePhysical extends Model
 {
@@ -104,6 +103,19 @@ abstract class FilePhysical extends Model
         'build' => 'integer',
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
+    ];
+
+    /**
+     * Mutators for nested JSON.
+     * jsonb - sort an array by key
+     * nullable - '' => null convertation
+     * types - set the type of a value (nested)
+     * sorts - sort an array (nested)
+     *
+     * @var array
+     */
+    protected $jsonNested = [
+
     ];
 
     /**
@@ -261,8 +273,7 @@ abstract class FilePhysical extends Model
     protected function url(): Attribute
     {
         return Attribute::make(
-            get: function ($value)
-            {
+            get: function ($value) {
                 $handler = $this->getVisibilityHandler();
                 if (! $handler instanceof DirectAccessInterface) {
                     return null;
@@ -285,8 +296,7 @@ abstract class FilePhysical extends Model
     protected function urlGenerate(): Attribute
     {
         return Attribute::make(
-            get: function ($query)
-            {
+            get: function ($query) {
                 $handler = $this->getVisibilityHandler();
                 if (! $handler instanceof DirectAccessInterface) {
                     return null;

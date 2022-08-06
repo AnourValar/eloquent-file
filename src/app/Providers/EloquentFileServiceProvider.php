@@ -55,8 +55,7 @@ class EloquentFileServiceProvider extends ServiceProvider
      */
     private function addFileExtRule(): void
     {
-        \Validator::extend('file_ext', function ($attribute, $value, $parameters, $validator)
-        {
+        \Validator::extend('file_ext', function ($attribute, $value, $parameters, $validator) {
             if (! $validator->isValidFileInstance($value)) {
                 return false;
             }
@@ -67,8 +66,7 @@ class EloquentFileServiceProvider extends ServiceProvider
             );
         });
 
-        \Validator::replacer('file_ext', function ($message, $attribute, $rule, $parameters, $validator)
-        {
+        \Validator::replacer('file_ext', function ($message, $attribute, $rule, $parameters, $validator) {
             return trans(
                 'eloquent-file::validation.file_ext',
                 ['attribute' => $validator->getDisplayableAttribute($attribute), 'exts' => implode(', ', $parameters)]
@@ -81,20 +79,18 @@ class EloquentFileServiceProvider extends ServiceProvider
      */
     private function addFileNotExtRule(): void
     {
-        \Validator::extend('file_not_ext', function ($attribute, $value, $parameters, $validator)
-        {
+        \Validator::extend('file_not_ext', function ($attribute, $value, $parameters, $validator) {
             if (! $validator->isValidFileInstance($value)) {
                 return false;
             }
 
             return (
-                !in_array(mb_strtolower($value->getClientOriginalExtension()), $parameters, true)
-                && !in_array(mb_strtolower($value->extension()), $parameters, true)
+                ! in_array(mb_strtolower($value->getClientOriginalExtension()), $parameters, true)
+                && ! in_array(mb_strtolower($value->extension()), $parameters, true)
             );
         });
 
-        \Validator::replacer('file_not_ext', function ($message, $attribute, $rule, $parameters, $validator)
-        {
+        \Validator::replacer('file_not_ext', function ($message, $attribute, $rule, $parameters, $validator) {
             return trans(
                 'eloquent-file::validation.file_not_ext',
                 ['attribute' => $validator->getDisplayableAttribute($attribute), 'exts' => implode(', ', $parameters)]

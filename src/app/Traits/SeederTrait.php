@@ -24,14 +24,12 @@ trait SeederTrait
         $fileVirtual->forceFill($fileVirtual->getNameHandler()->generateFake($fileVirtual->entity, $fileVirtual->name));
 
         $class = config('eloquent_file.models.file_physical');
-        \DB::connection((new $class)->getConnectionName())->transaction(function () use ($fileVirtual, $text)
-        {
+        \DB::connection((new $class)->getConnectionName())->transaction(function () use ($fileVirtual, $text) {
             $fileName = tempnam(sys_get_temp_dir(), 'fake_');
 
             \Image
                 ::canvas(1280, 720, '#FFFFFF')
-                ->text($text, 650, 300, function ($font)
-                {
+                ->text($text, 650, 300, function ($font) {
                     $font->file(__DIR__.'/../../resources/arial.ttf');
                     $font->size(150);
                     $font->color('#FF0000');
@@ -74,8 +72,7 @@ trait SeederTrait
         }
 
         $class = config('eloquent_file.models.file_physical');
-        \DB::connection((new $class)->getConnectionName())->transaction(function () use ($fileVirtual, $file, $mime)
-        {
+        \DB::connection((new $class)->getConnectionName())->transaction(function () use ($fileVirtual, $file, $mime) {
             \App::make(\AnourValar\EloquentFile\Services\FileService::class)->upload(
                 new \Illuminate\Http\UploadedFile($file, basename($file), $mime, null, true),
                 $fileVirtual

@@ -54,15 +54,14 @@ class ImageType extends SimpleType implements GenerateInterface
             $generate = \Image
                 ::make($original)
                 ->orientate()
-                ->resize($details['max_width'], $details['max_height'], function ($constraint)
-                {
+                ->resize($details['max_width'], $details['max_height'], function ($constraint) {
                     $constraint->aspectRatio();
                     $constraint->upsize();
                 })
                 ->encode($details['format'], $details['quality']);
 
             $pathGenerate[$name]['disk'] = $details['alt_disks'] ? $this->getAltDisk($details['alt_disks']) : $filePhysical->disk;
-            $pathGenerate[$name]['path'] = $this->generatePath($filePhysical, sprintf("_%s.%s", $name, $details['format']));
+            $pathGenerate[$name]['path'] = $this->generatePath($filePhysical, sprintf('_%s.%s', $name, $details['format']));
 
             \Storage::disk($pathGenerate[$name]['disk'])->put($pathGenerate[$name]['path'], $generate);
         }

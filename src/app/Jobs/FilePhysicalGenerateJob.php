@@ -4,11 +4,11 @@ namespace AnourValar\EloquentFile\Jobs;
 
 use AnourValar\EloquentFile\FilePhysical;
 use Illuminate\Bus\Queueable;
-use Illuminate\Queue\SerializesModels;
-use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Queue\SerializesModels;
 
 class FilePhysicalGenerateJob implements ShouldQueue, ShouldBeUnique
 {
@@ -65,8 +65,7 @@ class FilePhysicalGenerateJob implements ShouldQueue, ShouldBeUnique
     public function handle()
     {
         try {
-            \DB::connection($this->filePhysical->getConnectionName())->transaction(function ()
-            {
+            \DB::connection($this->filePhysical->getConnectionName())->transaction(function () {
                 try {
                     $build = $this->filePhysical->getTypeHandler()->getBuild($this->filePhysical->type_details);
 
@@ -148,8 +147,7 @@ class FilePhysicalGenerateJob implements ShouldQueue, ShouldBeUnique
         $class = config('eloquent_file.models.file_virtual');
 
         foreach ($class::where('file_physical_id', '=', $filePhysical->id)->get() as $item) {
-            \Atom::onCommit(function () use ($item)
-            {
+            \Atom::onCommit(function () use ($item) {
                 event(new \AnourValar\EloquentFile\Events\FileVirtualChanged($item));
             }, $filePhysical->getConnectionName());
         }

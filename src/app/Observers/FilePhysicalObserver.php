@@ -33,8 +33,7 @@ class FilePhysicalObserver
             }
 
             \Atom::onCommit(
-                function () use ($item)
-                {
+                function () use ($item) {
                     if (\Storage::disk($item['disk'])->exists($item['path'])) {
                         \Storage::disk($item['disk'])->delete($item['path']);
                     }

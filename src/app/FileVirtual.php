@@ -2,13 +2,12 @@
 
 namespace AnourValar\EloquentFile;
 
+use AnourValar\EloquentFile\Handlers\Models\FilePhysical\Visibility\ProxyAccessInterface;
 use AnourValar\EloquentFile\Handlers\Models\FileVirtual\Entity\EntityInterface;
 use AnourValar\EloquentFile\Handlers\Models\FileVirtual\Entity\Policy\PolicyInterface;
 use AnourValar\EloquentFile\Handlers\Models\FileVirtual\Name\NameInterface;
-use AnourValar\EloquentFile\Handlers\Models\FilePhysical\Visibility\ProxyAccessInterface;
-use AnourValar\EloquentValidation\ValidatorHelper;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Casts\Attribute;
+use Illuminate\Database\Eloquent\Model;
 
 abstract class FileVirtual extends Model
 {
@@ -104,6 +103,24 @@ abstract class FileVirtual extends Model
         'archived_at' => 'datetime',
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
+    ];
+
+    /**
+     * Mutators for nested JSON.
+     * jsonb - sort an array by key
+     * nullable - '' => null convertation
+     * types - set the type of a value (nested)
+     * sorts - sort an array (nested)
+     *
+     * @var array
+     */
+    protected $jsonNested = [
+        'details' => [
+            'jsonb' => true,
+            'nullable' => false,
+            'types' => [],
+            'sorts' => [],
+        ],
     ];
 
     /**
@@ -304,18 +321,6 @@ abstract class FileVirtual extends Model
     }
 
     /**
-     * Mutator: details
-     *
-     * @return \Illuminate\Database\Eloquent\Casts\Attribute
-     */
-    protected function details(): Attribute
-    {
-        return Attribute::make(
-            set: fn ($value) => (new ValidatorHelper())->mutateJsonb($value),
-        );
-    }
-
-    /**
      * Virtual attribute: entity_details
      *
      * @return \Illuminate\Database\Eloquent\Casts\Attribute
@@ -359,8 +364,7 @@ abstract class FileVirtual extends Model
     protected function url(): Attribute
     {
         return Attribute::make(
-            get: function ($query)
-            {
+            get: function ($query) {
                 if (! $this->relationLoaded('filePhysical')) {
                     throw new \LogicException('The filePhysical relation must be eager loaded.');
                 }
@@ -378,8 +382,7 @@ abstract class FileVirtual extends Model
     protected function urlGenerate(): Attribute
     {
         return Attribute::make(
-            get: function ($query)
-            {
+            get: function ($query) {
                 if (! $this->relationLoaded('filePhysical')) {
                     throw new \LogicException('The filePhysical relation must be eager loaded.');
                 }
@@ -397,8 +400,7 @@ abstract class FileVirtual extends Model
     protected function urlProxy(): Attribute
     {
         return Attribute::make(
-            get: function ($query)
-            {
+            get: function ($query) {
                 if (! $this->relationLoaded('filePhysical')) {
                     throw new \LogicException('The filePhysical relation must be eager loaded.');
                 }

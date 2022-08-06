@@ -7,9 +7,14 @@
     "require": {
         "php": ">=8.0",
         "laravel/framework": ">=9.0",
-        "anourvalar/eloquent-validation": "^3.1",
+        "anourvalar/eloquent-validation": "^3.2",
         "anourvalar/laravel-atom": "^2.7",
         "intervention/image": "^2.7"
+    },
+    "require-dev": {
+        "nunomaduro/larastan": "^1.0",
+        "laravel/pint": "^1.0",
+        "orchestra/testbench": "^7.6"
     },
     "autoload": {
         "psr-4": {"AnourValar\\EloquentFile\\": "src/app/"}

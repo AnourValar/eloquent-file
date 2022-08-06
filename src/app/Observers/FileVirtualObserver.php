@@ -14,7 +14,7 @@ class FileVirtualObserver
      */
     public function saving(FileVirtual $model)
     {
-        if (!is_null($model->details) && $model->isDirty('details')) {
+        if (! is_null($model->details) && $model->isDirty('details')) {
             $model->details = $model->getNameHandler()->canonizeDetails($model->details);
         }
     }
@@ -72,8 +72,7 @@ class FileVirtualObserver
             $filePhysical->getTypeHandler()->onZero($filePhysical);
         }
 
-        \Atom::onCommit(function () use ($model)
-        {
+        \Atom::onCommit(function () use ($model) {
             event(new \AnourValar\EloquentFile\Events\FileVirtualChanged($model));
         }, $model->getConnectionName());
     }

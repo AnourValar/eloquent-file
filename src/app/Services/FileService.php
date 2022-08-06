@@ -4,8 +4,8 @@ namespace AnourValar\EloquentFile\Services;
 
 use AnourValar\EloquentFile\FilePhysical;
 use AnourValar\EloquentFile\FileVirtual;
-use AnourValar\EloquentValidation\Exceptions\ValidationException;
 use AnourValar\EloquentFile\Handlers\Models\FilePhysical\Type\GenerateInterface;
+use AnourValar\EloquentValidation\Exceptions\ValidationException;
 use Illuminate\Http\UploadedFile;
 
 class FileService
@@ -15,15 +15,13 @@ class FileService
      *
      * @param string $binary
      * @param string $fileName
-     * @param FileVirtual $fileVirtual
-     * @param string $fileValidationKey
+     * @param string $mimeType
      * @return \Illuminate\Http\UploadedFile
      */
     public function prepareFromBuffer(string $binary, string $fileName = null, string $mimeType = null): UploadedFile
     {
         $temp = tmpfile();
-        \App::terminating(function () use ($temp)
-        {
+        \App::terminating(function () use ($temp) {
             fclose($temp);
         });
         fwrite($temp, $binary);
@@ -73,7 +71,7 @@ class FileService
 
                     if ($file
                         && (
-                            !mb_strlen($file->getClientOriginalExtension())
+                            ! mb_strlen($file->getClientOriginalExtension())
                             || $key === '.' . mb_strtolower($file->getClientOriginalExtension())
                         )
                         && $key === '.' . mb_strtolower($file->extension())
@@ -209,8 +207,7 @@ class FileService
         // File move
         $file->storeAs(dirname($model->path), basename($model->path), $model->disk);
         \Atom::onRollBack(
-            function () use ($model)
-            {
+            function () use ($model) {
                 $model->delete(); // for observers
             },
             $model->getConnectionName()
@@ -219,8 +216,7 @@ class FileService
         // Side File Generation
         if ($model->getTypeHandler() instanceof GenerateInterface) {
             \Atom::onCommit(
-                function () use ($model)
-                {
+                function () use ($model) {
                     $model->getTypeHandler()->dispatch($model);
                 },
                 $model->getConnectionName()
@@ -299,8 +295,7 @@ class FileService
             $validator = \Validator
                 ::make(['file' => $file], [])
                 ->setAttributeNames(['file' => $title])
-                ->after(function ($validator) use ($filePhysical)
-                {
+                ->after(function ($validator) use ($filePhysical) {
                     static $triggered;
 
                     if (! $triggered) {
