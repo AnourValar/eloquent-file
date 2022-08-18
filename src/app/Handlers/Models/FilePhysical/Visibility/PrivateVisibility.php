@@ -20,7 +20,7 @@ class PrivateVisibility implements VisibilityInterface, ProxyAccessInterface
      */
     public function preventDuplicates(): bool
     {
-        return true;
+        return true; // if it's false, getPath must provide a unique name for the same file
     }
 
     /**

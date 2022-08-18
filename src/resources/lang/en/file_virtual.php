@@ -17,7 +17,7 @@ return [
         'updated_at' => 'Updated at',
     ],
 
-    'file_physical_id_not_exists' => 'File not exists.',
+    'file_physical_id_not_exists' => 'The physical file does not exist.',
     'file_physical_id_incorrect_visibility' => 'The physical file has an invalid visibility.',
     'file_physical_id_incorrect_type' => 'The physical file has an invalid type.',
 
@@ -33,7 +33,7 @@ return [
         'over_limit' => 'Number of files ":name" cannot exceed :limit.',
 
         'user' => [
-            'entity_id_not_exists' => 'User not exists.',
+            'entity_id_not_exists' => 'The user does not exist.',
         ],
     ],
 ];
