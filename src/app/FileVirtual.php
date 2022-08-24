@@ -8,6 +8,7 @@ use AnourValar\EloquentFile\Handlers\Models\FileVirtual\Entity\Policy\PolicyInte
 use AnourValar\EloquentFile\Handlers\Models\FileVirtual\Name\NameInterface;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Validation\Rule;
 
 abstract class FileVirtual extends Model
 {

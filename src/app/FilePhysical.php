@@ -7,6 +7,7 @@ use AnourValar\EloquentFile\Handlers\Models\FilePhysical\Visibility\DirectAccess
 use AnourValar\EloquentFile\Handlers\Models\FilePhysical\Visibility\VisibilityInterface;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Validation\Rule;
 
 abstract class FilePhysical extends Model
 {

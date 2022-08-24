@@ -115,8 +115,8 @@ class FileService
                 )
                 ->setAttributeNames((new $class)->getAttributeNames())
                 ->validate();
-        } catch (\IIluminate\Validation\ValidationException $e) {
-            throw new ValidationException($e->validator, null, 'default', $prefix);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            throw new ValidationException($e->validator, $e->response, $e->errorBag, $prefix);
         }
 
         return $class::with('filePhysical')->where($attributes)->get();
@@ -202,7 +202,7 @@ class FileService
         }
 
         // Validation & save
-        $model->validate()->save();
+        $model->validate($fileValidationKey)->save();
 
         // File move
         $file->storeAs(dirname($model->path), basename($model->path), $model->disk);
@@ -312,7 +312,7 @@ class FileService
         }
 
         if (! $passes) {
-            throw new ValidationException($validator, null, 'default', $fileValidationKey, true);
+            throw (new ValidationException($validator))->replaceKey('file', $fileValidationKey);
         }
     }
 }

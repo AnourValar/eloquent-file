@@ -95,9 +95,7 @@ class FilePhysicalGenerateJob implements ShouldQueue, ShouldBeUnique
 
                     $this->cleanUp($filePhysical, $original)->fireEvents($filePhysical);
                 } catch (\Illuminate\Validation\ValidationException $e) {
-                    \Log::error($e->getMessage(), [$e->validator->errors()->all(), $e->validator->getData()]);
-
-                    throw new \Exception('Internal validation error.');
+                    throw \AnourValar\LaravelAtom\Exceptions\InternalValidationException::fromValidationException($e);
                 }
             });
         } catch (\Throwable $e) {

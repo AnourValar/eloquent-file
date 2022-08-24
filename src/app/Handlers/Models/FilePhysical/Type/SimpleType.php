@@ -24,9 +24,7 @@ class SimpleType implements TypeInterface
         try {
             $filePhysical->validateDelete()->delete();
         } catch (\Illuminate\Validation\ValidationException $e) {
-            \Log::error($e->getMessage(), [$e->validator->errors()->all(), $e->validator->getData()]);
-
-            throw new \Exception('Internal validation error.');
+            throw \AnourValar\LaravelAtom\Exceptions\InternalValidationException::fromValidationException($e);
         }
     }
 }
