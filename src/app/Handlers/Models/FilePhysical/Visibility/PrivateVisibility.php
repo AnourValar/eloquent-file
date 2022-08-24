@@ -44,7 +44,7 @@ class PrivateVisibility implements VisibilityInterface, ProxyAccessInterface
             throw new \LogicException('Incorrect usage.');
         }
 
-        return $filePhysical->type.'/'
+        return $filePhysical->type.'_'.$filePhysical->visibility.'/'
             .mb_substr($filePhysical->sha256, 0, 2).'/'
             .mb_substr($filePhysical->sha256, 2, 2).'/'
             .mb_substr($filePhysical->sha256, 4, 2).'/'

@@ -45,7 +45,7 @@ class PublicVisibility implements VisibilityInterface, DirectAccessInterface
             $extension = ".$extension";
         }
 
-        return $filePhysical->type.'/'
+        return $filePhysical->type.'_'.$filePhysical->visibility.'/'
             .mb_substr($filePhysical->sha256, 0, 2).'/'
             .mb_substr($filePhysical->sha256, 2, 2).'/'
             .mb_substr($filePhysical->sha256, 4, 2).'/'
