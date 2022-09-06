@@ -164,22 +164,15 @@ abstract class FileVirtual extends Model
     }
 
     /**
-     * @see \AnourValar\EloquentValidation\ModelTrait::getAttributeNames
+     * @see \AnourValar\EloquentValidation\ModelTrait::getAttributeNamesFromModelLang()
      *
      * @return array
      */
-    public function getAttributeNames()
+    protected function getAttributeNamesFromModelLang(): array
     {
-        if (is_null(static::$attributeNames)) {
-            $attributeNames = trans('eloquent-file::file_virtual.attributes');
-            if (! is_array($attributeNames)) {
-                $attributeNames = [];
-            }
+        $attributeNames = trans('eloquent-file::file_virtual.attributes');
 
-            static::$attributeNames = &$attributeNames;
-        }
-
-        return static::$attributeNames;
+        return is_array($attributeNames) ? $attributeNames : [];
     }
 
     /**

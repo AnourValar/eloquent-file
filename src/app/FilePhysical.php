@@ -147,25 +147,6 @@ abstract class FilePhysical extends Model
     ];
 
     /**
-     * @see \AnourValar\EloquentValidation\ModelTrait::getAttributeNames
-     *
-     * @return array
-     */
-    public function getAttributeNames()
-    {
-        if (is_null(static::$attributeNames)) {
-            $attributeNames = trans('eloquent-file::file_physical.attributes');
-            if (! is_array($attributeNames)) {
-                $attributeNames = [];
-            }
-
-            static::$attributeNames = &$attributeNames;
-        }
-
-        return static::$attributeNames;
-    }
-
-    /**
      * Bootstrap the model and its traits.
      *
      * @return void
@@ -175,6 +156,18 @@ abstract class FilePhysical extends Model
         parent::boot();
 
         static::observe(\AnourValar\EloquentFile\Observers\FilePhysicalObserver::class);
+    }
+
+    /**
+     * @see \AnourValar\EloquentValidation\ModelTrait::getAttributeNamesFromModelLang()
+     *
+     * @return array
+     */
+    protected function getAttributeNamesFromModelLang(): array
+    {
+        $attributeNames = trans('eloquent-file::file_physical.attributes');
+
+        return is_array($attributeNames) ? $attributeNames : [];
     }
 
     /**
