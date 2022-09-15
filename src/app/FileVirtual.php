@@ -351,6 +351,24 @@ abstract class FileVirtual extends Model
     }
 
     /**
+     * Virtual attribute: file_data
+     *
+     * @return \Illuminate\Database\Eloquent\Casts\Attribute
+     */
+    protected function fileData(): Attribute
+    {
+        return Attribute::make(
+            get: function ($query) {
+                if (! $this->relationLoaded('filePhysical')) {
+                    throw new \LogicException('The filePhysical relation must be eager loaded.');
+                }
+
+                return $this->filePhysical->file_data;
+            }
+        );
+    }
+
+    /**
      * Virtual attribute: url
      *
      * @return \Illuminate\Database\Eloquent\Casts\Attribute

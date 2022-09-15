@@ -12,6 +12,7 @@ class PrivateVisibility implements VisibilityInterface, ProxyAccessInterface
      * @var string
      */
     public const METHOD_SIGNED = 'signed';
+    public const METHOD_SIGNED_DIRECT = 'signed_direct';
     public const METHOD_AUTHORIZE = 'authorize';
 
     /**
@@ -64,12 +65,28 @@ class PrivateVisibility implements VisibilityInterface, ProxyAccessInterface
             return \URL::temporarySignedRoute(
                 $route,
                 now()->addMinutes($this->expireIn($fileVirtual)),
-                ['file_virtual' => $fileVirtual->id]
+                ['file_virtual' => $fileVirtual->id, 'file_name' => $this->getFileName($fileVirtual)]
+            );
+        }
+
+        if ($method === static::METHOD_SIGNED_DIRECT) {
+            if (! \Storage::disk($fileVirtual->filePhysical->disk)->providesTemporaryUrls()) {
+                throw new \LogicException('Disk driver does not support temporary urls.');
+            }
+
+            return url(
+                \Storage
+                    ::disk($fileVirtual->filePhysical->disk)
+                    ->temporaryUrl(
+                        $fileVirtual->filePhysical->path,
+                        now()->addMinutes($this->expireIn($fileVirtual)),
+                        ['ResponseContentDisposition' => 'inline; filename='.$this->getFileName($fileVirtual)]
+                    )
             );
         }
 
         if ($method === static::METHOD_AUTHORIZE) {
-            return route($route, ['file_virtual' => $fileVirtual->id]);
+            return route($route, ['file_virtual' => $fileVirtual->id, 'file_name' => $this->getFileName($fileVirtual)]);
         }
 
         throw new \LogicException('Option "proxy_route_method" must be set properly.');
@@ -81,13 +98,7 @@ class PrivateVisibility implements VisibilityInterface, ProxyAccessInterface
      */
     public function proxyDownload(FileVirtual $fileVirtual): \Symfony\Component\HttpFoundation\Response
     {
-        return \Storage
-            ::disk($fileVirtual->filePhysical->disk)
-            ->download(
-                $fileVirtual->filePhysical->path,
-                $this->getFileName($fileVirtual),
-                ['Content-Type' => $fileVirtual->content_type]
-            );
+        return $this->proxy($fileVirtual, 'attachment');
     }
 
     /**
@@ -96,12 +107,36 @@ class PrivateVisibility implements VisibilityInterface, ProxyAccessInterface
      */
     public function proxyInline(FileVirtual $fileVirtual): \Symfony\Component\HttpFoundation\Response
     {
+        return $this->proxy($fileVirtual, 'inline');
+    }
+
+    /**
+     * @param \AnourValar\EloquentFile\FileVirtual $fileVirtual
+     * @param string $disposition
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
+    protected function proxy(FileVirtual $fileVirtual, string $disposition): \Symfony\Component\HttpFoundation\Response
+    {
+        $visibilityHandler = $fileVirtual->filePhysical->getVisibilityHandler();
+
+        if ($visibilityHandler instanceof \AnourValar\EloquentFile\Handlers\Models\FilePhysical\Visibility\AdapterInterface) {
+            return response()->streamDownload(
+                function () use (&$visibilityHandler, &$fileVirtual) {
+                    echo $visibilityHandler->getFile($fileVirtual->filePhysical);
+                },
+                $this->getFileName($fileVirtual),
+                ['Content-Type' => $fileVirtual->content_type],
+                $disposition
+            );
+        }
+
         return \Storage
             ::disk($fileVirtual->filePhysical->disk)
             ->response(
                 $fileVirtual->filePhysical->path,
                 $this->getFileName($fileVirtual),
-                ['Content-Type' => $fileVirtual->content_type]
+                ['Content-Type' => $fileVirtual->content_type],
+                $disposition
             );
     }
 

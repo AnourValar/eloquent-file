@@ -5,6 +5,7 @@ namespace AnourValar\EloquentFile\Services;
 use AnourValar\EloquentFile\FilePhysical;
 use AnourValar\EloquentFile\FileVirtual;
 use AnourValar\EloquentFile\Handlers\Models\FilePhysical\Type\GenerateInterface;
+use AnourValar\EloquentFile\Handlers\Models\FilePhysical\Visibility\AdapterInterface;
 use AnourValar\EloquentValidation\Exceptions\ValidationException;
 use Illuminate\Http\UploadedFile;
 
@@ -204,8 +205,13 @@ class FileService
         // Validation & save
         $model->validate($fileValidationKey)->save();
 
-        // File move
-        $file->storeAs(dirname($model->path), basename($model->path), $model->disk);
+        // Store file
+        if ($model->getVisibilityHandler() instanceof AdapterInterface) {
+            $model->getVisibilityHandler()->putFile($file, $model);
+        } else {
+            $file->storeAs(dirname($model->path), basename($model->path), $model->disk);
+        }
+
         \Atom::onRollBack(
             function () use ($model) {
                 $model->delete(); // for observers

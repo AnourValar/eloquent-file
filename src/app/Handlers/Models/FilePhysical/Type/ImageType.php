@@ -48,7 +48,7 @@ class ImageType extends SimpleType implements GenerateInterface
 
         foreach ($filePhysical->type_details['generate'] as $name => $details) {
             if (! $original) {
-                $original = \Storage::disk($filePhysical->disk)->get($filePhysical->path);
+                $original = $filePhysical->file_data;
             }
 
             $generate = \Image

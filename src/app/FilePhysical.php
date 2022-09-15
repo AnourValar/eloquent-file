@@ -3,6 +3,7 @@
 namespace AnourValar\EloquentFile;
 
 use AnourValar\EloquentFile\Handlers\Models\FilePhysical\Type\TypeInterface;
+use AnourValar\EloquentFile\Handlers\Models\FilePhysical\Visibility\AdapterInterface;
 use AnourValar\EloquentFile\Handlers\Models\FilePhysical\Visibility\DirectAccessInterface;
 use AnourValar\EloquentFile\Handlers\Models\FilePhysical\Visibility\VisibilityInterface;
 use Illuminate\Database\Eloquent\Casts\Attribute;
@@ -256,6 +257,25 @@ abstract class FilePhysical extends Model
     {
         return Attribute::make(
             get: fn ($value) => config("eloquent_file.file_physical.type.{$this->type}"),
+        );
+    }
+
+    /**
+     * Virtual attribute: file_data
+     *
+     * @return \Illuminate\Database\Eloquent\Casts\Attribute
+     */
+    protected function fileData(): Attribute
+    {
+        return Attribute::make(
+            get: function ($value) {
+                $handler = $this->getVisibilityHandler();
+                if (! $handler instanceof AdapterInterface) {
+                    return \Storage::disk($this->disk)->get($this->path);
+                }
+
+                return $handler->getFile($this);
+            }
         );
     }
 

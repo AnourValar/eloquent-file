@@ -45,8 +45,9 @@ return new class extends Migration
             $table->timestamps();
 
             $table->index(['entity', 'entity_id']);
+            $table->index('created_at');
 
-            $table->foreign('file_physical_id')->references('id')->on('file_physicals')->onDelete('cascade');
+            //$table->foreign('file_physical_id')->references('id')->on('file_physicals')->onDelete('cascade');
         });
     }
 
