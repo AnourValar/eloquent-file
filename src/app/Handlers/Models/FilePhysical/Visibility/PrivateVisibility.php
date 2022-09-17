@@ -6,14 +6,14 @@ use AnourValar\EloquentFile\FilePhysical;
 use AnourValar\EloquentFile\FileVirtual;
 use Illuminate\Http\UploadedFile;
 
-class PrivateVisibility implements VisibilityInterface, ProxyAccessInterface
+class PrivateVisibility implements VisibilityInterface, DirectAccessInterface, ProxyAccessInterface
 {
     /**
      * @var string
      */
-    public const METHOD_SIGNED = 'signed';
-    public const METHOD_SIGNED_DIRECT = 'signed_direct';
-    public const METHOD_AUTHORIZE = 'authorize';
+    public const METHOD_URL_SIGNED = 'url_signed';
+    public const METHOD_URL_SIGNED_DIRECT = 'url_signed_direct';
+    public const METHOD_USER_AUTHORIZE = 'user_authorize';
 
     /**
      * {@inheritDoc}
@@ -30,6 +30,18 @@ class PrivateVisibility implements VisibilityInterface, ProxyAccessInterface
      */
     public function getDisk(array $disks, UploadedFile $file): string
     {
+        shuffle($disks);
+
+        return $disks[0];
+    }
+
+    /**
+     * {@inheritDoc}
+     * @see \AnourValar\EloquentFile\Handlers\Models\FilePhysical\Visibility\VisibilityInterface::getDiskForGenerated()
+     */
+    public function getDiskForGenerated(FilePhysical $filePhysical, string $generate): string
+    {
+        $disks = $filePhysical->visibility_details['disks_generated'];
         shuffle($disks);
 
         return $disks[0];
@@ -54,6 +66,22 @@ class PrivateVisibility implements VisibilityInterface, ProxyAccessInterface
 
     /**
      * {@inheritDoc}
+     * @see \AnourValar\EloquentFile\Handlers\Models\FilePhysical\Visibility\DirectAccessInterface::directUrl()
+     */
+    public function directUrl(FilePhysical $filePhysical, string $generate = null): ?string
+    {
+        if (is_null($generate)) {
+            return null;
+        } else {
+            $disk = $filePhysical->path_generate[$generate]['disk'];
+            $path = $filePhysical->path_generate[$generate]['path'];
+        }
+
+        return url( \Storage::disk($disk)->url($path) );
+    }
+
+    /**
+     * {@inheritDoc}
      * @see \AnourValar\EloquentFile\Handlers\Models\FilePhysical\Visibility\ProxyAccessInterface::proxyUrl()
      */
     public function proxyUrl(FileVirtual $fileVirtual): string
@@ -61,15 +89,15 @@ class PrivateVisibility implements VisibilityInterface, ProxyAccessInterface
         $route = $fileVirtual->filePhysical->visibility_details['proxy_route'];
         $method = $fileVirtual->filePhysical->visibility_details['proxy_route_method'];
 
-        if ($method === static::METHOD_SIGNED) {
+        if ($method === static::METHOD_URL_SIGNED) {
             return \URL::temporarySignedRoute(
                 $route,
                 now()->addMinutes($this->expireIn($fileVirtual)),
-                ['file_virtual' => $fileVirtual->id, 'file_name' => $this->getFileName($fileVirtual)]
+                ['file_virtual' => $fileVirtual->id, 'filename' => $this->getFileName($fileVirtual)]
             );
         }
 
-        if ($method === static::METHOD_SIGNED_DIRECT) {
+        if ($method === static::METHOD_URL_SIGNED_DIRECT) {
             if (! \Storage::disk($fileVirtual->filePhysical->disk)->providesTemporaryUrls()) {
                 throw new \LogicException('Disk driver does not support temporary urls.');
             }
@@ -80,13 +108,13 @@ class PrivateVisibility implements VisibilityInterface, ProxyAccessInterface
                     ->temporaryUrl(
                         $fileVirtual->filePhysical->path,
                         now()->addMinutes($this->expireIn($fileVirtual)),
-                        ['ResponseContentDisposition' => 'inline; filename='.$this->getFileName($fileVirtual)]
+                        ['ResponseContentDisposition' => 'inline; filename="'.$this->getFileName($fileVirtual).'"']
                     )
             );
         }
 
-        if ($method === static::METHOD_AUTHORIZE) {
-            return route($route, ['file_virtual' => $fileVirtual->id, 'file_name' => $this->getFileName($fileVirtual)]);
+        if ($method === static::METHOD_USER_AUTHORIZE) {
+            return route($route, ['file_virtual' => $fileVirtual->id, 'filename' => $this->getFileName($fileVirtual)]);
         }
 
         throw new \LogicException('Option "proxy_route_method" must be set properly.');

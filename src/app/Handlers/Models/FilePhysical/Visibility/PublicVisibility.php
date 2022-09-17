@@ -29,6 +29,15 @@ class PublicVisibility implements VisibilityInterface, DirectAccessInterface
 
     /**
      * {@inheritDoc}
+     * @see \AnourValar\EloquentFile\Handlers\Models\FilePhysical\Visibility\VisibilityInterface::getDiskForGenerated()
+     */
+    public function getDiskForGenerated(FilePhysical $filePhysical, string $generate): string
+    {
+        return $filePhysical->disk;
+    }
+
+    /**
+     * {@inheritDoc}
      * @see \AnourValar\EloquentFile\Handlers\Models\FilePhysical\Visibility\VisibilityInterface::getPath()
      */
     public function getPath(FilePhysical $filePhysical, UploadedFile $file): string

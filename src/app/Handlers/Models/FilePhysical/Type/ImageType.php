@@ -60,7 +60,7 @@ class ImageType extends SimpleType implements GenerateInterface
                 })
                 ->encode($details['format'], $details['quality']);
 
-            $pathGenerate[$name]['disk'] = $details['alt_disks'] ? $this->getAltDisk($details['alt_disks']) : $filePhysical->disk;
+            $pathGenerate[$name]['disk'] = $filePhysical->getVisibilityHandler()->getDiskForGenerated($filePhysical, $name);
             $pathGenerate[$name]['path'] = $this->generatePath($filePhysical, sprintf('_%s.%s', $name, $details['format']));
 
             \Storage::disk($pathGenerate[$name]['disk'])->put($pathGenerate[$name]['path'], $generate);

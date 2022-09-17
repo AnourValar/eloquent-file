@@ -8,14 +8,14 @@ use Illuminate\Http\Request;
 trait ControllerProxyTrait
 {
     /**
-     * Retrieve (proxying) a file via authorization
+     * Retrieve (proxying) a file via user authorization
      *
      * @param Request $request
      * @param bool $download
      * @throws \Illuminate\Auth\Access\AuthorizationException
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function proxyAuthorized(Request $request, bool $download = true)
+    public function proxyUserAuthorize(Request $request, bool $download = true)
     {
         $fileVirtual = $this->extractFileVirtualFrom($request);
 
@@ -43,7 +43,7 @@ trait ControllerProxyTrait
      * @throws \Illuminate\Auth\Access\AuthorizationException
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function proxySigned(Request $request, bool $download = true)
+    public function proxyUrlSigned(Request $request, bool $download = true)
     {
         $fileVirtual = $this->extractFileVirtualFrom($request);
 

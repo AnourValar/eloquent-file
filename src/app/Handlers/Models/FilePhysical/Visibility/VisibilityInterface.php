@@ -24,6 +24,15 @@ interface VisibilityInterface
     public function getDisk(array $disks, UploadedFile $file): string;
 
     /**
+     * Choose a disk for the generated file
+     *
+     * @param \AnourValar\EloquentFile\FilePhysical $filePhysical
+     * @param string $generate
+     * @return string
+     */
+    public function getDiskForGenerated(FilePhysical $filePhysical, string $generate): string;
+
+    /**
      * Choose a path (filename)
      *
      * @param \AnourValar\EloquentFile\FilePhysical $filePhysical
