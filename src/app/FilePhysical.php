@@ -113,6 +113,8 @@ abstract class FilePhysical extends Model
      * nullable - '' => null convertation
      * types - set the type of a value (nested)
      * sorts - sort an array (nested)
+     * lists - drop array keys (nested)
+     * purges - remove null elements (nested)
      *
      * @var array
      */
