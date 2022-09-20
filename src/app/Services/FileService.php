@@ -124,16 +124,27 @@ class FileService
     }
 
     /**
-     * Delete files
+     * Delete fileVirtuals
      *
-     * @param array $attributes
+     * @param array|\Illuminate\Database\Eloquent\Model $collection
      * @param mixed $prefix
      * @return int
      */
-    public function delete(array $attributes, $prefix = null): int
+    public function delete(array|\Illuminate\Database\Eloquent\Model $collection, $prefix = null): int
     {
+        if (is_array($collection)) {
+            $collection = $this->collect($collection, $prefix);
+        } else {
+            $class = config('eloquent_file.models.file_virtual');
+            $collection = $class
+                ::with('filePhysical')
+                ->where('entity', '=', $collection->getMorphClass())
+                ->where('entity_id', '=', $collection->getKey())
+                ->cursor();
+        }
+
         $counter = 0;
-        foreach ($this->collect($attributes, $prefix) as $fileVirtual) {
+        foreach ($collection as $fileVirtual) {
             $this->lock($fileVirtual->filePhysical);
             $fileVirtual->validateDelete($prefix)->delete();
 
@@ -141,6 +152,27 @@ class FileService
         }
 
         return $counter;
+    }
+
+    /**
+     * Replicate fileVirtual
+     *
+     * @param \AnourValar\EloquentFile\FileVirtual $fileVirtual
+     * @param array $data
+     * @param mixed $prefix
+     * @return \AnourValar\EloquentFile\FileVirtual
+     */
+    public function replicate(FileVirtual $fileVirtual, array $data, $prefix = null): FileVirtual
+    {
+        $this->lock($fileVirtual->filePhysical);
+
+        $fileVirtual
+            ->replicate(['entity', 'entity_id'])
+            ->forceFill($data)
+            ->validate($prefix)
+            ->save();
+
+        return $fileVirtual;
     }
 
     /**
