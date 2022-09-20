@@ -166,13 +166,12 @@ class FileService
     {
         $this->lock($fileVirtual->filePhysical);
 
-        $fileVirtual
-            ->replicate(['entity', 'entity_id'])
-            ->forceFill($data)
-            ->validate($prefix)
-            ->save();
-
-        return $fileVirtual;
+        return tap(
+            $fileVirtual
+                ->replicate(['entity', 'entity_id'])
+                ->forceFill($data)
+                ->validate($prefix)
+            )->save();
     }
 
     /**
