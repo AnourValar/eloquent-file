@@ -21,7 +21,7 @@ interface NameInterface
      * @param mixed $details
      * @return mixed
      */
-    public function canonizeDetails($details);
+    public function canonizeDetails($details): mixed;
 
     /**
      * Generates fake attributes: title, details ...

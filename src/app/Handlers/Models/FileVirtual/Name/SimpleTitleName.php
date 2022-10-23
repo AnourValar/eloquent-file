@@ -4,7 +4,7 @@ namespace AnourValar\EloquentFile\Handlers\Models\FileVirtual\Name;
 
 use AnourValar\EloquentFile\FileVirtual;
 
-class SimpleName implements NameInterface
+class SimpleTitleName implements NameInterface
 {
     /**
      * {@inheritDoc}
@@ -13,7 +13,7 @@ class SimpleName implements NameInterface
     public function validate(FileVirtual $fileVirtual, \Illuminate\Validation\Validator $validator): void
     {
         $validator->addRules([
-            'title' => ['nullable', 'prohibited'],
+            'title' => ['required'],
             'details' => ['nullable', 'prohibited'],
         ]);
     }
@@ -33,6 +33,8 @@ class SimpleName implements NameInterface
      */
     public function generateFake(string $entity, string $name): array
     {
-        return [];
+        return [
+            'title' => \App::make(\Faker\Generator::class)->sentence,
+        ];
     }
 }

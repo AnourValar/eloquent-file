@@ -4,7 +4,7 @@ namespace AnourValar\EloquentFile\Traits;
 
 use AnourValar\EloquentFile\FileVirtual;
 
-trait AvatarListenerTrait
+trait ListenerTrait
 {
     /**
      * Get schema with entity's avatar
