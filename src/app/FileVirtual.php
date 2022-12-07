@@ -70,7 +70,7 @@ abstract class FileVirtual extends Model
     /**
      * The attributes that should be hidden for serialization.
      *
-     * @var array
+     * @var array<string>
      */
     protected $hidden = [
         'file_physical_id', 'entity', 'entity_id', 'updated_at',
@@ -109,7 +109,7 @@ abstract class FileVirtual extends Model
     /**
      * Mutators for nested JSON.
      * jsonb - sort an array by key
-     * nullable - '' => null convertation
+     * nullable - '',[] => null convertation
      * types - set the type of a value (nested)
      * sorts - sort an array (nested)
      * lists - drop array keys (nested)
