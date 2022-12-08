@@ -59,7 +59,7 @@ abstract class FileVirtual extends Model
     ];
 
     /**
-     * '' => null convertation
+     * '',[] => null convertation
      *
      * @var array
      */
@@ -120,7 +120,7 @@ abstract class FileVirtual extends Model
     protected $jsonNested = [
         'details' => [
             'jsonb' => true,
-            'nullable' => false,
+            'nullable' => [],
             'types' => [],
             'sorts' => [],
             'lists' => [],

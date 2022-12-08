@@ -59,7 +59,7 @@ abstract class FilePhysical extends Model
     ];
 
     /**
-     * '' => null convertation
+     * '',[] => null convertation
      *
      * @var array
      */
