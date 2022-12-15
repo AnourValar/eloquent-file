@@ -120,8 +120,8 @@ abstract class FileVirtual extends Model
     protected $jsonNested = [
         'details' => [
             'jsonb' => true,
-            'nullable' => [],
-            'purges' => [],
+            'nullable' => ['*'],
+            'purges' => ['*'],
             'types' => [],
             'sorts' => [],
             'lists' => [],
