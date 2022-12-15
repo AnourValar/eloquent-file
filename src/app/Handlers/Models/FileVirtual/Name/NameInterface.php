@@ -28,7 +28,8 @@ interface NameInterface
      *
      * @param string $entity
      * @param string $name
+     * @param \Illuminate\Database\Eloquent\Model $entitable
      * @return array
      */
-    public function generateFake(string $entity, string $name): array;
+    public function generateFake(string $entity, string $name, \Illuminate\Database\Eloquent\Model $entitable): array;
 }

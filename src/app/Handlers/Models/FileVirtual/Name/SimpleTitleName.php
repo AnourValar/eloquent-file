@@ -31,7 +31,7 @@ class SimpleTitleName implements NameInterface
      * {@inheritDoc}
      * @see \AnourValar\EloquentFile\Handlers\Models\FileVirtual\Name\NameInterface::generateFake()
      */
-    public function generateFake(string $entity, string $name): array
+    public function generateFake(string $entity, string $name, \Illuminate\Database\Eloquent\Model $entitable): array
     {
         return [
             'title' => \App::make(\Faker\Generator::class)->sentence,

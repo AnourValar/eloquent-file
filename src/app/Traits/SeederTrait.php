@@ -3,6 +3,7 @@
 namespace AnourValar\EloquentFile\Traits;
 
 use AnourValar\EloquentFile\FileVirtual;
+use Illuminate\Database\Eloquent\Model;
 
 trait SeederTrait
 {
@@ -10,10 +11,11 @@ trait SeederTrait
      * Create an image
      *
      * @param \AnourValar\EloquentFile\FileVirtual $fileVirtual
+     * @param \Illuminate\Database\Eloquent\Model $entitable
      * @param string $text
      * @return void
      */
-    protected function createImage(FileVirtual &$fileVirtual, string $text = null): void
+    protected function createImage(FileVirtual &$fileVirtual, Model $entitable, string $text = null): void
     {
         static $counter;
         if (is_null($text)) {
@@ -21,7 +23,9 @@ trait SeederTrait
             $text = $counter;
         }
 
-        $fileVirtual->forceFill($fileVirtual->getNameHandler()->generateFake($fileVirtual->entity, $fileVirtual->name));
+        $fileVirtual->entity = $entitable->getMorphClass();
+        $fileVirtual->entity_id = $entitable->getKey();
+        $fileVirtual->forceFill($fileVirtual->getNameHandler()->generateFake($fileVirtual->entity, $fileVirtual->name, $entitable));
 
         $class = config('eloquent_file.models.file_physical');
         \DB::connection((new $class)->getConnectionName())->transaction(function () use ($fileVirtual, $text) {
@@ -51,12 +55,13 @@ trait SeederTrait
      * Create a file from the list
      *
      * @param \AnourValar\EloquentFile\FileVirtual $fileVirtual
+     * @param \Illuminate\Database\Eloquent\Model $entitable
      * @param string $path
      * @param array $files
      * @param string|null string $mime
      * @return void
      */
-    protected function createFromList(FileVirtual &$fileVirtual, string $path, array $files, string $mime = null): void
+    protected function createFromList(FileVirtual &$fileVirtual, Model $entitable, string $path, array $files, string $mime = null): void
     {
         static $cache;
 
@@ -64,7 +69,9 @@ trait SeederTrait
         shuffle($files);
         $file = $path . $files[0];
 
-        $fileVirtual->forceFill($fileVirtual->getNameHandler()->generateFake($fileVirtual->entity, $fileVirtual->name));
+        $fileVirtual->entity = $entitable->getMorphClass();
+        $fileVirtual->entity_id = $entitable->getKey();
+        $fileVirtual->forceFill($fileVirtual->getNameHandler()->generateFake($fileVirtual->entity, $fileVirtual->name, $entitable));
 
         if (isset($cache[$file.$mime])) {
             $fileVirtual->forceFill($cache[$file.$mime])->validate()->save();

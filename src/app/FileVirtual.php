@@ -262,7 +262,6 @@ abstract class FileVirtual extends Model
 
         // entity, entity_id, name, title, details
         if ($this->isDirty('entity', 'entity_id', 'name', 'title', 'details')) {
-
             $this->getNameHandler()->validate($this, $validator);
         }
     }
