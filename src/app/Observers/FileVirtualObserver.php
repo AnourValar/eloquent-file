@@ -17,6 +17,10 @@ class FileVirtualObserver
         if (! is_null($model->details) && $model->isDirty('details')) {
             $model->details = $model->getNameHandler()->canonizeDetails($model->details);
         }
+
+        if ($model->isDirty('file_physical_id')) {
+            $model->size = $model->filePhysical->size;
+        }
     }
 
     /**

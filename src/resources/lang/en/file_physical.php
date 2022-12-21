@@ -9,7 +9,7 @@ return [
         'path' => 'Path',
         'path_generate' => 'Path (generated)',
         'sha256' => 'SHA256',
-        'size' => 'Size',
+        'size' => 'Size (bytes)',
         'mime_type' => 'MIME-type',
         'counter' => 'Counter',
         'build' => 'Build',

@@ -98,6 +98,7 @@ abstract class FileVirtual extends Model
         'name' => 'string',
         'filename' => 'string',
         'content_type' => 'string',
+        'size' => 'integer',
         'title' => 'string',
         'weight' => 'integer',
         'details' => 'json',
@@ -134,7 +135,7 @@ abstract class FileVirtual extends Model
      * @var array
      */
     protected $computed = [
-
+        'size',
     ];
 
     /**
