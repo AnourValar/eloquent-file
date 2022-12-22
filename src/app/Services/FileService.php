@@ -126,21 +126,16 @@ class FileService
     /**
      * Delete fileVirtuals
      *
-     * @param array|\Illuminate\Database\Eloquent\Model $collection
+     * @param array|\AnourValar\EloquentFile\FileVirtual $collection
      * @param mixed $prefix
      * @return int
      */
-    public function delete(array|\Illuminate\Database\Eloquent\Model $collection, $prefix = null): int
+    public function delete(array|\AnourValar\EloquentFile\FileVirtual $collection, $prefix = null): int
     {
         if (is_array($collection)) {
             $collection = $this->collect($collection, $prefix);
         } else {
-            $class = config('eloquent_file.models.file_virtual');
-            $collection = $class
-                ::with('filePhysical')
-                ->where('entity', '=', $collection->getMorphClass())
-                ->where('entity_id', '=', $collection->getKey())
-                ->cursor();
+            $collection = [$collection];
         }
 
         $counter = 0;

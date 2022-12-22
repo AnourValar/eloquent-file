@@ -8,6 +8,11 @@ return [
 
     'file_physical' => [
         'visibility' => [
+            'public' => [
+                'bind' => AnourValar\EloquentFile\Handlers\Models\FilePhysical\Visibility\PublicVisibility::class,
+                'disks' => explode(',', env('ELOQUENT_FILE_PUBLIC', 'public')),
+            ],
+
             'private' => [
                 'bind' => AnourValar\EloquentFile\Handlers\Models\FilePhysical\Visibility\PrivateVisibility::class,
                 'disks' => explode(',', env('ELOQUENT_FILE_PRIVATE', 'private')),
@@ -15,11 +20,6 @@ return [
 
                 'proxy_route' => 'file.download',
                 'proxy_route_method' => AnourValar\EloquentFile\Handlers\Models\FilePhysical\Visibility\PrivateVisibility::METHOD_URL_SIGNED,
-            ],
-
-            'public' => [
-                'bind' => AnourValar\EloquentFile\Handlers\Models\FilePhysical\Visibility\PublicVisibility::class,
-                'disks' => explode(',', env('ELOQUENT_FILE_PUBLIC', 'public')),
             ],
         ],
 
