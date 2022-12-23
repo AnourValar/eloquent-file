@@ -41,6 +41,7 @@ class EloquentFileServiceProvider extends ServiceProvider
         // commands
         if ($this->app->runningInConsole()) {
             $this->commands([
+                \AnourValar\EloquentFile\Console\Commands\OnZeroCommand::class,
                 \AnourValar\EloquentFile\Console\Commands\RegenerateCommand::class,
             ]);
         }

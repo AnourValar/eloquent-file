@@ -124,32 +124,6 @@ class FileService
     }
 
     /**
-     * Delete fileVirtuals
-     *
-     * @param array|\AnourValar\EloquentFile\FileVirtual $collection
-     * @param mixed $prefix
-     * @return int
-     */
-    public function delete(array|\AnourValar\EloquentFile\FileVirtual $collection, $prefix = null): int
-    {
-        if (is_array($collection)) {
-            $collection = $this->collect($collection, $prefix);
-        } else {
-            $collection = [$collection];
-        }
-
-        $counter = 0;
-        foreach ($collection as $fileVirtual) {
-            $this->lock($fileVirtual->filePhysical);
-            $fileVirtual->validateDelete($prefix)->delete();
-
-            $counter++;
-        }
-
-        return $counter;
-    }
-
-    /**
      * Replicate fileVirtual
      *
      * @param \AnourValar\EloquentFile\FileVirtual $fileVirtual
@@ -170,7 +144,7 @@ class FileService
     }
 
     /**
-     * Upload file
+     * Upload a file
      *
      * @param \Illuminate\Http\UploadedFile $file
      * @param mixed $visibility
@@ -259,33 +233,6 @@ class FileService
     }
 
     /**
-     * Refill and create a fileVirtual
-     *
-     * @param \AnourValar\EloquentFile\FileVirtual $fileVirtual
-     * @param \Illuminate\Http\UploadedFile $file
-     * @return void
-     */
-    public function link(FileVirtual &$fileVirtual, UploadedFile $file = null): void
-    {
-        // Get the lock
-        $this->lock($fileVirtual->filePhysical);
-
-        // Refill
-        if ($file) {
-            if (is_null($fileVirtual->filename)) {
-                $fileVirtual->filename = mb_substr($file->getClientOriginalName(), -100);
-            }
-
-            if (is_null($fileVirtual->content_type)) {
-                $fileVirtual->content_type = mb_strtolower((string) $file->getMimeType());
-            }
-        }
-
-        // Validation & save
-        $fileVirtual->validate()->save();
-    }
-
-    /**
      * Get the lock
      *
      * @param \AnourValar\EloquentFile\FilePhysical $filePhysical
@@ -303,6 +250,30 @@ class FileService
         }
 
         \Atom::lockFilePhysical($filePhysical->visibility, $filePhysical->type, $filePhysical->sha256);
+    }
+
+    /**
+     * Refill and create a fileVirtual
+     *
+     * @param \AnourValar\EloquentFile\FileVirtual $fileVirtual
+     * @param \Illuminate\Http\UploadedFile $file
+     * @return void
+     */
+    private function link(FileVirtual &$fileVirtual, UploadedFile $file = null): void
+    {
+        // Refill
+        if ($file) {
+            if (is_null($fileVirtual->filename)) {
+                $fileVirtual->filename = mb_substr($file->getClientOriginalName(), -100);
+            }
+
+            if (is_null($fileVirtual->content_type)) {
+                $fileVirtual->content_type = mb_strtolower((string) $file->getMimeType());
+            }
+        }
+
+        // Validation & save
+        $fileVirtual->validate()->save();
     }
 
     /**

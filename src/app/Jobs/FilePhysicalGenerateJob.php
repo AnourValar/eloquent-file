@@ -65,39 +65,43 @@ class FilePhysicalGenerateJob implements ShouldQueue, ShouldBeUnique
     public function handle()
     {
         try {
-            \DB::connection($this->filePhysical->getConnectionName())->transaction(function () {
-                try {
-                    $build = $this->filePhysical->getTypeHandler()->getBuild($this->filePhysical->type_details);
+            $filePhysical = \DB::connection($this->filePhysical->getConnectionName())->transaction(function () {
+                $build = $this->filePhysical->getTypeHandler()->getBuild($this->filePhysical->type_details);
 
-                    \App::make(\AnourValar\EloquentFile\Services\FileService::class)->lock($this->filePhysical);
-                    $filePhysical = $this->filePhysical->fresh();
+                \App::make(\AnourValar\EloquentFile\Services\FileService::class)->lock($this->filePhysical);
+                $filePhysical = $this->filePhysical->fresh();
 
-                    if (! $filePhysical) {
-                        return;
-                    }
-                    if ($filePhysical->build == $build) {
-                        return;
-                    }
-                    if (! $filePhysical->path) {
-                        return;
-                    }
-
-                    $original = (array) $filePhysical->path_generate;
-
-                    $filePhysical
-                        ->fields('build', 'path_generate')
-                        ->fill([
-                            'build' => $build,
-                            'path_generate' => $filePhysical->getTypeHandler()->generate($filePhysical),
-                        ])
-                        ->validate()
-                        ->save();
-
-                    $this->cleanUp($filePhysical, $original)->fireEvents($filePhysical);
-                } catch (\Illuminate\Validation\ValidationException $e) {
-                    throw \AnourValar\LaravelAtom\Exceptions\InternalValidationException::fromValidationException($e);
+                if (! $filePhysical) {
+                    return false;
                 }
+                if ($filePhysical->build == $build) {
+                    return false;
+                }
+                if (! $filePhysical->path) {
+                    return false;
+                }
+
+                $filePhysical->forceFill(['build' => $build])->save();
+                return $filePhysical;
             });
+
+            if (! $filePhysical) {
+                return;
+            }
+
+            try {
+                $original = (array) $filePhysical->path_generate;
+
+                $filePhysical
+                    ->fields('build', 'path_generate')
+                    ->fill(['path_generate' => $filePhysical->getTypeHandler()->generate($filePhysical)])
+                    ->validate()
+                    ->save();
+
+                $this->cleanUp($filePhysical, $original)->fireEvents($filePhysical);
+            } catch (\Illuminate\Validation\ValidationException $e) {
+                throw \AnourValar\LaravelAtom\Exceptions\InternalValidationException::fromValidationException($e);
+            }
         } catch (\Throwable $e) {
             $class = config('eloquent_file.models.file_physical');
             $class::where('id', '=', $this->filePhysical->id)->update(['build' => null]);

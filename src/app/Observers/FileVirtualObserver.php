@@ -45,7 +45,9 @@ class FileVirtualObserver
     public function updated(FileVirtual $model)
     {
         if ($model->isDirty('weight')) {
-            event(new \AnourValar\EloquentFile\Events\FileVirtualChanged($model));
+            \Atom::onCommit(function () use ($model) {
+                event(new \AnourValar\EloquentFile\Events\FileVirtualChanged($model));
+            }, $model->getConnectionName());
         }
     }
 
@@ -66,15 +68,13 @@ class FileVirtualObserver
      */
     private function recalc(FileVirtual $model): void
     {
+        \App::make(\AnourValar\EloquentFile\Services\FileService::class)->lock($model->file_physical);
+
         $class = config('eloquent_file.models.file_virtual');
         $qty = $class::where('file_physical_id', '=', $model->file_physical_id)->count();
 
         $class = config('eloquent_file.models.file_physical');
-        $class::where('id', '=', $model->file_physical_id)->update(['counter' => $qty]);
-        if (! $qty) {
-            $filePhysical = $class::find($model->file_physical_id);
-            $filePhysical->getTypeHandler()->onZero($filePhysical);
-        }
+        $class::where('id', '=', $model->file_physical_id)->update(['counter' => $qty, 'updated_at' => now()]);
 
         \Atom::onCommit(function () use ($model) {
             event(new \AnourValar\EloquentFile\Events\FileVirtualChanged($model));

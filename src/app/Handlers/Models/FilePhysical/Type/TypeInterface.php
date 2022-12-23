@@ -16,7 +16,7 @@ interface TypeInterface
     public function validate(array $typeDetails, \Illuminate\Validation\Validator $validator): void;
 
     /**
-     * PhysicalFile is not use (counter == 0)
+     * PhysicalFile has no links (FileVirtuals)
      *
      * @param \AnourValar\EloquentFile\FilePhysical $filePhysical
      * @return void

@@ -32,14 +32,9 @@ class FilePhysicalObserver
                 continue;
             }
 
-            \Atom::onCommit(
-                function () use ($item) {
-                    if (\Storage::disk($item['disk'])->exists($item['path'])) {
-                        \Storage::disk($item['disk'])->delete($item['path']);
-                    }
-                },
-                $model->getConnectionName()
-            );
+            if (\Storage::disk($item['disk'])->exists($item['path'])) {
+                \Storage::disk($item['disk'])->delete($item['path']);
+            }
         }
     }
 }
