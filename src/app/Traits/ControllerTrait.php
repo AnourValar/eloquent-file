@@ -82,6 +82,7 @@ trait ControllerTrait
      *
      * @param \Illuminate\Http\Request $request
      * @param mixed $data
+     * @throws \AnourValar\EloquentValidation\Exceptions\ValidationException
      * @return \AnourValar\EloquentFile\FileVirtual
      */
     protected function uploadFileFrom(Request $request, mixed $data = []): \AnourValar\EloquentFile\FileVirtual
@@ -112,11 +113,11 @@ trait ControllerTrait
         $files = $request->file();
 
         if (! count($files)) {
-            throw new \Illuminate\Auth\Access\AuthorizationException(trans('eloquent-file::auth.proxy.file_missed'));
+            throw new \AnourValar\EloquentValidation\Exceptions\ValidationException(trans('eloquent-file::auth.proxy.file_missed'));
         }
 
         if (count($files) > 1) {
-            throw new \Illuminate\Auth\Access\AuthorizationException(trans('eloquent-file::auth.proxy.file_multi'));
+            throw new \AnourValar\EloquentValidation\Exceptions\ValidationException(trans('eloquent-file::auth.proxy.file_multi'));
         }
 
 
