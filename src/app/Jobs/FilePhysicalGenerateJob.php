@@ -93,8 +93,7 @@ class FilePhysicalGenerateJob implements ShouldQueue, ShouldBeUnique
                 $original = (array) $filePhysical->path_generate;
 
                 $filePhysical
-                    ->fields('build', 'path_generate')
-                    ->fill(['path_generate' => $filePhysical->getTypeHandler()->generate($filePhysical)])
+                    ->forceFill(['path_generate' => $filePhysical->getTypeHandler()->generate($filePhysical)])
                     ->validate()
                     ->save();
 
