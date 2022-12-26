@@ -137,7 +137,7 @@ class FileService
 
         return tap(
             $fileVirtual
-                ->replicate(['entity', 'entity_id'])
+                ->replicate(array_merge(['entity', 'entity_id'], $fileVirtual->getComputed()))
                 ->forceFill($data)
                 ->validate($prefix)
             )->save();
