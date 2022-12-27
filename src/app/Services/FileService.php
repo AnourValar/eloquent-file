@@ -186,8 +186,12 @@ class FileService
                     ->where('sha256', '=', $model->sha256)
                     ->first();
 
-                if ($check) {
+                if ($check && ($check->counter || $this->isSafe($check))) {
                     return $check;
+                }
+
+                if ($check) {
+                    $class::where('id', $check->id)->delete();
                 }
             }
 
@@ -317,5 +321,26 @@ class FileService
         if (! $passes) {
             throw (new ValidationException($validator))->replaceKey('file', $fileValidationKey);
         }
+    }
+
+    /**
+     * @param \AnourValar\EloquentFile\FilePhysical $filePhysical
+     * @return bool
+     */
+    private function isSafe(FilePhysical $filePhysical): bool
+    {
+        $files = array_merge([['disk' => $filePhysical->disk, 'path' => $filePhysical->path]], (array) $filePhysical->path_generate);
+
+        foreach ($files as $file) {
+            if (! mb_strlen((string) $file['path'])) {
+                continue;
+            }
+
+            if (! \Storage::disk($file['disk'])->exists($file['path'])) {
+                return false;
+            }
+        }
+
+        return true;
     }
 }

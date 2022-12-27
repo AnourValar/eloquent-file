@@ -61,6 +61,7 @@ class PrivateVisibility implements VisibilityInterface, DirectAccessInterface, P
             .mb_substr($filePhysical->sha256, 0, 2).'/'
             .mb_substr($filePhysical->sha256, 2, 2).'/'
             .mb_substr($filePhysical->sha256, 4, 2).'/'
+            //.$filePhysical->id.'_'
             .$filePhysical->sha256;
     }
 

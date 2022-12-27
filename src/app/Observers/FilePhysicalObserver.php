@@ -28,7 +28,7 @@ class FilePhysicalObserver
     public function deleted(\AnourValar\EloquentFile\FilePhysical $model)
     {
         foreach (array_merge([['disk' => $model->disk, 'path' => $model->path]], (array) $model->path_generate) as $item) {
-            if (! mb_strlen($item['path'])) {
+            if (! mb_strlen((string) $item['path'])) {
                 continue;
             }
 
