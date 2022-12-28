@@ -71,7 +71,7 @@ class FileVirtualObserver
         \App::make(\AnourValar\EloquentFile\Services\FileService::class)->lock($model->file_physical);
 
         $class = config('eloquent_file.models.file_virtual');
-        $linked = $class::where('file_physical_id', '=', $model->file_physical_id)->first() ? true : false;
+        $linked = $class::where('file_physical_id', '=', $model->file_physical_id)->select(['id'])->first() ? true : false;
 
         $class = config('eloquent_file.models.file_physical');
         $class::where('id', '=', $model->file_physical_id)->update(['linked' => $linked, 'updated_at' => now()]);
