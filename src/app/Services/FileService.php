@@ -186,12 +186,12 @@ class FileService
                     ->where('sha256', '=', $model->sha256)
                     ->first();
 
-                if ($check && ($check->counter || $this->isSafe($check))) {
+                if ($check && ($check->linked || $this->isSafe($check))) {
                     return $check;
                 }
 
                 if ($check) {
-                    $class::where('id', $check->id)->delete();
+                    $class::where('id', '=', $check->id)->delete();
                 }
             }
 

@@ -38,7 +38,7 @@ class OnZeroCommand extends Command
 
         $class = config('eloquent_file.models.file_physical');
         $collection = $class
-            ::where('counter', '=', 0)
+            ::where('linked', '=', false)
             ->where('updated_at', '<', $now) // index?
             ->select(['id', 'visibility', 'type', 'sha256'])
             ->cursor();
@@ -49,11 +49,11 @@ class OnZeroCommand extends Command
                 $fileService->lock($item);
                 $item = $item->fresh();
 
-                if ($item && ! $item->counter && $item->updated_at < $now) {
+                if ($item && ! $item->linked && $item->updated_at < $now) {
                     $item->getTypeHandler()->onZero($item);
                     $counter++;
 
-                    if ($item->exists && isset($item->counter)) {
+                    if ($item->exists && isset($item->linked)) {
                         throw new \RuntimeException('Incorrect onZero behaviour.');
                     }
                 }

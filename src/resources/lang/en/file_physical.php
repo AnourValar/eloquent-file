@@ -11,7 +11,7 @@ return [
         'sha256' => 'SHA256',
         'size' => 'Size (bytes)',
         'mime_type' => 'MIME-type',
-        'counter' => 'Counter',
+        'linked' => 'Linked',
         'build' => 'Build',
         'created_at' => 'Created at',
         'updated_at' => 'Updated at',

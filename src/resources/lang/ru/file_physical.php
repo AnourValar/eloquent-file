@@ -11,7 +11,7 @@ return [
         'sha256' => 'SHA256',
         'size' => 'Размер (байты)',
         'mime_type' => 'MIME-тип',
-        'counter' => 'Счётчик',
+        'linked' => 'Связанный',
         'build' => 'Билд',
         'created_at' => 'Дата создания',
         'updated_at' => 'Дата изменения',

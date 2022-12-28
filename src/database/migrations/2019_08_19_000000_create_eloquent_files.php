@@ -23,7 +23,7 @@ return new class extends Migration
             $table->string('sha256', 64)->nullable();
             $table->unsignedInteger('size')->nullable()->index();
             $table->string('mime_type', 100)->nullable();
-            $table->unsignedInteger('counter')->nullable()->index();
+            $table->boolean('linked')->nullable()->index();
             $table->unsignedTinyInteger('build')->nullable()->index();
             $table->timestamps();
 

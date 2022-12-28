@@ -71,10 +71,10 @@ class FileVirtualObserver
         \App::make(\AnourValar\EloquentFile\Services\FileService::class)->lock($model->file_physical);
 
         $class = config('eloquent_file.models.file_virtual');
-        $qty = $class::where('file_physical_id', '=', $model->file_physical_id)->count();
+        $linked = $class::where('file_physical_id', '=', $model->file_physical_id)->first() ? true : false;
 
         $class = config('eloquent_file.models.file_physical');
-        $class::where('id', '=', $model->file_physical_id)->update(['counter' => $qty, 'updated_at' => now()]);
+        $class::where('id', '=', $model->file_physical_id)->update(['linked' => $linked, 'updated_at' => now()]);
 
         \Atom::onCommit(function () use ($model) {
             event(new \AnourValar\EloquentFile\Events\FileVirtualChanged($model));
