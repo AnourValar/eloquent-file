@@ -93,7 +93,7 @@ class GenerateJob implements ShouldQueue, ShouldBeUnique
 
                 $this->cleanUp($filePhysical, $original)->fireEvents($filePhysical);
             } catch (\Illuminate\Validation\ValidationException $e) {
-                $this->fail();
+                $this->fail(); // no retry
                 throw \AnourValar\LaravelAtom\Exceptions\InternalValidationException::fromValidationException($e);
             }
         } catch (\Throwable $e) {
