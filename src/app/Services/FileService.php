@@ -227,7 +227,7 @@ class FileService
         if ($model->getTypeHandler() instanceof GenerateInterface) {
             \Atom::onCommit(
                 function () use ($model) {
-                    $model->getTypeHandler()->dispatch($model);
+                    $model->getTypeHandler()->dispatchGenerate($model);
                 },
                 $model->getConnectionName()
             );
@@ -240,7 +240,7 @@ class FileService
      * Get the lock
      *
      * @param \AnourValar\EloquentFile\FilePhysical $filePhysical
-     * @throws \LogicException
+     * @throws \RuntimeException
      * @return void
      */
     public function lock(?FilePhysical $filePhysical): void
@@ -249,8 +249,12 @@ class FileService
             return;
         }
 
+        if (! isset($filePhysical->id) && $filePhysical->exists) {
+            throw new \RuntimeException('Incorrect usage.');
+        }
+
         if (! isset($filePhysical->visibility, $filePhysical->type, $filePhysical->sha256)) {
-            throw new \LogicException('Incorrect usage.');
+            throw new \RuntimeException('Incorrect usage.');
         }
 
         \Atom::lockFilePhysical($filePhysical->visibility, $filePhysical->type, $filePhysical->sha256);

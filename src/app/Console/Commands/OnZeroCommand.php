@@ -23,11 +23,9 @@ class OnZeroCommand extends Command
     /**
      * Execute the console command.
      *
-     * @param \AnourValar\EloquentFile\Services\FileService $fileService
-     * @throws \RuntimeException
      * @return int
      */
-    public function handle(\AnourValar\EloquentFile\Services\FileService $fileService)
+    public function handle()
     {
         $days = (int) $this->option('days');
         if ($days > 0) {
@@ -39,31 +37,20 @@ class OnZeroCommand extends Command
         $class = config('eloquent_file.models.file_physical');
         $collection = $class
             ::where('linked', '=', false)
-            ->where('updated_at', '<', $now) // index?
+            ->where('updated_at', '<', $now)
             ->select(['id', 'visibility', 'type', 'sha256'])
             ->cursor();
 
         $counter = 0;
         foreach ($collection as $item) {
-            \DB::transaction(function () use ($fileService, $item, $now, &$counter) {
-                $fileService->lock($item);
-                $item = $item->fresh();
-
-                if ($item && ! $item->linked && $item->updated_at < $now) {
-                    $item->getTypeHandler()->onZero($item);
-                    $counter++;
-
-                    if ($item->exists && isset($item->linked)) {
-                        throw new \RuntimeException('Incorrect onZero behaviour.');
-                    }
-                }
-            });
+            $item->getTypeHandler()->dispatchOnZero($item);
+            $counter++;
         }
 
         if (! $counter) {
-            $this->info('Nothing to handle.');
+            $this->info('No jobs.');
         } else {
-            $this->info("$counter file(s) handled.");
+            $this->info("$counter job(s) created.");
         }
         return Command::SUCCESS;
     }

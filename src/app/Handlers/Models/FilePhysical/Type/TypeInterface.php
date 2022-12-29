@@ -22,4 +22,12 @@ interface TypeInterface
      * @return void
      */
     public function onZero(FilePhysical $filePhysical): void;
+
+    /**
+     * Send OnZeroJob to a queue
+     *
+     * @param \AnourValar\EloquentFile\FilePhysical $filePhysical
+     * @return void
+     */
+    public function dispatchOnZero(FilePhysical $filePhysical): void;
 }

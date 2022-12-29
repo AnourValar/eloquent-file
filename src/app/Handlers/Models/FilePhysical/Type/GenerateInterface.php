@@ -31,10 +31,10 @@ interface GenerateInterface
     public function keepOriginal(FilePhysical $filePhysical): bool;
 
     /**
-     * Send job to a queue
+     * Send GenerateJob to a queue
      *
      * @param \AnourValar\EloquentFile\FilePhysical $filePhysical
      * @return void
      */
-    public function dispatch(FilePhysical $filePhysical): void;
+    public function dispatchGenerate(FilePhysical $filePhysical): void;
 }

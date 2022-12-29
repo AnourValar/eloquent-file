@@ -80,11 +80,11 @@ class ImageType extends SimpleType implements GenerateInterface
 
     /**
      * {@inheritDoc}
-     * @see \AnourValar\EloquentFile\Handlers\Models\FilePhysical\Type\GenerateInterface::dispatch()
+     * @see \AnourValar\EloquentFile\Handlers\Models\FilePhysical\Type\GenerateInterface::dispatchGenerate()
      */
-    public function dispatch(FilePhysical $filePhysical): void
+    public function dispatchGenerate(FilePhysical $filePhysical): void
     {
-        \AnourValar\EloquentFile\Jobs\FilePhysicalGenerateJob::dispatch($filePhysical);
+        \AnourValar\EloquentFile\Jobs\GenerateJob::dispatch($filePhysical);
     }
 
     /**

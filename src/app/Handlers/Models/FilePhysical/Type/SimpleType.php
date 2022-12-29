@@ -27,4 +27,13 @@ class SimpleType implements TypeInterface
             throw \AnourValar\LaravelAtom\Exceptions\InternalValidationException::fromValidationException($e);
         }
     }
+
+    /**
+     * {@inheritDoc}
+     * @see \AnourValar\EloquentFile\Handlers\Models\FilePhysical\Type\TypeInterface::dispatchOnZero()
+     */
+    public function dispatchOnZero(FilePhysical $filePhysical): void
+    {
+        \AnourValar\EloquentFile\Jobs\OnZeroJob::dispatch($filePhysical);
+    }
 }

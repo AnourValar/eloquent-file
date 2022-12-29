@@ -46,7 +46,7 @@ class RegenerateCommand extends Command
                     continue;
                 }
 
-                $handler->dispatch($item);
+                $handler->dispatchGenerate($item);
             }
         }
 

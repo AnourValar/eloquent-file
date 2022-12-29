@@ -10,21 +10,14 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 
-class FilePhysicalGenerateJob implements ShouldQueue, ShouldBeUnique
+class GenerateJob implements ShouldQueue, ShouldBeUnique
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+    use Dispatchable, InteractsWithQueue, Queueable;
 
     /**
      * @var \AnourValar\EloquentFile\FilePhysical
      */
-    private $filePhysical;
-
-    /**
-     * Delete the job if its models no longer exist.
-     *
-     * @var bool
-     */
-    public $deleteWhenMissingModels = true;
+    private FilePhysical $filePhysical;
 
     /**
      * Create a new job instance.
@@ -54,26 +47,27 @@ class FilePhysicalGenerateJob implements ShouldQueue, ShouldBeUnique
      */
     public function uniqueId()
     {
-        return $this->filePhysical->id;
+        return (string) $this->filePhysical->id;
     }
 
     /**
      * Execute the job.
      *
+     * @param \AnourValar\EloquentFile\Services\FileService $fileService
      * @return void
      */
-    public function handle()
+    public function handle(\AnourValar\EloquentFile\Services\FileService $fileService)
     {
         try {
-            $filePhysical = \DB::connection($this->filePhysical->getConnectionName())->transaction(function () {
-                $build = $this->filePhysical->getTypeHandler()->getBuild($this->filePhysical->type_details);
-
-                \App::make(\AnourValar\EloquentFile\Services\FileService::class)->lock($this->filePhysical);
+            $filePhysical = \DB::connection($this->filePhysical->getConnectionName())->transaction(function () use ($fileService) {
+                $fileService->lock($this->filePhysical);
                 $filePhysical = $this->filePhysical->fresh();
 
                 if (! $filePhysical) {
                     return false;
                 }
+
+                $build = $filePhysical->getTypeHandler()->getBuild($filePhysical->type_details);
                 if ($filePhysical->build == $build) {
                     return false;
                 }
@@ -112,7 +106,7 @@ class FilePhysicalGenerateJob implements ShouldQueue, ShouldBeUnique
     /**
      * @param \AnourValar\EloquentFile\FilePhysical $filePhysical
      * @param array $original
-     * @return \AnourValar\EloquentFile\Jobs\FilePhysicalGenerateJob
+     * @return self
      */
     private function cleanUp(FilePhysical &$filePhysical, array $original): self
     {
@@ -141,7 +135,7 @@ class FilePhysicalGenerateJob implements ShouldQueue, ShouldBeUnique
 
     /**
      * @param \AnourValar\EloquentFile\FilePhysical $filePhysical
-     * @return \AnourValar\EloquentFile\Jobs\FilePhysicalGenerateJob
+     * @return self
      */
     private function fireEvents(FilePhysical $filePhysical): self
     {
