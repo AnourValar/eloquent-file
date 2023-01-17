@@ -228,7 +228,7 @@ class FileService
                         ->where('id', '!=', $model->id)
                         ->first();
 
-                    if (! $check || ! $model->getVisibilityHandler()->preventDuplicates()) {
+                    if ($model->path != $check?->path) {
                         $model->delete(); // for observers
                     }
                 });
