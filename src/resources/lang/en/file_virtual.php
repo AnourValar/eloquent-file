@@ -9,7 +9,6 @@ return [
         'name' => 'Name',
         'filename' => 'Filename',
         'content_type' => 'Content type',
-        'size' => 'Size (bytes)',
         'title' => 'Title',
         'weight' => 'Weight',
         'details' => 'Details',

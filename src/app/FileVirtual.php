@@ -98,7 +98,6 @@ abstract class FileVirtual extends Model
         'name' => 'string',
         'filename' => 'string',
         'content_type' => 'string',
-        'size' => 'integer',
         'title' => 'string',
         'weight' => 'integer',
         'details' => 'json',
@@ -135,7 +134,7 @@ abstract class FileVirtual extends Model
      * @var array
      */
     protected $computed = [
-        'size',
+
     ];
 
     /**
@@ -431,6 +430,24 @@ abstract class FileVirtual extends Model
                 }
 
                 return $handler->proxyUrl($this);
+            }
+        );
+    }
+
+    /**
+     * Virtual attribute: size
+     *
+     * @return \Illuminate\Database\Eloquent\Casts\Attribute
+     */
+    protected function size(): Attribute
+    {
+        return Attribute::make(
+            get: function ($query) {
+                if (! $this->relationLoaded('filePhysical')) {
+                    throw new \LogicException('The filePhysical relation must be eager loaded.');
+                }
+
+                return $this->filePhysical->size;
             }
         );
     }

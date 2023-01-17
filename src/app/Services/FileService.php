@@ -217,8 +217,21 @@ class FileService
         }
 
         \Atom::onRollBack(
-            function () use ($model) {
-                $model->delete(); // for observers
+            function () use ($model, $class) {
+                \DB::transaction(function () use ($model, $class) {
+                    $this->lock($model);
+
+                    $check = $class
+                        ::where('visibility', '=', $model->visibility)
+                        ->where('type', '=', $model->type)
+                        ->where('sha256', '=', $model->sha256)
+                        ->where('id', '!=', $model->id)
+                        ->first();
+
+                    if (! $check || ! $model->getVisibilityHandler()->preventDuplicates()) {
+                        $model->delete(); // for observers
+                    }
+                });
             },
             $model->getConnectionName()
         );

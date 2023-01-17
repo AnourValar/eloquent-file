@@ -38,7 +38,6 @@ return new class extends Migration
             $table->string('name', 40)->index();
             $table->string('filename', 100);
             $table->string('content_type', 100)->nullable();
-            $table->unsignedInteger('size');
             $table->string('title', 150)->nullable();
             $table->unsignedSmallInteger('weight')->index();
             $table->jsonb('details')->nullable();

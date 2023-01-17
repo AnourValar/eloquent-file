@@ -13,9 +13,5 @@ php artisan vendor:publish --tag=AnourValar\EloquentFile\Providers\EloquentFileS
 ## Prune command
 
 ```php
-$schedule
-    ->command('eloquent-file:on-zero --days=10')
-    ->dailyAt('00:30')
-    ->withoutOverlapping()
-    ->onOneServer();
+$schedule->command('eloquent-file:on-zero --days=10')->dailyAt('00:30')->onOneServer();
 ```
