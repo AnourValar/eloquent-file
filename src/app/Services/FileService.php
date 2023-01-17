@@ -226,9 +226,10 @@ class FileService
                         ->where('type', '=', $model->type)
                         ->where('sha256', '=', $model->sha256)
                         ->where('id', '!=', $model->id)
+                        ->where('path', '=', $model->path)
                         ->first();
 
-                    if ($model->path != $check?->path) {
+                    if (! $check) {
                         $model->delete(); // for observers
                     }
                 });
