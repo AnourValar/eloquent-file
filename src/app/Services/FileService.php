@@ -226,7 +226,7 @@ class FileService
                         ->where('type', '=', $model->type)
                         ->where('sha256', '=', $model->sha256)
                         ->where('id', '!=', $model->id)
-                        ->where('path', '=', $model->path)
+                        ->where('path', '=', $model->path) // case sensitive must not be matter
                         ->first();
 
                     if (! $check) {

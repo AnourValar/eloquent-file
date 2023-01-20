@@ -61,13 +61,46 @@ trait SeederTrait
      * @param string|null string $mime
      * @return void
      */
-    protected function createFromList(FileVirtual &$fileVirtual, Model $entitable, string $path, array $files, string $mime = null): void
-    {
+    protected function createFromList(
+        FileVirtual &$fileVirtual,
+        Model $entitable,
+        string $path,
+        array $files = [],
+        string $mime = null
+    ): void {
         static $cache;
+        static $cacheFiles;
+
+        if (! $files) {
+            if (! isset($cacheFiles[$path])) {
+                foreach (scandir($path) as $item) {
+                    if (! in_array($item, ['.', '..', '.gitignore']) && stripos($item, '.')) {
+                        $cacheFiles[$path][] = $item;
+                    }
+                }
+            }
+
+            $files = $cacheFiles[$path];
+        }
 
         $files = array_values($files);
         shuffle($files);
         $file = $path . $files[0];
+
+        if (! $mime) {
+            $mime = match( mb_strtolower(pathinfo($file, PATHINFO_EXTENSION)) ) {
+                'jpg' => 'image/jpeg',
+                'jpeg' => 'image/jpeg',
+                'png' => 'image/png',
+                'gif' => 'image/gif',
+                'pdf' => 'application/pdf',
+                'xlsx' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                'docx' => 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+                'rar' => 'application/vnd.rar',
+                'zip' => 'application/zip',
+                default => null,
+            };
+        }
 
         $fileVirtual->entity = $entitable->getMorphClass();
         $fileVirtual->entity_id = $entitable->getKey();
