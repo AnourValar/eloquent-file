@@ -133,7 +133,9 @@ class FileService
      */
     public function replicate(FileVirtual $fileVirtual, array $data, $prefix = null): FileVirtual
     {
-        $this->lock($fileVirtual->filePhysical);
+        if (! $fileVirtual->filePhysical->linked) {
+            $this->lock($fileVirtual->filePhysical);
+        }
 
         return tap(
             $fileVirtual
