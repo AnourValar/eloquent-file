@@ -42,9 +42,7 @@ class FileVirtualObserver
     public function updated(FileVirtual $model)
     {
         if ($model->isDirty('weight')) {
-            \Atom::onCommit(function () use ($model) {
-                event(new \AnourValar\EloquentFile\Events\FileVirtualChanged($model));
-            }, $model->getConnectionName());
+            event(new \AnourValar\EloquentFile\Events\FileVirtualChanged($model));
         }
     }
 
@@ -67,18 +65,16 @@ class FileVirtualObserver
     {
         \App::make(\AnourValar\EloquentFile\Services\FileService::class)->lock($model->filePhysical);
 
-        $class = config('eloquent_file.models.file_virtual');
         if ($model->exists) {
             $linked = true;
         } else {
+            $class = config('eloquent_file.models.file_virtual');
             $linked = $class::where('file_physical_id', '=', $model->file_physical_id)->select(['id'])->first() ? true : false;
         }
 
         $class = config('eloquent_file.models.file_physical');
         $class::where('id', '=', $model->file_physical_id)->update(['linked' => $linked, 'updated_at' => now()]);
 
-        \Atom::onCommit(function () use ($model) {
-            event(new \AnourValar\EloquentFile\Events\FileVirtualChanged($model));
-        }, $model->getConnectionName());
+        event(new \AnourValar\EloquentFile\Events\FileVirtualChanged($model));
     }
 }

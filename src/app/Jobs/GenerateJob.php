@@ -143,9 +143,7 @@ class GenerateJob implements ShouldQueue, ShouldBeUnique
         $class = config('eloquent_file.models.file_virtual');
 
         foreach ($class::where('file_physical_id', '=', $filePhysical->id)->get() as $item) {
-            \Atom::onCommit(function () use ($item) {
-                event(new \AnourValar\EloquentFile\Events\FileVirtualChanged($item));
-            }, $filePhysical->getConnectionName());
+            event(new \AnourValar\EloquentFile\Events\FileVirtualChanged($item));
         }
 
         return $this;
