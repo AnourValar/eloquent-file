@@ -57,7 +57,8 @@ return [
                         'title' => 'eloquent-file::file_virtual.entity.user.name.avatar',
                         'policy' => [
                             'bind' => AnourValar\EloquentFile\Handlers\Models\FileVirtual\Entity\Policy\UniquePolicy::class,
-                            'limit' => 0,
+                            'limit_qty' => 0,
+                            'limit_size' => 0,
                         ],
                         'visibility' => 'public',
                         'types' => ['*' => 'image'],

@@ -30,7 +30,8 @@ return [
     ],
 
     'entity_handlers' => [
-        'over_limit' => 'Number of files ":name" cannot exceed :limit.',
+        'over_limit_qty' => 'Number of files ":name" cannot exceed :limit.',
+        'over_limit_size' => 'Size of files ":name" cannot exceed :limit kb.',
 
         'user' => [
             'entity_id_not_exists' => 'The user does not exist.',

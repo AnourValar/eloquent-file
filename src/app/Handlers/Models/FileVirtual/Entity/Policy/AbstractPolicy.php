@@ -13,18 +13,37 @@ abstract class AbstractPolicy implements PolicyInterface
      */
     public function validate(FileVirtual $fileVirtual, \Illuminate\Validation\Validator $validator): void
     {
-        if (empty($fileVirtual->name_details['policy']['limit'])) {
-            return;
+        $collection = null;
+
+        if (! empty($fileVirtual->name_details['policy']['limit_qty'])) {
+            $collection = $this->getOriginalCollection($fileVirtual);
+
+            if ($collection->count() + 1 > $fileVirtual->name_details['policy']['limit_qty']) {
+                $validator->errors()->add(
+                    'entity_id',
+                    trans(
+                        'eloquent-file::file_virtual.entity_handlers.over_limit_qty',
+                        ['name' => $fileVirtual->name_title, 'limit' => $fileVirtual->name_details['policy']['limit_qty']]
+                    )
+                );
+            }
         }
 
-        if ($this->getOriginalCollection($fileVirtual)->count() + 1 > $fileVirtual->name_details['policy']['limit']) {
-            $validator->errors()->add(
-                'entity_id',
-                trans(
-                    'eloquent-file::file_virtual.entity_handlers.over_limit',
-                    ['name' => $fileVirtual->name_title, 'limit' => $fileVirtual->name_details['policy']['limit']]
-                )
-            );
+        if (! empty($fileVirtual->name_details['policy']['limit_size'])) {
+            if (! isset($collection)) {
+                $collection = $this->getOriginalCollection($fileVirtual);
+            }
+
+            $filePhysical = \App\FilePhysical::find($fileVirtual->file_physical_id);
+            if (($collection->sum('size') + $filePhysical->size) / 1024 > $fileVirtual->name_details['policy']['limit_size']) {
+                $validator->errors()->add(
+                    'entity_id',
+                    trans(
+                        'eloquent-file::file_virtual.entity_handlers.over_limit_size',
+                        ['name' => $fileVirtual->name_title, 'limit' => $fileVirtual->name_details['policy']['limit_size']]
+                    )
+                );
+            }
         }
     }
 
@@ -37,7 +56,8 @@ abstract class AbstractPolicy implements PolicyInterface
         $class = config('eloquent_file.models.file_virtual');
 
         return $class
-            ::where('entity', '=', $fileVirtual->entity)
+            ::with('filePhysical')
+            ->where('entity', '=', $fileVirtual->entity)
             ->where('entity_id', '=', $fileVirtual->entity_id)
             ->where('name', '=', $fileVirtual->name)
             ->where('id', '!=', $fileVirtual->id)

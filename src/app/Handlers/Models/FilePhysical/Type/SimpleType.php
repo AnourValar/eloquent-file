@@ -21,11 +21,7 @@ class SimpleType implements TypeInterface
      */
     public function onZero(FilePhysical $filePhysical): void
     {
-        try {
-            $filePhysical->validateDelete()->delete();
-        } catch (\Illuminate\Validation\ValidationException $e) {
-            throw \AnourValar\LaravelAtom\Exceptions\InternalValidationException::fromValidationException($e);
-        }
+        $filePhysical->validateDelete()->delete();
     }
 
     /**

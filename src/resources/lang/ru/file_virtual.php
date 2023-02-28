@@ -30,7 +30,8 @@ return [
     ],
 
     'entity_handlers' => [
-        'over_limit' => 'Кол-во файлов ":name" не может превышать :limit.',
+        'over_limit_qty' => 'Кол-во файлов ":name" не может превышать :limit.',
+        'over_limit_size' => 'Размер файлов ":name" не может превышать :limit кб.',
 
         'user' => [
             'entity_id_not_exists' => 'Несуществующий пользователь.',
