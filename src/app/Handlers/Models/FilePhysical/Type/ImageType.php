@@ -101,15 +101,4 @@ class ImageType extends SimpleType implements GenerateInterface
 
         return $filePhysical->path . $suffix;
     }
-
-    /**
-     * @param array $disks
-     * @return string
-     */
-    protected function getAltDisk(array $disks): string
-    {
-        shuffle($disks);
-
-        return $disks[0];
-    }
 }
