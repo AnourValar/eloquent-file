@@ -101,13 +101,14 @@ trait SeederTrait
                 default => null,
             };
         }
+        $cacheKey = implode('|', [$file, $mime, get_class($entitable), $fileVirtual->name]);
 
         $fileVirtual->entity = $entitable->getMorphClass();
         $fileVirtual->entity_id = $entitable->getKey();
         $fileVirtual->forceFill($fileVirtual->getNameHandler()->generateFake($fileVirtual->entity, $fileVirtual->name, $entitable));
 
-        if (isset($cache[$file.$mime])) {
-            $fileVirtual->forceFill($cache[$file.$mime])->validate()->save();
+        if (isset($cache[$cacheKey])) {
+            $fileVirtual->forceFill($cache[$cacheKey])->validate()->save();
             return;
         }
 
@@ -119,6 +120,6 @@ trait SeederTrait
             );
         });
 
-        $cache[$file.$mime] = $fileVirtual->only(['file_physical_id', 'filename', 'content_type']);
+        $cache[$cacheKey] = $fileVirtual->only(['file_physical_id', 'filename', 'content_type']);
     }
 }
