@@ -68,9 +68,7 @@ trait SeederTrait
         array $files = [],
         string $mime = null
     ): void {
-        static $cache;
         static $cacheFiles;
-
         if (! $files) {
             if (! isset($cacheFiles[$path])) {
                 foreach (scandir($path) as $item) {
@@ -101,6 +99,8 @@ trait SeederTrait
                 default => null,
             };
         }
+
+        $cache = \Cache::driver('array')->get(__METHOD__);
         $cacheKey = implode('|', [$file, $mime, get_class($entitable), $fileVirtual->name]);
 
         $fileVirtual->entity = $entitable->getMorphClass();
@@ -121,5 +121,6 @@ trait SeederTrait
         });
 
         $cache[$cacheKey] = $fileVirtual->only(['file_physical_id', 'filename', 'content_type']);
+        \Cache::driver('array')->put(__METHOD__, $cache);
     }
 }
