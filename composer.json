@@ -6,7 +6,7 @@
     "license": "MIT",
     "require": {
         "php": "^8.0",
-        "laravel/framework": "^9.0",
+        "laravel/framework": "^9.0|^10.0",
         "anourvalar/eloquent-validation": "^3.11",
         "anourvalar/laravel-atom": "^2.9",
         "intervention/image": "^2.7"
