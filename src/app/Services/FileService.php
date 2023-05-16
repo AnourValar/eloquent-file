@@ -241,12 +241,7 @@ class FileService
 
         // Side File Generation
         if ($model->getTypeHandler() instanceof GenerateInterface) {
-            \Atom::onCommit(
-                function () use ($model) {
-                    $model->getTypeHandler()->dispatchGenerate($model);
-                },
-                $model->getConnectionName()
-            );
+            $model->getTypeHandler()->dispatchGenerate($model);
         }
 
         return $model;

@@ -187,9 +187,9 @@ abstract class FileVirtual extends Model
     public function saveRules()
     {
         return [
-            'file_physical_id' => ['required', 'integer'],
+            'file_physical_id' => ['required', 'integer', 'min:1'],
             'entity' => ['required', 'max:30', 'config:eloquent_file.file_virtual.entity'],
-            'entity_id' => ['required', 'integer'],
+            'entity_id' => ['required', 'integer', 'min:1'],
             'name' => ['required', 'max:40'],
             'filename' => ['required', 'min:1', 'max:100'],
             'content_type' => ['nullable', 'max:100'],

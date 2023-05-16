@@ -84,7 +84,12 @@ class ImageType extends SimpleType implements GenerateInterface
      */
     public function dispatchGenerate(FilePhysical $filePhysical): void
     {
-        \AnourValar\EloquentFile\Jobs\GenerateJob::dispatch($filePhysical);
+        \Atom::onCommit(
+            function () use ($filePhysical) {
+                \AnourValar\EloquentFile\Jobs\GenerateJob::dispatch($filePhysical);
+            },
+            $filePhysical->getConnectionName()
+        );
     }
 
     /**
