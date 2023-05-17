@@ -59,7 +59,7 @@ abstract class FileVirtual extends Model
     ];
 
     /**
-     * '',[] => null convertation
+     * '',[] => null convert
      *
      * @var array
      */
@@ -109,9 +109,9 @@ abstract class FileVirtual extends Model
     /**
      * Mutators for nested JSON.
      * jsonb - sort an array by key
-     * nullable - '',[] => null convertation (nested)
+     * nullable - '',[] => null convert (nested)
      * purges - remove null elements (nested)
-     * types - set the type of a value (nested)
+     * types - set the type of value (nested)
      * sorts - sort an array (nested)
      * lists - drop array keys (nested)
      *
