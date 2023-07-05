@@ -9,9 +9,18 @@ class UserEntity implements EntityInterface
 {
     /**
      * {@inheritDoc}
-     * @see \AnourValar\EloquentFile\Handlers\Models\FileVirtual\Entity\EntityInterface::canAccess()
+     * @see \AnourValar\EloquentFile\Handlers\Models\FileVirtual\Entity\EntityInterface::canUpload()
      */
-    public function canAccess(FileVirtual $fileVirtual, ?Authenticatable $user): bool
+    public function canUpload(FileVirtual $fileVirtual, ?Authenticatable $user): bool
+    {
+        return true;
+    }
+
+    /**
+     * {@inheritDoc}
+     * @see \AnourValar\EloquentFile\Handlers\Models\FileVirtual\Entity\EntityInterface::canDownload()
+     */
+    public function canDownload(FileVirtual $fileVirtual, ?Authenticatable $user): bool
     {
         return true;
     }

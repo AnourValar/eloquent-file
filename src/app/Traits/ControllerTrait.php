@@ -21,11 +21,11 @@ trait ControllerTrait
 
         $visibilityHandler = $fileVirtual->filePhysical->getVisibilityHandler();
         if (! $visibilityHandler instanceof ProxyAccessInterface) {
-            throw new \Illuminate\Auth\Access\AuthorizationException(trans('eloquent-file::auth.proxy.unsupported'));
+            throw new \Illuminate\Auth\Access\AuthorizationException(trans('eloquent-file::auth.download.unsupported'));
         }
 
-        if (! $fileVirtual->getEntityHandler()->canAccess($fileVirtual, $request->user())) {
-            throw new \Illuminate\Auth\Access\AuthorizationException(trans('eloquent-file::auth.proxy.not_authorized'));
+        if (! $fileVirtual->getEntityHandler()->canDownload($fileVirtual, $request->user())) {
+            throw new \Illuminate\Auth\Access\AuthorizationException(trans('eloquent-file::auth.download.not_authorized'));
         }
 
         if ($download) {
@@ -49,11 +49,11 @@ trait ControllerTrait
 
         $visibilityHandler = $fileVirtual->filePhysical->getVisibilityHandler();
         if (! $visibilityHandler instanceof ProxyAccessInterface) {
-            throw new \Illuminate\Auth\Access\AuthorizationException(trans('eloquent-file::auth.proxy.unsupported'));
+            throw new \Illuminate\Auth\Access\AuthorizationException(trans('eloquent-file::auth.download.unsupported'));
         }
 
         if (! $request->hasValidSignature()) {
-            throw new \Illuminate\Auth\Access\AuthorizationException(trans('eloquent-file::auth.proxy.invalid'));
+            throw new \Illuminate\Auth\Access\AuthorizationException(trans('eloquent-file::auth.download.invalid'));
         }
 
         if ($download) {
@@ -113,17 +113,23 @@ trait ControllerTrait
         $files = $request->file();
 
         if (! count($files)) {
-            throw new \AnourValar\EloquentValidation\Exceptions\ValidationException(trans('eloquent-file::auth.proxy.file_missed'));
+            throw new \AnourValar\EloquentValidation\Exceptions\ValidationException(trans('eloquent-file::auth.upload.file_missed'));
         }
 
         if (count($files) > 1) {
-            throw new \AnourValar\EloquentValidation\Exceptions\ValidationException(trans('eloquent-file::auth.proxy.file_multi'));
+            throw new \AnourValar\EloquentValidation\Exceptions\ValidationException(trans('eloquent-file::auth.upload.file_multi'));
         }
+
+        $key = array_key_last($files);
 
 
         // Upload
-        $key = array_key_last($files);
-        \App::make(\AnourValar\EloquentFile\Services\FileService::class)->upload($files[$key], $fileVirtual, $key);
+        $acl = function ($fileVirtual) use ($request) {
+            if (! $fileVirtual->getEntityHandler()->canUpload($fileVirtual, $request->user())) {
+                throw new \Illuminate\Auth\Access\AuthorizationException(trans('eloquent-file::auth.upload.not_authorized'));
+            }
+        };
+        \App::make(\AnourValar\EloquentFile\Services\FileService::class)->upload($files[$key], $fileVirtual, $key, $acl);
 
         return $fileVirtual;
     }

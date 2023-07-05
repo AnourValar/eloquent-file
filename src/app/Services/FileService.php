@@ -39,21 +39,22 @@ class FileService
     }
 
     /**
-     * Upload file and create a fileVirtual
+     * Upload a file
      *
-     * @param \Illuminate\Http\UploadedFile $file
+     * @param \Illuminate\Http\UploadedFile|null $file
      * @param \AnourValar\EloquentFile\FileVirtual $fileVirtual
      * @param string $fileValidationKey
-     * @throws \LogicException
+     * @param callable|null $acl
+     * @throws \RuntimeException
      * @return void
      */
-    public function upload(?UploadedFile $file, FileVirtual &$fileVirtual, string $fileValidationKey = null): void
+    public function upload(?UploadedFile $file, FileVirtual &$fileVirtual, string $fileValidationKey = null, callable $acl = null): void
     {
         if (! is_null($fileVirtual->file_physical_id)) {
-            throw new \LogicException('Attribute "file_physical_id" must be null.');
+            throw new \RuntimeException('Attribute "file_physical_id" must be null.');
         }
         if ($fileVirtual->exists) {
-            throw new \LogicException('FileVirtual must not be persisted.');
+            throw new \RuntimeException('FileVirtual must not be persisted.');
         }
 
         $visibility = null;
@@ -86,10 +87,7 @@ class FileService
             }
         }
 
-        $filePhysical = $this->uploadPhysical($file, $visibility, $type, $fileValidationKey, $title);
-        $fileVirtual->file_physical_id = $filePhysical->id;
-
-        $this->link($fileVirtual, $file);
+        $this->handleUpload($fileVirtual, $file, $visibility, $type, $fileValidationKey, $title, $acl);
     }
 
     /**
@@ -146,17 +144,48 @@ class FileService
     }
 
     /**
-     * Upload a file
+     * Get the lock
      *
-     * @param \Illuminate\Http\UploadedFile $file
+     * @param \AnourValar\EloquentFile\FilePhysical $filePhysical
+     * @throws \RuntimeException
+     * @return void
+     */
+    public function lock(?FilePhysical $filePhysical): void
+    {
+        if (! $filePhysical) {
+            return;
+        }
+
+        if (! isset($filePhysical->id) && $filePhysical->exists) {
+            throw new \RuntimeException('Incorrect usage.');
+        }
+
+        if (! isset($filePhysical->visibility, $filePhysical->type, $filePhysical->sha256)) {
+            throw new \RuntimeException('Incorrect usage.');
+        }
+
+        \Atom::lockFilePhysical($filePhysical->visibility, $filePhysical->type, $filePhysical->sha256);
+    }
+
+    /**
+     * @param \AnourValar\EloquentFile\FileVirtual $fileVirtual
+     * @param \Illuminate\Http\UploadedFile|null $file
      * @param mixed $visibility
      * @param mixed $type
-     * @param string $fileValidationKey
-     * @param string $title
-     * @return \AnourValar\EloquentFile\FilePhysical
+     * @param string|null $fileValidationKey
+     * @param string|null $title
+     * @param callable|null $acl
+     * @return void
      */
-    public function uploadPhysical(?UploadedFile $file, $visibility, $type, string $fileValidationKey = null, string $title = null): FilePhysical
-    {
+    private function handleUpload(
+        FileVirtual &$fileVirtual,
+        ?UploadedFile $file,
+        $visibility,
+        $type,
+        ?string $fileValidationKey,
+        ?string $title,
+        ?callable $acl
+    ): void {
         $class = config('eloquent_file.models.file_physical');
         $model = new $class;
 
@@ -189,7 +218,8 @@ class FileService
                     ->first();
 
                 if ($check && ($check->linked || $this->isSafe($check))) {
-                    return $check;
+                    $this->link($fileVirtual, $check, $file, $fileValidationKey, $acl);
+                    return;
                 }
 
                 if ($check) {
@@ -210,6 +240,7 @@ class FileService
 
         // Validation & save
         $model->validate($fileValidationKey)->save();
+        $this->link($fileVirtual, $model, $file, $fileValidationKey, $acl);
 
         // Store file
         if ($model->getVisibilityHandler() instanceof AdapterInterface) {
@@ -243,56 +274,38 @@ class FileService
         if ($model->getTypeHandler() instanceof GenerateInterface) {
             $model->getTypeHandler()->dispatchGenerate($model);
         }
-
-        return $model;
     }
 
     /**
-     * Get the lock
-     *
-     * @param \AnourValar\EloquentFile\FilePhysical $filePhysical
-     * @throws \RuntimeException
+     * @param FileVirtual $fileVirtual
+     * @param FilePhysical $filePhysical
+     * @param UploadedFile $file
+     * @param string $fileValidationKey
+     * @param callable $acl
      * @return void
      */
-    public function lock(?FilePhysical $filePhysical): void
-    {
-        if (! $filePhysical) {
-            return;
+    private function link(
+        FileVirtual &$fileVirtual,
+        FilePhysical $filePhysical,
+        UploadedFile $file,
+        ?string $fileValidationKey,
+        ?callable $acl
+    ): void {
+        $fileVirtual->file_physical_id = $filePhysical->id;
+
+        if (is_null($fileVirtual->filename)) {
+            $fileVirtual->filename = mb_substr($file->getClientOriginalName(), -100);
         }
 
-        if (! isset($filePhysical->id) && $filePhysical->exists) {
-            throw new \RuntimeException('Incorrect usage.');
+        if (is_null($fileVirtual->content_type)) {
+            $fileVirtual->content_type = mb_strtolower((string) $file->getMimeType());
         }
 
-        if (! isset($filePhysical->visibility, $filePhysical->type, $filePhysical->sha256)) {
-            throw new \RuntimeException('Incorrect usage.');
+        $fileVirtual->validate($fileValidationKey);
+        if ($acl) {
+            $acl($fileVirtual);
         }
-
-        \Atom::lockFilePhysical($filePhysical->visibility, $filePhysical->type, $filePhysical->sha256);
-    }
-
-    /**
-     * Refill and create a fileVirtual
-     *
-     * @param \AnourValar\EloquentFile\FileVirtual $fileVirtual
-     * @param \Illuminate\Http\UploadedFile $file
-     * @return void
-     */
-    private function link(FileVirtual &$fileVirtual, UploadedFile $file = null): void
-    {
-        // Refill
-        if ($file) {
-            if (is_null($fileVirtual->filename)) {
-                $fileVirtual->filename = mb_substr($file->getClientOriginalName(), -100);
-            }
-
-            if (is_null($fileVirtual->content_type)) {
-                $fileVirtual->content_type = mb_strtolower((string) $file->getMimeType());
-            }
-        }
-
-        // Validation & save
-        $fileVirtual->validate()->save();
+        $fileVirtual->save();
     }
 
     /**

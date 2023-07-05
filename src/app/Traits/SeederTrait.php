@@ -113,7 +113,7 @@ trait SeederTrait
         }
 
         $class = config('eloquent_file.models.file_physical');
-        \DB::connection((new $class)->getConnectionName())->transaction(function () use ($fileVirtual, $file, $mime) {
+        \DB::connection((new $class)->getConnectionName())->transaction(function () use (&$fileVirtual, $file, $mime) {
             \App::make(\AnourValar\EloquentFile\Services\FileService::class)->upload(
                 new \Illuminate\Http\UploadedFile($file, basename($file), $mime, null, true),
                 $fileVirtual

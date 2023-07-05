@@ -8,10 +8,8 @@ return new class extends Migration
 {
     /**
      * Run the migrations.
-     *
-     * @return void
      */
-    public function up()
+    public function up(): void
     {
         Schema::connection(null)->create('file_physicals', function (Blueprint $table) {
             $table->id();
@@ -53,10 +51,8 @@ return new class extends Migration
 
     /**
      * Reverse the migrations.
-     *
-     * @return void
      */
-    public function down()
+    public function down(): void
     {
         Schema::connection(null)->dropIfExists('file_virtuals');
         Schema::connection(null)->dropIfExists('file_physicals');
