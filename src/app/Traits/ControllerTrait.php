@@ -68,13 +68,10 @@ trait ControllerTrait
      */
     protected function extractFileVirtualFrom(Request $request): \AnourValar\EloquentFile\FileVirtual
     {
-        $fileVirtual = $request->route('file_virtual');
-        if (is_scalar($fileVirtual)) {
-            $class = config('eloquent_file.models.file_virtual');
-            $fileVirtual = $class::findOrFail((int) $fileVirtual);
-        }
+        $id = $request->route('file_virtual');
+        $class = config('eloquent_file.models.file_virtual');
 
-        return $fileVirtual;
+        return $class::findOrFail((int) is_scalar($id) ? $id : 0);
     }
 
     /**
@@ -131,6 +128,25 @@ trait ControllerTrait
         };
         \App::make(\AnourValar\EloquentFile\Services\FileService::class)->upload($files[$key], $fileVirtual, $key, $acl);
 
+        return $fileVirtual;
+    }
+
+    /**
+     * Delete a file
+     *
+     * @param \Illuminate\Http\Request $request
+     * @throws \Illuminate\Auth\Access\AuthorizationException
+     * @return \AnourValar\EloquentFile\FileVirtual
+     */
+    protected function deleteFileFrom(Request $request): \AnourValar\EloquentFile\FileVirtual
+    {
+        $fileVirtual = $this->extractFileVirtualFrom($request);
+
+        if (! $fileVirtual->getEntityHandler()->canDelete($fileVirtual, $request->user())) {
+            throw new \Illuminate\Auth\Access\AuthorizationException(trans('eloquent-file::auth.delete.not_authorized'));
+        }
+
+        $fileVirtual->validateDelete()->delete();
         return $fileVirtual;
     }
 }

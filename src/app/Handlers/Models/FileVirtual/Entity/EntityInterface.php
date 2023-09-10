@@ -26,6 +26,15 @@ interface EntityInterface
     public function canDownload(FileVirtual $fileVirtual, ?Authenticatable $user): bool;
 
     /**
+     * Can the user delete the file
+     *
+     * @param \AnourValar\EloquentFile\FileVirtual $fileVirtual
+     * @param \Illuminate\Contracts\Auth\Authenticatable $user
+     * @return bool
+     */
+    public function canDelete(FileVirtual $fileVirtual, ?Authenticatable $user): bool;
+
+    /**
      * Validation: entity, entity_id, name
      *
      * @param \AnourValar\EloquentFile\FileVirtual $fileVirtual

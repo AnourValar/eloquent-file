@@ -27,6 +27,15 @@ class UserEntity implements EntityInterface
 
     /**
      * {@inheritDoc}
+     * @see \AnourValar\EloquentFile\Handlers\Models\FileVirtual\Entity\EntityInterface::canDelete()
+     */
+    public function canDelete(FileVirtual $fileVirtual, ?Authenticatable $user): bool
+    {
+        return true;
+    }
+
+    /**
+     * {@inheritDoc}
      * @see \AnourValar\EloquentFile\Handlers\Models\FileVirtual\Entity\EntityInterface::validate()
      */
     public function validate(FileVirtual $fileVirtual, \Illuminate\Validation\Validator $validator): void

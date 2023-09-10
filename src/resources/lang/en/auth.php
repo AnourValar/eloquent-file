@@ -12,4 +12,8 @@ return [
         'file_missed' => 'File missed.',
         'file_multi' => 'Multiple file upload is not available.',
     ],
+
+    'delete' => [
+        'not_authorized' => 'You don\'t have permission to delete the file.',
+    ],
 ];
