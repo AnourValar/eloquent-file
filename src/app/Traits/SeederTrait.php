@@ -28,11 +28,10 @@ trait SeederTrait
         $fileVirtual->forceFill($fileVirtual->getNameHandler()->generateFake($fileVirtual->entity, $fileVirtual->name, $entitable));
 
         $class = config('eloquent_file.models.file_physical');
-        \DB::connection((new $class)->getConnectionName())->transaction(function () use ($fileVirtual, $text) {
+        \DB::connection((new $class())->getConnectionName())->transaction(function () use ($fileVirtual, $text) {
             $fileName = tempnam(sys_get_temp_dir(), 'fake_');
 
-            \Image
-                ::canvas(1280, 720, '#FFFFFF')
+            \Image::canvas(1280, 720, '#FFFFFF')
                 ->text($text, 650, 300, function ($font) {
                     $font->file(__DIR__.'/../../resources/arial.ttf');
                     $font->size(150);
@@ -86,7 +85,7 @@ trait SeederTrait
         $file = $path . $files[0];
 
         if (! $mime) {
-            $mime = match( mb_strtolower(pathinfo($file, PATHINFO_EXTENSION)) ) {
+            $mime = match (mb_strtolower(pathinfo($file, PATHINFO_EXTENSION))) {
                 'jpg' => 'image/jpeg',
                 'jpeg' => 'image/jpeg',
                 'png' => 'image/png',
@@ -113,7 +112,7 @@ trait SeederTrait
         }
 
         $class = config('eloquent_file.models.file_physical');
-        \DB::connection((new $class)->getConnectionName())->transaction(function () use (&$fileVirtual, $file, $mime) {
+        \DB::connection((new $class())->getConnectionName())->transaction(function () use (&$fileVirtual, $file, $mime) {
             \App::make(\AnourValar\EloquentFile\Services\FileService::class)->upload(
                 new \Illuminate\Http\UploadedFile($file, basename($file), $mime, null, true),
                 $fileVirtual

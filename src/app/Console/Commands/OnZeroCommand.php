@@ -35,8 +35,8 @@ class OnZeroCommand extends Command
         }
 
         $class = config('eloquent_file.models.file_physical');
-        $collection = $class
-            ::where('linked', '=', false)
+        $collection = $class::query()
+            ->where('linked', '=', false)
             ->where('updated_at', '<', $now)
             ->select(['id', 'visibility', 'type', 'sha256'])
             ->cursor();

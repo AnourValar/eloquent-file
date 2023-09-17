@@ -57,8 +57,8 @@ abstract class AbstractPolicy implements PolicyInterface
     {
         $class = config('eloquent_file.models.file_virtual');
 
-        return $class
-            ::with('filePhysical')
+        return $class::query()
+            ->with('filePhysical')
             ->where('entity', '=', $fileVirtual->entity)
             ->where('entity_id', '=', $fileVirtual->entity_id)
             ->where('name', '=', $fileVirtual->name)

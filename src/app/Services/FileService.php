@@ -71,7 +71,8 @@ class FileService
                         break;
                     }
 
-                    if ($file
+                    if (
+                        $file
                         && (
                             ! mb_strlen($file->getClientOriginalExtension())
                             || $key === '.' . mb_strtolower($file->getClientOriginalExtension())
@@ -102,18 +103,15 @@ class FileService
         $class = config('eloquent_file.models.file_virtual');
 
         try {
-            $attributes = \Validator
-                ::make(
-                    $attributes,
-                    [
-                        'entity' => ['required', 'string', 'min:1', 'max:200'],
-                        'entity_id' => ['required', 'integer', 'min:1'],
-                        'name' => ['required', 'string', 'min:1', 'max:200'],
-                        'id' => ['nullable', 'not_empty', 'integer', 'min:1'],
-                    ]
-                )
-                ->setAttributeNames((new $class)->getAttributeNames())
-                ->validate();
+            $attributes = \Validator::make(
+                $attributes,
+                [
+                    'entity' => ['required', 'string', 'min:1', 'max:200'],
+                    'entity_id' => ['required', 'integer', 'min:1'],
+                    'name' => ['required', 'string', 'min:1', 'max:200'],
+                    'id' => ['nullable', 'not_empty', 'integer', 'min:1'],
+                ]
+            )>setAttributeNames((new $class())->getAttributeNames())->validate();
         } catch (\Illuminate\Validation\ValidationException $e) {
             throw new ValidationException($e->validator, $e->response, $e->errorBag, $prefix);
         }
@@ -140,7 +138,7 @@ class FileService
                 ->replicate(array_merge(['entity', 'entity_id'], $fileVirtual->getComputed()))
                 ->forceFill($data)
                 ->validate($prefix)
-            )->save();
+        )->save();
     }
 
     /**
@@ -187,13 +185,14 @@ class FileService
         ?callable $acl
     ): void {
         $class = config('eloquent_file.models.file_physical');
-        $model = new $class;
+        $model = new $class();
 
         // Fill: visibility, type
         $model->visibility = $visibility;
         $model->type = $type;
 
-        if (is_string($model->type) &&
+        if (
+            is_string($model->type) &&
             is_string($model->visibility) &&
             isset(config('eloquent_file.file_physical.type')[$model->type]) &&
             isset(config('eloquent_file.file_physical.visibility')[$model->visibility])
@@ -211,8 +210,8 @@ class FileService
 
             // Check file for uniqueness
             if ($model->getVisibilityHandler()->preventDuplicates()) {
-                $check = $class
-                    ::where('visibility', '=', $model->visibility)
+                $check = $class::query()
+                    ->where('visibility', '=', $model->visibility)
                     ->where('type', '=', $model->type)
                     ->where('sha256', '=', $model->sha256)
                     ->first();
@@ -254,8 +253,8 @@ class FileService
                 \DB::transaction(function () use ($model, $class) {
                     $this->lock($model);
 
-                    $check = $class
-                        ::where('visibility', '=', $model->visibility)
+                    $check = $class::query()
+                        ->where('visibility', '=', $model->visibility)
                         ->where('type', '=', $model->type)
                         ->where('sha256', '=', $model->sha256)
                         ->where('id', '!=', $model->id)
@@ -318,17 +317,14 @@ class FileService
      */
     private function validate(FilePhysical $filePhysical, ?UploadedFile $file, ?string $fileValidationKey, ?string $title): void
     {
-        $validator = \Validator
-            ::make(
-                ['file' => $file],
-                ['file' => array_merge(['required', 'file', 'bail'], $filePhysical->type_details['rules'])]
-            )
-            ->setAttributeNames(['file' => $title]);
+        $validator = \Validator::make(
+            ['file' => $file],
+            ['file' => array_merge(['required', 'file', 'bail'], $filePhysical->type_details['rules'])]
+        )->setAttributeNames(['file' => $title]);
 
         $passes = $validator->passes();
         if ($passes) {
-            $validator = \Validator
-                ::make(['file' => $file], [])
+            $validator = \Validator::make(['file' => $file], [])
                 ->setAttributeNames(['file' => $title])
                 ->after(function ($validator) use ($filePhysical) {
                     static $triggered;

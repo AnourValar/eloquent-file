@@ -15,8 +15,8 @@ trait ListenerTrait
      */
     protected function avatarSchema(FileVirtual $fileVirtual, $generateKeys = 'preview'): ?array
     {
-        $model = \App\FileVirtual
-            ::with('filePhysical')
+        $model = \App\FileVirtual::query()
+            ->with('filePhysical')
             ->where('entity', '=', $fileVirtual['entity'])
             ->where('entity_id', '=', $fileVirtual['entity_id'])
             ->where('name', '=', $fileVirtual['name'])

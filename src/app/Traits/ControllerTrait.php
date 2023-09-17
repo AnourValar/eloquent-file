@@ -103,7 +103,7 @@ trait ControllerTrait
             $data
         );
 
-        $fileVirtual = (new \App\FileVirtual)->forceFill($data);
+        $fileVirtual = (new \App\FileVirtual())->forceFill($data);
 
 
         // Request

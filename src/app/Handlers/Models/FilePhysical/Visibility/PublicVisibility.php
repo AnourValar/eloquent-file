@@ -77,6 +77,6 @@ class PublicVisibility implements VisibilityInterface, DirectAccessInterface
             $path = $filePhysical->path_generate[$generate]['path'];
         }
 
-        return url( \Storage::disk($disk)->url($path) );
+        return url(\Storage::disk($disk)->url($path));
     }
 }

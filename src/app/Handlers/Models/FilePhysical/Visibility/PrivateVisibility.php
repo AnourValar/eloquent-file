@@ -78,7 +78,7 @@ class PrivateVisibility implements VisibilityInterface, DirectAccessInterface, P
             $path = $filePhysical->path_generate[$generate]['path'];
         }
 
-        return url( \Storage::disk($disk)->url($path) );
+        return url(\Storage::disk($disk)->url($path));
     }
 
     /**
@@ -104,8 +104,7 @@ class PrivateVisibility implements VisibilityInterface, DirectAccessInterface, P
             }
 
             return url(
-                \Storage
-                    ::disk($fileVirtual->filePhysical->disk)
+                \Storage::disk($fileVirtual->filePhysical->disk)
                     ->temporaryUrl(
                         $fileVirtual->filePhysical->path,
                         now()->addMinutes($this->expireIn($fileVirtual)),
@@ -159,8 +158,7 @@ class PrivateVisibility implements VisibilityInterface, DirectAccessInterface, P
             );
         }
 
-        return \Storage
-            ::disk($fileVirtual->filePhysical->disk)
+        return \Storage::disk($fileVirtual->filePhysical->disk)
             ->response(
                 $fileVirtual->filePhysical->path,
                 $this->getFileName($fileVirtual),
@@ -177,7 +175,7 @@ class PrivateVisibility implements VisibilityInterface, DirectAccessInterface, P
      */
     protected function expireIn(FileVirtual $fileVirtual): int
     {
-        return ceil($fileVirtual->filePhysical->size / (1024 * 1024)) + 10;
+        return (int) (ceil($fileVirtual->filePhysical->size / (1024 * 1024)) + 10);
     }
 
     /**

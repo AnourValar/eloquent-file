@@ -43,7 +43,7 @@ class UserEntity implements EntityInterface
         $class = config('auth.providers.users.model');
 
         if (in_array(\Illuminate\Database\Eloquent\SoftDeletes::class, class_uses($class))) {
-             $user = $class::withTrashed()->find($fileVirtual->entity_id);
+            $user = $class::withTrashed()->find($fileVirtual->entity_id);
         } else {
             $user = $class::find($fileVirtual->entity_id);
         }

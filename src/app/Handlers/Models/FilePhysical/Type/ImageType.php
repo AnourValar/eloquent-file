@@ -51,8 +51,7 @@ class ImageType extends SimpleType implements GenerateInterface
                 $original = $filePhysical->file_data;
             }
 
-            $generate = \Image
-                ::make($original)
+            $generate = \Image::make($original)
                 ->orientate()
                 ->resize($details['max_width'], $details['max_height'], function ($constraint) {
                     $constraint->aspectRatio();
