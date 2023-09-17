@@ -111,7 +111,7 @@ class FileService
                     'name' => ['required', 'string', 'min:1', 'max:200'],
                     'id' => ['nullable', 'not_empty', 'integer', 'min:1'],
                 ]
-            )>setAttributeNames((new $class())->getAttributeNames())->validate();
+            )->setAttributeNames((new $class())->getAttributeNames())->validate();
         } catch (\Illuminate\Validation\ValidationException $e) {
             throw new ValidationException($e->validator, $e->response, $e->errorBag, $prefix);
         }
