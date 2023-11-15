@@ -122,4 +122,27 @@ trait SeederTrait
         $cache[$cacheKey] = $fileVirtual->only(['file_physical_id', 'filename', 'content_type']);
         \Cache::driver('array')->put(__METHOD__, $cache);
     }
+
+    /**
+     * Create a file from the buffer
+     *
+     * @param \AnourValar\EloquentFile\FileVirtual $fileVirtual
+     * @param \Illuminate\Database\Eloquent\Model $entitable
+     * @param string $binary
+     * @return void
+     */
+    protected function createFromBuffer(FileVirtual $fileVirtual, Model $entitable, string $binary): FileVirtual
+    {
+        $fileVirtual->entity = $entitable->getMorphClass();
+        $fileVirtual->entity_id = $entitable->getKey();
+        $fileVirtual->forceFill($fileVirtual->getNameHandler()->generateFake($fileVirtual->entity, $fileVirtual->name, $entitable));
+
+        $class = config('eloquent_file.models.file_physical');
+        \DB::connection((new $class())->getConnectionName())->transaction(function () use ($fileVirtual, $binary) {
+            $fileService = \App::make(\AnourValar\EloquentFile\Services\FileService::class);
+            $fileService->upload($fileService->prepareFromBuffer($binary), $fileVirtual);
+        });
+
+        return $fileVirtual;
+    }
 }

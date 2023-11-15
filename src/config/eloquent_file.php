@@ -26,7 +26,7 @@ return [
         'type' => [
             'simple' => [
                 'bind' => AnourValar\EloquentFile\Handlers\Models\FilePhysical\Type\SimpleType::class,
-                'rules' => ['max:10240', 'file_not_ext:php,cgi,pl,fcgi,fpl,phtml,shtml,php2,php3,php4,php5,php6,php7,php8,asp,jsp,phar,exe,phps'],
+                'rules' => ['max:10240', 'file_not_ext:php,cgi,fcgi,phar,exe'],
             ],
 
             'image' => [
