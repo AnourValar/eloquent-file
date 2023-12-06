@@ -129,7 +129,7 @@ trait SeederTrait
      * @param \AnourValar\EloquentFile\FileVirtual $fileVirtual
      * @param \Illuminate\Database\Eloquent\Model $entitable
      * @param string $binary
-     * @return void
+     * @return \AnourValar\EloquentFile\FileVirtual
      */
     protected function createFromBuffer(FileVirtual $fileVirtual, Model $entitable, string $binary): FileVirtual
     {
