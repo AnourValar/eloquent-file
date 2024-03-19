@@ -8,7 +8,7 @@
         "php": "^8.0",
         "laravel/framework": "^9.0|^10.0|^11.0",
         "anourvalar/eloquent-validation": "^3.14",
-        "anourvalar/laravel-atom": "^2.13",
+        "anourvalar/laravel-atom": "^2.14",
         "intervention/image": "^2.7"
     },
     "require-dev": {
