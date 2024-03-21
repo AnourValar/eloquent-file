@@ -7,6 +7,21 @@ use AnourValar\EloquentFile\FilePhysical;
 class ImageType extends SimpleType implements GenerateInterface
 {
     /**
+     * @var \Intervention\Image\ImageManager
+     */
+    protected \Intervention\Image\ImageManager $image;
+
+    /**
+     * DI
+     *
+     * @return void
+     */
+    public function __construct()
+    {
+        $this->image = new \Intervention\Image\ImageManager(new \Intervention\Image\Drivers\Imagick\Driver());
+    }
+
+    /**
      * {@inheritDoc}
      * @see \AnourValar\EloquentFile\Handlers\Models\FilePhysical\Type\TypeInterface::validate()
      */
@@ -21,7 +36,7 @@ class ImageType extends SimpleType implements GenerateInterface
         }
 
         // Exif
-        $exif = var_export(\Image::make($file)->exif(), true);
+        $exif = var_export($this->image->read($file)->exif()->toArray(), true);
         if (stripos($exif, '<?') !== false || stripos($exif, '<%') !== false) {
             $validator->errors()->add('file', trans('eloquent-file::file_physical.type_handlers.image.incorrect'));
             return;
@@ -51,13 +66,16 @@ class ImageType extends SimpleType implements GenerateInterface
                 $original = $filePhysical->file_data;
             }
 
-            $generate = \Image::make($original)
-                ->orientate()
-                ->resize($details['max_width'], $details['max_height'], function ($constraint) {
-                    $constraint->aspectRatio();
-                    $constraint->upsize();
-                })
-                ->encode($details['format'], $details['quality']);
+            $encoder = match (mb_strtolower($details['format'])) {
+                'jpg' => new \Intervention\Image\Encoders\JpegEncoder(quality: $details['quality']),
+                'png' => new \Intervention\Image\Encoders\PngEncoder(quality: $details['quality']),
+                default => throw new \LogicException('Format is not supported.'),
+            };
+
+            $generate = $this->image
+                ->read($original)
+                ->scaleDown($details['max_width'], $details['max_height'])
+                ->encode($encoder);
 
             $pathGenerate[$name]['disk'] = $filePhysical->getVisibilityHandler()->getDiskForGenerated($filePhysical, $name);
             $pathGenerate[$name]['path'] = $this->generatePath($filePhysical, sprintf('_%s.%s', $name, $details['format']));

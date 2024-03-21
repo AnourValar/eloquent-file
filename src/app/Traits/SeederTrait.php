@@ -8,49 +8,6 @@ use Illuminate\Database\Eloquent\Model;
 trait SeederTrait
 {
     /**
-     * Create an image
-     *
-     * @param \AnourValar\EloquentFile\FileVirtual $fileVirtual
-     * @param \Illuminate\Database\Eloquent\Model $entitable
-     * @param string $text
-     * @return void
-     */
-    protected function createImage(FileVirtual &$fileVirtual, Model $entitable, string $text = null): void
-    {
-        static $counter;
-        if (is_null($text)) {
-            $counter++;
-            $text = $counter;
-        }
-
-        $fileVirtual->entity = $entitable->getMorphClass();
-        $fileVirtual->entity_id = $entitable->getKey();
-        $fileVirtual->forceFill($fileVirtual->getNameHandler()->generateFake($fileVirtual->entity, $fileVirtual->name, $entitable));
-
-        $class = config('eloquent_file.models.file_physical');
-        \DB::connection((new $class())->getConnectionName())->transaction(function () use ($fileVirtual, $text) {
-            $fileName = tempnam(sys_get_temp_dir(), 'fake_');
-
-            \Image::canvas(1280, 720, '#FFFFFF')
-                ->text($text, 650, 300, function ($font) {
-                    $font->file(__DIR__.'/../../resources/arial.ttf');
-                    $font->size(150);
-                    $font->color('#FF0000');
-                    $font->align('center');
-                    $font->valign('top');
-                })
-                ->save($fileName, '80', 'jpg');
-
-            \App::make(\AnourValar\EloquentFile\Services\FileService::class)->upload(
-                new \Illuminate\Http\UploadedFile($fileName, $fileVirtual->name.'.jpg', 'image/jpeg', null, true),
-                $fileVirtual
-            );
-
-            unlink($fileName);
-        });
-    }
-
-    /**
      * Create a file from the list
      *
      * @param \AnourValar\EloquentFile\FileVirtual $fileVirtual
