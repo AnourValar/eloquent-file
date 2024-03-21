@@ -23,28 +23,6 @@ class ImageType extends SimpleType implements GenerateInterface
 
     /**
      * {@inheritDoc}
-     * @see \AnourValar\EloquentFile\Handlers\Models\FilePhysical\Type\TypeInterface::validate()
-     */
-    public function validate(array $typeDetails, \Illuminate\Validation\Validator $validator): void
-    {
-        $file = $validator->getData()['file'];
-
-        // Mime
-        if (mb_substr($file->getMimeType(), 0, 5) != 'image') {
-            $validator->errors()->add('file', trans('eloquent-file::file_physical.type_handlers.image.incorrect'));
-            return;
-        }
-
-        // Exif
-        $exif = var_export($this->image->read($file)->exif()->toArray(), true);
-        if (stripos($exif, '<?') !== false || stripos($exif, '<%') !== false) {
-            $validator->errors()->add('file', trans('eloquent-file::file_physical.type_handlers.image.incorrect'));
-            return;
-        }
-    }
-
-    /**
-     * {@inheritDoc}
      * @see \AnourValar\EloquentFile\Handlers\Models\FilePhysical\Type\GenerateInterface::getBuild()
      */
     public function getBuild(array $typeDetails): int

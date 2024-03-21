@@ -16,10 +16,4 @@ return [
         'created_at' => 'Created at',
         'updated_at' => 'Updated at',
     ],
-
-    'type_handlers' => [
-        'image' => [
-            'incorrect' => 'The file is not an image.',
-        ],
-    ],
 ];
