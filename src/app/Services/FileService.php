@@ -145,7 +145,7 @@ class FileService
      * Get the lock
      *
      * @param \AnourValar\EloquentFile\FilePhysical $filePhysical
-     * @throws \RuntimeException
+     * @throws \LogicException
      * @return void
      */
     public function lock(?FilePhysical $filePhysical): void
@@ -155,11 +155,11 @@ class FileService
         }
 
         if (! isset($filePhysical->id) && $filePhysical->exists) {
-            throw new \RuntimeException('Incorrect usage.');
+            throw new \LogicException('Incorrect usage.');
         }
 
         if (! isset($filePhysical->visibility, $filePhysical->type, $filePhysical->sha256)) {
-            throw new \RuntimeException('Incorrect usage.');
+            throw new \LogicException('Incorrect usage.');
         }
 
         \Atom::lockFilePhysical($filePhysical->visibility, $filePhysical->type, $filePhysical->sha256);
