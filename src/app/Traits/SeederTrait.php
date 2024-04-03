@@ -8,6 +8,20 @@ use Illuminate\Database\Eloquent\Model;
 trait SeederTrait
 {
     /**
+     * Fake all disks
+     *
+     * @return self
+     */
+    protected function fakeStorages(): self
+    {
+        foreach (array_keys(config('filesystems.disks')) as $disk) {
+            \Storage::fake($disk);
+        }
+
+        return $this;
+    }
+
+    /**
      * Create a file from the list
      *
      * @param \AnourValar\EloquentFile\FileVirtual $fileVirtual

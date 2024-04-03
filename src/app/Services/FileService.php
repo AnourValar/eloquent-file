@@ -174,6 +174,7 @@ class FileService
      * @param string|null $title
      * @param callable|null $acl
      * @return void
+     * @throws \LogicException
      */
     private function handleUpload(
         FileVirtual &$fileVirtual,
@@ -232,6 +233,9 @@ class FileService
             // Fill: disk
             $disks = config('eloquent_file.file_physical.visibility')[$model->visibility]['disks'];
             $model->disk = $model->getVisibilityHandler()->getDisk($disks, $file);
+            if (config('app.env') === 'testing' && ! \Storage::disk($model->disk) instanceof \Illuminate\Filesystem\FilesystemAdapter) {
+                throw new \LogicException('External storage has used during the tests.');
+            }
 
             // Fill: path
             $model->path = $model->getVisibilityHandler()->getPath($model, $file);
