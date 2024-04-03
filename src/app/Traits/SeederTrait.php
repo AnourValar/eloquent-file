@@ -30,6 +30,7 @@ trait SeederTrait
      * @param array $files
      * @param string|null string $mime
      * @return void
+     * @throws \LogicException
      */
     protected function createFromList(
         FileVirtual &$fileVirtual,
@@ -92,6 +93,13 @@ trait SeederTrait
 
         $cache[$cacheKey] = $fileVirtual->only(['file_physical_id', 'filename', 'content_type']);
         \Cache::driver('array')->put(__METHOD__, $cache);
+
+        if (
+            config('app.env') === 'testing'
+            && ! \Storage::disk($fileVirtual->filePhysical->disk) instanceof \Illuminate\Filesystem\FilesystemAdapter
+        ) {
+            throw new \LogicException('External storage has used during the tests.');
+        }
     }
 
     /**
@@ -100,9 +108,10 @@ trait SeederTrait
      * @param \AnourValar\EloquentFile\FileVirtual $fileVirtual
      * @param \Illuminate\Database\Eloquent\Model $entitable
      * @param string $binary
-     * @return \AnourValar\EloquentFile\FileVirtual
+     * @return void
+     * @throws \LogicException
      */
-    protected function createFromBuffer(FileVirtual $fileVirtual, Model $entitable, string $binary): FileVirtual
+    protected function createFromBuffer(FileVirtual &$fileVirtual, Model $entitable, string $binary): void
     {
         $fileVirtual->entity = $entitable->getMorphClass();
         $fileVirtual->entity_id = $entitable->getKey();
@@ -114,6 +123,11 @@ trait SeederTrait
             $fileService->upload($fileService->prepareFromBuffer($binary), $fileVirtual);
         });
 
-        return $fileVirtual;
+        if (
+            config('app.env') === 'testing'
+            && ! \Storage::disk($fileVirtual->filePhysical->disk) instanceof \Illuminate\Filesystem\FilesystemAdapter
+        ) {
+            throw new \LogicException('External storage has used during the tests.');
+        }
     }
 }
