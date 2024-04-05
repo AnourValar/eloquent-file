@@ -22,8 +22,10 @@ class FileService
     public function prepareFromBuffer(string $binary, string $fileName = null, string $mimeType = null): UploadedFile
     {
         $temp = tmpfile();
-        \App::terminating(function () use ($temp) {
-            fclose($temp);
+        \App::terminating(function () use (&$temp) {
+            if (is_resource($temp)) {
+                fclose($temp);
+            }
         });
         fwrite($temp, $binary);
 
