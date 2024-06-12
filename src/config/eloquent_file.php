@@ -26,12 +26,12 @@ return [
         'type' => [
             'simple' => [
                 'bind' => AnourValar\EloquentFile\Handlers\Models\FilePhysical\Type\SimpleType::class,
-                'rules' => ['max:10240', 'extensions:zip,rar,pdf,gz,jpg,jpeg,png,bmp,gif,xls,xlsx,doc,docx,ppt,pptx'],
+                'rules' => ['max:10240', 'extensions:zip,rar,pdf,gz,jpg,jpeg,png,gif,xls,xlsx,doc,docx,ppt,pptx'],
             ],
 
             'image' => [
                 'bind' => AnourValar\EloquentFile\Handlers\Models\FilePhysical\Type\ImageType::class,
-                'rules' => ['max:10240', 'extensions:jpg,jpeg,png,bmp,gif', 'image', 'dimensions:min_width=100,min_height=100'],
+                'rules' => ['max:10240', 'extensions:jpg,jpeg,png,gif', 'image', 'dimensions:min_width=100,min_height=100'],
 
                 'build' => 1,
                 'keep_original' => true,
