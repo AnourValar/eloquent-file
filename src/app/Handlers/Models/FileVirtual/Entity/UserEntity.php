@@ -51,7 +51,7 @@ class UserEntity implements EntityInterface
         if (! $user) {
             $validator->errors()->add(
                 'entity_id',
-                trans('eloquent-file::file_virtual.entity_handlers.user.entity_id_not_exists')
+                trans('eloquent-file::file_virtual.entity_handler.user.entity_id_not_exists')
             );
         }
     }

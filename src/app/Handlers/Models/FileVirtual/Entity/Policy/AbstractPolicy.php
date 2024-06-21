@@ -23,7 +23,7 @@ abstract class AbstractPolicy implements PolicyInterface
                 $validator->errors()->add(
                     'entity_id',
                     trans(
-                        'eloquent-file::file_virtual.entity_handlers.over_limit_qty',
+                        'eloquent-file::file_virtual.entity_handler.over_limit_qty',
                         ['name' => $fileVirtual->name_title, 'limit' => $fileVirtual->name_details['policy']['limit_qty']]
                     )
                 );
@@ -41,7 +41,7 @@ abstract class AbstractPolicy implements PolicyInterface
                 $validator->errors()->add(
                     'entity_id',
                     trans(
-                        'eloquent-file::file_virtual.entity_handlers.over_limit_size',
+                        'eloquent-file::file_virtual.entity_handler.over_limit_size',
                         ['name' => $fileVirtual->name_title, 'limit' => $fileVirtual->name_details['policy']['limit_size']]
                     )
                 );

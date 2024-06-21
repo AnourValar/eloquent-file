@@ -29,7 +29,7 @@ return [
         ],
     ],
 
-    'entity_handlers' => [
+    'entity_handler' => [
         'over_limit_qty' => 'Кол-во файлов ":name" не может превышать :limit.',
         'over_limit_size' => 'Размер файлов ":name" не может превышать :limit кб.',
 

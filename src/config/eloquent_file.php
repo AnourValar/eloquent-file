@@ -26,7 +26,7 @@ return [
         'type' => [
             'simple' => [
                 'bind' => AnourValar\EloquentFile\Handlers\Models\FilePhysical\Type\SimpleType::class,
-                'rules' => ['max:10240', 'extensions:zip,rar,pdf,gz,jpg,jpeg,png,gif,webp,svg,ico,xls,xlsx,doc,docx,ppt,pptx,xml'],
+                'rules' => ['max:10240', 'extensions:zip,rar,pdf,gz,jpg,jpeg,png,gif,webp,svg,ico,xls,xlsx,doc,docx,ppt,pptx,xml,mp3'],
             ],
 
             'image' => [
