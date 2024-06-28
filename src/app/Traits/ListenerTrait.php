@@ -36,6 +36,6 @@ trait ListenerTrait
             }
         }
 
-        return ['generated' => false];
+        return ['generated' => false, 'url' => $model->url];
     }
 }
