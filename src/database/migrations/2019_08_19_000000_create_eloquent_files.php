@@ -22,7 +22,7 @@ return new class extends Migration
             $table->unsignedInteger('size')->nullable()->index();
             $table->string('mime_type', 100)->nullable();
             $table->boolean('linked')->nullable()->index();
-            $table->unsignedTinyInteger('build')->nullable()->index();
+            $table->unsignedTinyInteger('build')->nullable();
             $table->timestamps();
 
             $table->index(['visibility', 'type', 'sha256']);
