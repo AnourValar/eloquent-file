@@ -46,7 +46,7 @@ class ImageType extends SimpleType implements GenerateInterface
 
             $encoder = match (mb_strtolower($details['format'])) {
                 'jpg' => new \Intervention\Image\Encoders\JpegEncoder(quality: $details['quality']),
-                'png' => new \Intervention\Image\Encoders\PngEncoder(quality: $details['quality']),
+                'png' => new \Intervention\Image\Encoders\PngEncoder(),
                 default => throw new \LogicException('Format is not supported.'),
             };
 

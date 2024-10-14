@@ -13,7 +13,7 @@ class UserEntity implements EntityInterface
      */
     public function canUpload(FileVirtual $fileVirtual, ?Authenticatable $user): bool
     {
-        return true;
+        return $user?->can('update', $fileVirtual->entitable);
     }
 
     /**
@@ -31,7 +31,7 @@ class UserEntity implements EntityInterface
      */
     public function canDelete(FileVirtual $fileVirtual, ?Authenticatable $user): bool
     {
-        return true;
+        return $this->canUpload($fileVirtual, $user);
     }
 
     /**
