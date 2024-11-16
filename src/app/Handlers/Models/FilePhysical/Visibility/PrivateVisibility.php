@@ -12,7 +12,7 @@ class PrivateVisibility implements VisibilityInterface, DirectAccessInterface, P
      * @var string
      */
     public const METHOD_URL_SIGNED = 'url_signed';
-    public const METHOD_URL_SIGNED_DIRECT = 'url_signed_direct';
+    public const METHOD_URL_SIGNED_DIRECT = 'url_signed_direct'; // working offline
     public const METHOD_USER_AUTHORIZE = 'user_authorize';
 
     /**
