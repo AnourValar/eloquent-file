@@ -13,14 +13,14 @@ return new class extends Migration
     {
         Schema::connection(null)->create('file_physicals', function (Blueprint $table) {
             $table->id();
-            $table->string('visibility', 30)->nullable();
-            $table->string('type', 30)->nullable();
-            $table->string('disk', 30)->nullable();
-            $table->string('path', 200)->nullable();
-            $table->string('path_generate', 2000)->nullable();
-            $table->string('sha256', 64)->nullable();
+            $table->string('visibility')->nullable();
+            $table->string('type')->nullable();
+            $table->string('disk')->nullable();
+            $table->string('path')->nullable();
+            $table->string('path_generate')->nullable();
+            $table->string('sha256')->nullable();
             $table->unsignedInteger('size')->nullable()->index();
-            $table->string('mime_type', 100)->nullable();
+            $table->string('mime_type')->nullable();
             $table->boolean('linked')->nullable()->index();
             $table->unsignedTinyInteger('build')->nullable();
             $table->timestamps();
@@ -31,12 +31,12 @@ return new class extends Migration
         Schema::connection(null)->create('file_virtuals', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('file_physical_id')->index();
-            $table->string('entity', 30);
+            $table->string('entity');
             $table->unsignedBigInteger('entity_id');
-            $table->string('name', 40)->index();
-            $table->string('filename', 100);
-            $table->string('content_type', 100)->nullable();
-            $table->string('title', 150)->nullable();
+            $table->string('name')->index();
+            $table->string('filename');
+            $table->string('content_type')->nullable();
+            $table->string('title')->nullable();
             $table->unsignedSmallInteger('weight')->index();
             $table->jsonb('details')->nullable();
             $table->timestamp('archived_at')->nullable()->index();
