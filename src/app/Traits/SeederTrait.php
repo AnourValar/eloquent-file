@@ -37,7 +37,7 @@ trait SeederTrait
         Model $entitable,
         string $path,
         array $files = [],
-        string $mime = null
+        ?string $mime = null
     ): void {
         static $cacheFiles;
         if (! $files) {

@@ -10,8 +10,8 @@ interface DirectAccessInterface
      * Getting a direct link to the file
      *
      * @param \AnourValar\EloquentFile\FilePhysical $filePhysical
-     * @param string $generate
+     * @param string|null $generate
      * @return string|null
      */
-    public function directUrl(FilePhysical $filePhysical, string $generate = null): ?string;
+    public function directUrl(FilePhysical $filePhysical, ?string $generate = null): ?string;
 }

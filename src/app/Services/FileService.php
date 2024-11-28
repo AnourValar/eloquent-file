@@ -15,11 +15,11 @@ class FileService
      * Create UploadedFile from a buffer
      *
      * @param string $binary
-     * @param string $fileName
-     * @param string $mimeType
+     * @param string|null $fileName
+     * @param string|null $mimeType
      * @return \Illuminate\Http\UploadedFile
      */
-    public function prepareFromBuffer(string $binary, string $fileName = null, string $mimeType = null): UploadedFile
+    public function prepareFromBuffer(string $binary, ?string $fileName = null, ?string $mimeType = null): UploadedFile
     {
         $temp = tmpfile();
         \App::terminating(function () use (&$temp) {
@@ -45,12 +45,12 @@ class FileService
      *
      * @param \Illuminate\Http\UploadedFile|null $file
      * @param \AnourValar\EloquentFile\FileVirtual $fileVirtual
-     * @param string $fileValidationKey
+     * @param string|null $fileValidationKey
      * @param callable|null $acl
      * @throws \RuntimeException
      * @return void
      */
-    public function upload(?UploadedFile $file, FileVirtual &$fileVirtual, string $fileValidationKey = null, callable $acl = null): void
+    public function upload(?UploadedFile $file, FileVirtual &$fileVirtual, ?string $fileValidationKey = null, ?callable $acl = null): void
     {
         if (! is_null($fileVirtual->file_physical_id)) {
             throw new \RuntimeException('Attribute "file_physical_id" must be null.');

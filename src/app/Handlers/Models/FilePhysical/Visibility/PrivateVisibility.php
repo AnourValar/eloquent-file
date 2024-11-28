@@ -69,7 +69,7 @@ class PrivateVisibility implements VisibilityInterface, DirectAccessInterface, P
      * {@inheritDoc}
      * @see \AnourValar\EloquentFile\Handlers\Models\FilePhysical\Visibility\DirectAccessInterface::directUrl()
      */
-    public function directUrl(FilePhysical $filePhysical, string $generate = null): ?string
+    public function directUrl(FilePhysical $filePhysical, ?string $generate = null): ?string
     {
         if (is_null($generate)) {
             return null;
