@@ -3,7 +3,7 @@ parameters:
     paths:
         - src
 
-    # The level 9 is the highest level
+    # The level 10 is the highest level
     level: 5
 
     ignoreErrors:
@@ -11,12 +11,12 @@ parameters:
         - '#Access to an undefined property#'
         - '#Call to an undefined method#'
         - '#Call to an undefined static#'
+        - '#is used zero times and is not analysed#'
 
     excludePaths:
 
     checkFunctionNameCase: true
     checkInternalClassCaseSensitivity: true
-    checkAlwaysTrueInstanceof: true
     reportMaybesInMethodSignatures: true
     reportStaticMethodSignatures: true
     checkUninitializedProperties: true
@@ -24,3 +24,6 @@ parameters:
     reportAlwaysTrueInLastCondition: true
     reportWrongPhpDocTypeInVarTag: true
     checkMissingCallableSignature: true
+    reportPossiblyNonexistentGeneralArrayOffset: true
+    reportPossiblyNonexistentConstantArrayOffset: true
+    reportAnyTypeWideningInVarTag: true
