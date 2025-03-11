@@ -22,7 +22,7 @@ class UserEntity implements EntityInterface
      */
     public function canDownload(FileVirtual $fileVirtual, ?Authenticatable $user): bool
     {
-        return true;
+        return $this->canUpload($fileVirtual, $user);
     }
 
     /**

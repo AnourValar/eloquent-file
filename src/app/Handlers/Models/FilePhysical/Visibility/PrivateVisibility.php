@@ -87,7 +87,7 @@ class PrivateVisibility implements VisibilityInterface, DirectAccessInterface, P
      */
     public function proxyUrl(FileVirtual $fileVirtual): string
     {
-        $route = $fileVirtual->filePhysical->visibility_details['proxy_route'];
+        $route = ($fileVirtual->filePhysical->visibility_details['proxy_route'] ?? null);
         $method = $fileVirtual->filePhysical->visibility_details['proxy_route_method'];
 
         if ($method === static::METHOD_URL_SIGNED) {
