@@ -91,7 +91,7 @@ trait SeederTrait
             );
         });
 
-        $cache[$cacheKey] = $fileVirtual->only(['file_physical_id', 'filename', 'content_type']);
+        $cache[$cacheKey] = $fileVirtual->only(['file_physical_id', 'filename']);
         \Cache::driver('array')->put(__METHOD__, $cache);
 
         if (

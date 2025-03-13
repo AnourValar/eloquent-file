@@ -8,7 +8,6 @@ return [
         'entity_id' => 'Entity ID',
         'name' => 'Name',
         'filename' => 'Filename',
-        'content_type' => 'Content type',
         'title' => 'Title',
         'weight' => 'Weight',
         'details' => 'Details',

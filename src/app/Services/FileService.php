@@ -298,10 +298,6 @@ class FileService
             $fileVirtual->filename = mb_substr($file->getClientOriginalName(), -100);
         }
 
-        if (is_null($fileVirtual->content_type)) {
-            $fileVirtual->content_type = mb_strtolower((string) $file->getMimeType());
-        }
-
         $fileVirtual->validate($fileValidationKey);
         if ($acl) {
             $acl($fileVirtual);
@@ -319,9 +315,14 @@ class FileService
      */
     private function validate(FilePhysical $filePhysical, ?UploadedFile $file, ?string $fileValidationKey, ?string $title): void
     {
+        $extraRules = [];
+        if ($filePhysical->type_details['rules_validate_mime_by_extension'] && $file?->getClientOriginalExtension()) {
+            $extraRules[] = 'mimes:' . mb_strtolower($file->getClientOriginalExtension());
+        }
+
         $validator = \Validator::make(
             ['file' => $file],
-            ['file' => array_merge(['required', 'file', 'bail'], $filePhysical->type_details['rules'])]
+            ['file' => array_merge(['required', 'file', 'bail'], $filePhysical->type_details['rules'], $extraRules)]
         )->setAttributeNames(['file' => $title]);
 
         $passes = $validator->passes();

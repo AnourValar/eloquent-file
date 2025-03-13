@@ -27,11 +27,13 @@ return [
             'simple' => [
                 'bind' => AnourValar\EloquentFile\Handlers\Models\FilePhysical\Type\SimpleType::class,
                 'rules' => ['max:10240', 'extensions:zip,rar,pdf,gz,jpg,jpeg,png,gif,webp,svg,ico,xls,xlsx,doc,docx,ppt,pptx,xml,mp3'],
+                'rules_validate_mime_by_extension' => true,
             ],
 
             'image' => [
                 'bind' => AnourValar\EloquentFile\Handlers\Models\FilePhysical\Type\ImageType::class,
                 'rules' => ['max:10240', 'extensions:jpg,jpeg,png,gif,webp', 'image', 'dimensions:min_width=100,min_height=100'],
+                'rules_validate_mime_by_extension' => false,
 
                 'build' => 1,
                 'keep_original' => true,

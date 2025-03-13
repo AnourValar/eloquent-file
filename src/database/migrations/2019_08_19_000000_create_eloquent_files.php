@@ -35,7 +35,6 @@ return new class extends Migration
             $table->unsignedBigInteger('entity_id');
             $table->string('name')->index();
             $table->string('filename');
-            $table->string('content_type')->nullable();
             $table->string('title')->nullable();
             $table->unsignedSmallInteger('weight')->index();
             $table->jsonb('details')->nullable();

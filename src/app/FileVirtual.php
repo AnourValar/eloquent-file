@@ -55,7 +55,7 @@ abstract class FileVirtual extends Model
      * @var array
      */
     protected $trim = [
-        'entity', 'name', 'filename', 'content_type', 'title', 'details',
+        'entity', 'name', 'filename', 'title', 'details',
     ];
 
     /**
@@ -64,7 +64,7 @@ abstract class FileVirtual extends Model
      * @var array
      */
     protected $nullable = [
-        'content_type', 'title', 'details',
+        'title', 'details',
     ];
 
     /**
@@ -97,7 +97,6 @@ abstract class FileVirtual extends Model
         'entity_id' => 'integer',
         'name' => 'string',
         'filename' => 'string',
-        'content_type' => 'string',
         'title' => 'string',
         'weight' => 'integer',
         'details' => 'json',
@@ -143,7 +142,7 @@ abstract class FileVirtual extends Model
      * @var array
      */
     protected $unchangeable = [
-        'file_physical_id', 'content_type', 'entity', 'entity_id',
+        'file_physical_id', 'entity', 'entity_id',
     ];
 
     /**
@@ -192,7 +191,6 @@ abstract class FileVirtual extends Model
             'entity_id' => ['required', 'integer', 'min:1'],
             'name' => ['required', 'max:40'],
             'filename' => ['required', 'min:1', 'max:100'],
-            'content_type' => ['nullable', 'max:100'],
             'title' => ['nullable', 'string', 'max:150'],
             'weight' => ['required', 'integer', 'min:0', 'max:32767'],
             'details' => ['nullable'],
@@ -430,6 +428,24 @@ abstract class FileVirtual extends Model
                 }
 
                 return $handler->proxyUrl($this);
+            }
+        );
+    }
+
+    /**
+     * Virtual attribute: mime_type
+     *
+     * @return \Illuminate\Database\Eloquent\Casts\Attribute
+     */
+    protected function mimeType(): Attribute
+    {
+        return Attribute::make(
+            get: function ($query) {
+                if (! $this->relationLoaded('filePhysical')) {
+                    throw new \LogicException('The filePhysical relation must be eager loaded.');
+                }
+
+                return $this->filePhysical->mime_type;
             }
         );
     }

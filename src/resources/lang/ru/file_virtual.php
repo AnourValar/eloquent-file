@@ -8,7 +8,6 @@ return [
         'entity_id' => 'ID сущности',
         'name' => 'Техн. название',
         'filename' => 'Имя',
-        'content_type' => 'Тип контента',
         'title' => 'Описание',
         'weight' => 'Вес',
         'details' => 'Детали',

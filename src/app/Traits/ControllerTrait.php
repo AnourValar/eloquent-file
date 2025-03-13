@@ -68,7 +68,7 @@ trait ControllerTrait
      */
     protected function extractFileVirtualFrom(Request $request): \AnourValar\EloquentFile\FileVirtual
     {
-        $id = $request->route('file_virtual');
+        $id = ($request->route('file_virtual') ?? $request->input('file_virtual_id'));
         $class = config('eloquent_file.models.file_virtual');
 
         return $class::findOrFail((int) is_scalar($id) ? $id : 0);
