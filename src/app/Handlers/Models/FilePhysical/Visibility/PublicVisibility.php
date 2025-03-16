@@ -13,7 +13,7 @@ class PublicVisibility implements VisibilityInterface, DirectAccessInterface
      */
     public function preventDuplicates(): bool
     {
-        return true; // if it's false, getPath must provide a unique name for the same file
+        return true;
     }
 
     /**
@@ -47,9 +47,6 @@ class PublicVisibility implements VisibilityInterface, DirectAccessInterface
         }
 
         $extension = $file->getClientOriginalExtension();
-        if (! mb_strlen($extension)) {
-            $extension = $file->extension();
-        }
         if (mb_strlen($extension)) {
             $extension = ".$extension";
         }
@@ -58,8 +55,8 @@ class PublicVisibility implements VisibilityInterface, DirectAccessInterface
             .mb_substr($filePhysical->sha256, 0, 2).'/'
             .mb_substr($filePhysical->sha256, 2, 2).'/'
             .mb_substr($filePhysical->sha256, 4, 2).'/'
-            //.$filePhysical->id.'_'
             .$filePhysical->sha256
+            .$filePhysical->id // important for consistency!
             .$extension;
     }
 

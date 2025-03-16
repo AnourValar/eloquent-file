@@ -55,95 +55,69 @@ class GenerateJob implements ShouldQueue, ShouldBeUnique
      *
      * @param \AnourValar\EloquentFile\Services\FileService $fileService
      * @return void
+     * @psalm-suppress UnusedVariable
      */
     public function handle(\AnourValar\EloquentFile\Services\FileService $fileService)
     {
-        try {
-            $filePhysical = \DB::connection($this->filePhysical->getConnectionName())->transaction(function () use ($fileService) {
-                $fileService->lock($this->filePhysical);
-                $filePhysical = $this->filePhysical->fresh();
-
-                if (! $filePhysical) {
-                    return false;
-                }
-
-                $build = $filePhysical->getTypeHandler()->getBuild($filePhysical->type_details);
-                if ($filePhysical->build == $build) {
-                    return false;
-                }
-                if (! $filePhysical->path) {
-                    return false;
-                }
-
-                $filePhysical->forceFill(['build' => $build])->save();
-                return $filePhysical;
-            });
+        \DB::connection($this->filePhysical->getConnectionName())->transaction(function () use ($fileService) {
+            $fileService->lock($this->filePhysical);
+            $filePhysical = $this->filePhysical->fresh();
 
             if (! $filePhysical) {
                 return;
             }
 
-            try {
-                $original = (array) $filePhysical->path_generate;
+            $originalPathGenerate = (array) $filePhysical->path_generate;
+            $originalPath = $filePhysical->path;
 
-                $filePhysical
-                    ->forceFill(['path_generate' => $filePhysical->getTypeHandler()->generate($filePhysical)])
-                    ->validate()
-                    ->save();
-
-                $this->cleanUp($filePhysical, $original)->fireEvents($filePhysical);
-            } catch (\Illuminate\Validation\ValidationException $e) {
-                $this->fail(); // no retry
-                throw \AnourValar\LaravelAtom\Exceptions\InternalValidationException::fromValidationException($e);
+            $filePhysical->path_generate = $filePhysical->getTypeHandler()->generate($filePhysical);
+            if (! $filePhysical->getTypeHandler()->keepOriginal($filePhysical)) {
+                $filePhysical->path = null;
             }
-        } catch (\Throwable $e) {
-            $class = config('eloquent_file.models.file_physical');
-            $class::where('id', '=', $this->filePhysical->id)->update(['build' => null]);
 
-            throw $e;
+            $filePhysical->save();
+            $this->fireEvents($filePhysical);
+
+            \Atom::onCommit(
+                fn () => $this->cleanUp($filePhysical, $originalPathGenerate, $originalPath),
+                $filePhysical->getConnectionName()
+            );
+        });
+    }
+
+    /**
+     * @param \AnourValar\EloquentFile\FilePhysical $filePhysical
+     * @return void
+     */
+    private function fireEvents(FilePhysical &$filePhysical): void
+    {
+        $class = config('eloquent_file.models.file_virtual');
+
+        foreach ($class::where('file_physical_id', '=', $filePhysical->id)->cursor() as $item) {
+            event(new \AnourValar\EloquentFile\Events\FileVirtualChanged($item));
         }
     }
 
     /**
      * @param \AnourValar\EloquentFile\FilePhysical $filePhysical
-     * @param array $original
+     * @param array $originalPathGenerate
+     * @param string $originalPath
      * @return self
+     * @psalm-suppress UnusedMethod
      */
-    private function cleanUp(FilePhysical &$filePhysical, array $original): self
+    private function cleanUp(FilePhysical $filePhysical, array $originalPathGenerate, string $originalPath): self
     {
         $new = (array) $filePhysical->path_generate;
-        foreach ($original as $name => $item) {
+        foreach ($originalPathGenerate as $name => $item) {
             if (isset($new[$name]) && $new[$name] == $item) {
                 continue;
             }
 
-            if (\Storage::disk($item['disk'])->exists($item['path'])) {
-                \Storage::disk($item['disk'])->delete($item['path']);
-            }
+            \Storage::disk($item['disk'])->delete($item['path']);
         }
 
-        if (! $filePhysical->getTypeHandler()->keepOriginal($filePhysical)) {
-            if (\Storage::disk($filePhysical->disk)->exists($filePhysical->path)) {
-                \Storage::disk($filePhysical->disk)->delete($filePhysical->path);
-            }
-
-            $filePhysical->path = null;
-            $filePhysical->save();
-        }
-
-        return $this;
-    }
-
-    /**
-     * @param \AnourValar\EloquentFile\FilePhysical $filePhysical
-     * @return self
-     */
-    private function fireEvents(FilePhysical $filePhysical): self
-    {
-        $class = config('eloquent_file.models.file_virtual');
-
-        foreach ($class::where('file_physical_id', '=', $filePhysical->id)->get() as $item) {
-            event(new \AnourValar\EloquentFile\Events\FileVirtualChanged($item));
+        if ($filePhysical->path === null) {
+            \Storage::disk($filePhysical->disk)->delete($originalPath);
         }
 
         return $this;

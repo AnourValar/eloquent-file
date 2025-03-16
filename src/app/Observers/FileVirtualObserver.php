@@ -63,8 +63,6 @@ class FileVirtualObserver
      */
     private function recalc(FileVirtual $model): void
     {
-        \App::make(\AnourValar\EloquentFile\Services\FileService::class)->lock($model->filePhysical);
-
         if ($model->exists) {
             $linked = true;
         } else {

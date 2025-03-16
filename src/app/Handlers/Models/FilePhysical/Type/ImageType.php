@@ -23,15 +23,6 @@ class ImageType extends SimpleType implements GenerateInterface
 
     /**
      * {@inheritDoc}
-     * @see \AnourValar\EloquentFile\Handlers\Models\FilePhysical\Type\GenerateInterface::getBuild()
-     */
-    public function getBuild(array $typeDetails): int
-    {
-        return $typeDetails['build'];
-    }
-
-    /**
-     * {@inheritDoc}
      * @see \AnourValar\EloquentFile\Handlers\Models\FilePhysical\Type\GenerateInterface::generate()
      */
     public function generate(FilePhysical $filePhysical): array
@@ -81,7 +72,7 @@ class ImageType extends SimpleType implements GenerateInterface
     {
         \Atom::onCommit(
             function () use ($filePhysical) {
-                \AnourValar\EloquentFile\Jobs\GenerateJob::dispatch($filePhysical);
+                \AnourValar\EloquentFile\Jobs\GenerateJob::dispatch($filePhysical)->delay(now()->addSecond());
             },
             $filePhysical->getConnectionName()
         );

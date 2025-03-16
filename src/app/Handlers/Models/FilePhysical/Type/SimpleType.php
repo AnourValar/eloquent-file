@@ -21,7 +21,7 @@ class SimpleType implements TypeInterface
      */
     public function onZero(FilePhysical $filePhysical): void
     {
-        $filePhysical->validateDelete()->delete();
+        $filePhysical->delete();
     }
 
     /**

@@ -63,18 +63,6 @@ trait ControllerTrait
     }
 
     /**
-     * @param \Illuminate\Http\Request $request
-     * @return \AnourValar\EloquentFile\FileVirtual
-     */
-    protected function extractFileVirtualFrom(Request $request): \AnourValar\EloquentFile\FileVirtual
-    {
-        $id = ($request->route('file_virtual') ?? $request->input('file_virtual_id'));
-        $class = config('eloquent_file.models.file_virtual');
-
-        return $class::findOrFail((int) is_scalar($id) ? $id : 0);
-    }
-
-    /**
      * Upload a file
      *
      * @param \Illuminate\Http\Request $request
@@ -141,6 +129,7 @@ trait ControllerTrait
     protected function deleteFileFrom(Request $request): \AnourValar\EloquentFile\FileVirtual
     {
         $fileVirtual = $this->extractFileVirtualFrom($request);
+        \App::make(\AnourValar\EloquentFile\Services\FileService::class)->lock($fileVirtual->filePhysical);
 
         if (! $fileVirtual->getEntityHandler()->canDelete($fileVirtual, $request->user())) {
             throw new \Illuminate\Auth\Access\AuthorizationException(trans('eloquent-file::auth.delete.not_authorized'));
@@ -148,5 +137,17 @@ trait ControllerTrait
 
         $fileVirtual->validateDelete()->delete();
         return $fileVirtual;
+    }
+
+    /**
+     * @param \Illuminate\Http\Request $request
+     * @return \AnourValar\EloquentFile\FileVirtual
+     */
+    protected function extractFileVirtualFrom(Request $request): \AnourValar\EloquentFile\FileVirtual
+    {
+        $id = ($request->route('file_virtual') ?? $request->input('file_virtual_id'));
+        $class = config('eloquent_file.models.file_virtual');
+
+        return $class::findOrFail((int) is_scalar($id) ? $id : 0);
     }
 }

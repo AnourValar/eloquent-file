@@ -19,10 +19,9 @@ return new class extends Migration
             $table->string('path')->nullable();
             $table->string('path_generate')->nullable();
             $table->string('sha256')->nullable();
-            $table->unsignedInteger('size')->nullable()->index();
+            $table->unsignedInteger('size')->nullable();
             $table->string('mime_type')->nullable();
             $table->boolean('linked')->nullable()->index();
-            $table->unsignedTinyInteger('build')->nullable();
             $table->timestamps();
 
             $table->index(['visibility', 'type', 'sha256']);

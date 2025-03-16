@@ -35,7 +35,6 @@ return [
                 'rules' => ['max:10240', 'extensions:jpg,jpeg,png,gif,webp', 'image', 'dimensions:min_width=100,min_height=100'],
                 'rules_validate_mime_by_extension' => false,
 
-                'build' => 1,
                 'keep_original' => true,
                 'generate' => [
                     'preview' => [

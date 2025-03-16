@@ -74,7 +74,7 @@ abstract class FilePhysical extends Model
      */
     protected $hidden = [
         'id', 'visibility', 'type', 'disk', 'path', 'path_generate', 'sha256',
-        'linked', 'build', 'created_at', 'updated_at',
+        'linked', 'created_at', 'updated_at',
     ];
 
     /**
@@ -102,7 +102,6 @@ abstract class FilePhysical extends Model
         'size' => 'integer',
         'mime_type' => 'string',
         'linked' => 'boolean',
-        'build' => 'integer',
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
     ];
@@ -128,7 +127,7 @@ abstract class FilePhysical extends Model
      * @var array
      */
     protected $computed = [
-        'linked',
+        'path_generate', 'linked',
     ];
 
     /**
@@ -188,7 +187,6 @@ abstract class FilePhysical extends Model
             'sha256' => ['required', 'min:64', 'max:64'],
             'size' => ['required', 'integer', 'min:0'],
             'mime_type' => ['nullable', 'max:100'],
-            'build' => ['nullable', 'integer', 'min:1'],
         ];
     }
 

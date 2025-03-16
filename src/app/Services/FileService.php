@@ -73,14 +73,7 @@ class FileService
                         break;
                     }
 
-                    if (
-                        $file
-                        && (
-                            ! mb_strlen($file->getClientOriginalExtension())
-                            || $key === '.' . mb_strtolower($file->getClientOriginalExtension())
-                        )
-                        && $key === '.' . mb_strtolower($file->extension())
-                    ) {
+                    if ($file && $key === mb_strtolower($file->getClientOriginalExtension())) {
                         $type = $value;
                         break;
                     }
@@ -131,10 +124,6 @@ class FileService
      */
     public function replicate(FileVirtual $fileVirtual, array $data, $prefix = null): FileVirtual
     {
-        if (! $fileVirtual->filePhysical->linked) {
-            $this->lock($fileVirtual->filePhysical);
-        }
-
         return tap(
             $fileVirtual
                 ->replicate(array_merge(['entity', 'entity_id'], $fileVirtual->getComputed()))
@@ -147,21 +136,13 @@ class FileService
      * Get the lock
      *
      * @param \AnourValar\EloquentFile\FilePhysical $filePhysical
-     * @throws \LogicException
+     * @throws \RuntimeException
      * @return void
      */
-    public function lock(?FilePhysical $filePhysical): void
+    public function lock(FilePhysical $filePhysical): void
     {
-        if (! $filePhysical) {
-            return;
-        }
-
-        if (! isset($filePhysical->id) && $filePhysical->exists) {
-            throw new \LogicException('Incorrect usage.');
-        }
-
         if (! isset($filePhysical->visibility, $filePhysical->type, $filePhysical->sha256)) {
-            throw new \LogicException('Incorrect usage.');
+            throw new \RuntimeException('Incorrect usage.');
         }
 
         \Atom::lockFilePhysical($filePhysical->visibility, $filePhysical->type, $filePhysical->sha256);
@@ -218,13 +199,9 @@ class FileService
                     ->where('sha256', '=', $model->sha256)
                     ->first();
 
-                if ($check && ($check->linked || $this->isSafe($check))) {
+                if ($check) {
                     $this->link($fileVirtual, $check, $file, $fileValidationKey, $acl);
                     return;
-                }
-
-                if ($check) {
-                    $class::where('id', '=', $check->id)->delete();
                 }
             }
 
@@ -242,6 +219,10 @@ class FileService
         // Validation & save
         $model->validate($fileValidationKey)->save();
         $this->link($fileVirtual, $model, $file, $fileValidationKey, $acl);
+        \Atom::onRollBack(
+            fn () => $model->delete(), // for observers
+            $model->getConnectionName()
+        );
 
         // Store file
         if ($model->getVisibilityHandler() instanceof AdapterInterface) {
@@ -250,28 +231,7 @@ class FileService
             $file->storeAs(dirname($model->path), basename($model->path), $model->disk);
         }
 
-        \Atom::onRollBack(
-            function () use ($model, $class) {
-                \DB::transaction(function () use ($model, $class) {
-                    $this->lock($model);
-
-                    $check = $class::query()
-                        ->where('visibility', '=', $model->visibility)
-                        ->where('type', '=', $model->type)
-                        ->where('sha256', '=', $model->sha256)
-                        ->where('id', '!=', $model->id)
-                        ->where('path', '=', $model->path) // case sensitive must not be matter
-                        ->first();
-
-                    if (! $check) {
-                        $model->delete(); // for observers
-                    }
-                });
-            },
-            $model->getConnectionName()
-        );
-
-        // Side File Generation
+        // Side files generation
         if ($model->getTypeHandler() instanceof GenerateInterface) {
             $model->getTypeHandler()->dispatchGenerate($model);
         }
@@ -348,26 +308,5 @@ class FileService
         if (! $passes) {
             throw (new ValidationException($validator))->replaceKey('file', $fileValidationKey);
         }
-    }
-
-    /**
-     * @param \AnourValar\EloquentFile\FilePhysical $filePhysical
-     * @return bool
-     */
-    private function isSafe(FilePhysical $filePhysical): bool
-    {
-        $files = array_merge([['disk' => $filePhysical->disk, 'path' => $filePhysical->path]], (array) $filePhysical->path_generate);
-
-        foreach ($files as $file) {
-            if (! mb_strlen((string) $file['path'])) {
-                continue;
-            }
-
-            if (! \Storage::disk($file['disk'])->exists($file['path'])) {
-                return false;
-            }
-        }
-
-        return true;
     }
 }

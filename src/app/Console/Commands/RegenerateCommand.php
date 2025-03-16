@@ -11,14 +11,14 @@ class RegenerateCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'eloquent-file:regenerate';
+    protected $signature = 'eloquent-file:regenerate {--created_before=now}';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Regenerates "side files" (GenerateInterface) with old builds.';
+    protected $description = 'Regenerates "side files" (GenerateInterface).';
 
     /**
      * Execute the console command.
@@ -30,6 +30,7 @@ class RegenerateCommand extends Command
         $class = config('eloquent_file.models.file_physical');
         $types = config('eloquent_file.file_physical.type');
 
+        $beforeCreatedAt = \Date::parse($this->option('created_before'));
         $bar = $this->output->createProgressBar(count($types));
 
         foreach ($types as $type => $typeDetails) {
@@ -40,8 +41,7 @@ class RegenerateCommand extends Command
                 continue;
             }
 
-            $build = $handler->getBuild($typeDetails);
-            foreach ($class::where('type', '=', $type)->where('build', '<', $build)->cursor() as $item) {
+            foreach ($class::where('created_at', '<=', $beforeCreatedAt)->where('type', '=', $type)->cursor() as $item) {
                 if (! $item->path) {
                     continue;
                 }

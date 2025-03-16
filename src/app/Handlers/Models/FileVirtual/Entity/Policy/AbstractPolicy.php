@@ -16,7 +16,6 @@ abstract class AbstractPolicy implements PolicyInterface
         $collection = null;
 
         if (! empty($fileVirtual->name_details['policy']['limit_qty'])) {
-            \Atom::lockFileVirtual($fileVirtual->entity, $fileVirtual->entity_id, $fileVirtual->name);
             $collection = $this->getOriginalCollection($fileVirtual);
 
             if ($collection->count() + 1 > $fileVirtual->name_details['policy']['limit_qty']) {
@@ -32,7 +31,6 @@ abstract class AbstractPolicy implements PolicyInterface
 
         if (! empty($fileVirtual->name_details['policy']['limit_size'])) {
             if (! isset($collection)) {
-                \Atom::lockFileVirtual($fileVirtual->entity, $fileVirtual->entity_id, $fileVirtual->name);
                 $collection = $this->getOriginalCollection($fileVirtual);
             }
 

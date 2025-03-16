@@ -12,10 +12,11 @@ class FilePhysicalObserver
      */
     public function deleting(\AnourValar\EloquentFile\FilePhysical $model)
     {
-        $class = config('eloquent_file.models.file_virtual');
-
-        foreach ($class::where('file_physical_id', '=', $model->id)->get() as $item) {
-            $item->validateDelete()->delete();
+        if ($model->linked) {
+            $class = config('eloquent_file.models.file_virtual');
+            foreach ($class::where('file_physical_id', '=', $model->id)->get() as $item) {
+                $item->delete();
+            }
         }
     }
 
@@ -27,14 +28,14 @@ class FilePhysicalObserver
      */
     public function deleted(\AnourValar\EloquentFile\FilePhysical $model)
     {
-        foreach (array_merge([['disk' => $model->disk, 'path' => $model->path]], (array) $model->path_generate) as $item) {
-            if (! mb_strlen((string) $item['path'])) {
-                continue;
-            }
+        \Atom::onCommit(function () use ($model) {
+            foreach (array_merge([['disk' => $model->disk, 'path' => $model->path]], (array) $model->path_generate) as $item) {
+                if (! mb_strlen((string) $item['path'])) {
+                    continue;
+                }
 
-            if (\Storage::disk($item['disk'])->exists($item['path'])) {
                 \Storage::disk($item['disk'])->delete($item['path']);
             }
-        }
+        }, $model->getConnectionName());
     }
 }

@@ -12,7 +12,6 @@ return [
         'size' => 'Size (bytes)',
         'mime_type' => 'MIME-type',
         'linked' => 'Linked',
-        'build' => 'Build',
         'created_at' => 'Created at',
         'updated_at' => 'Updated at',
     ],

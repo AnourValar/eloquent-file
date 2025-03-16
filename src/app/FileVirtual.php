@@ -292,6 +292,24 @@ abstract class FileVirtual extends Model
     }
 
     /**
+     * "Light" set of the attributes
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $builder
+     * @return void
+     */
+    public function scopeLight(\Illuminate\Database\Eloquent\Builder $builder): void
+    {
+        $builder
+            ->with('filePhysical')
+            ->select([
+                'id', 'file_physical_id', 'entity', 'entity_id', 'name', 'filename', 'title', 'created_at',
+            ])
+            ->publishFields([
+                'id', 'name', 'filename', 'title', 'created_at', 'mime_type', 'size', 'url', 'url_generate', 'url_proxy',
+           ]);
+    }
+
+    /**
      * @return \AnourValar\EloquentFile\Handlers\Models\FileVirtual\Entity\EntityInterface
      */
     public function getEntityHandler(): EntityInterface
