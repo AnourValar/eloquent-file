@@ -288,7 +288,7 @@ abstract class FileVirtual extends Model
      */
     public function entitable(): \Illuminate\Database\Eloquent\Relations\MorphTo
     {
-        return $this->morphTo('entity', 'entity');
+        return $this->morphTo('entity', 'entity')->withTrashed();
     }
 
     /**

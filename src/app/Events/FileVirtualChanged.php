@@ -6,7 +6,7 @@ use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class FileVirtualChanged
+class FileVirtualChanged // listeners should not be queued
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
