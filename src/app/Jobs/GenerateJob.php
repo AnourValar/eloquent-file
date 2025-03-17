@@ -113,11 +113,11 @@ class GenerateJob implements ShouldQueue, ShouldBeUnique
                 continue;
             }
 
-            \Storage::disk($item['disk'])->delete($item['path']);
+            \Storage::disk($item['disk'])->delete($item['path']); // alt: file_deletes [in db] + cron = eventual consistency
         }
 
         if ($filePhysical->path === null) {
-            \Storage::disk($filePhysical->disk)->delete($originalPath);
+            \Storage::disk($filePhysical->disk)->delete($originalPath); // alt: file_deletes [in db] + cron = eventual consistency
         }
 
         return $this;

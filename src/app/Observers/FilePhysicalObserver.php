@@ -34,7 +34,7 @@ class FilePhysicalObserver
                     continue;
                 }
 
-                \Storage::disk($item['disk'])->delete($item['path']);
+                \Storage::disk($item['disk'])->delete($item['path']); // alt: file_deletes [in db] + cron = eventual consistency
             }
         }, $model->getConnectionName());
     }
