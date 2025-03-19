@@ -99,7 +99,7 @@ abstract class FileVirtual extends Model
         'filename' => 'string',
         'title' => 'string',
         'weight' => 'integer',
-        'details' => 'json',
+        'details' => 'json:unicode',
         'archived_at' => 'datetime',
         'created_at' => 'datetime',
         'updated_at' => 'datetime',

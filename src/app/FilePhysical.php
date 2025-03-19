@@ -97,7 +97,7 @@ abstract class FilePhysical extends Model
         'type' => 'string',
         'disk' => 'string',
         'path' => 'string',
-        'path_generate' => 'json',
+        'path_generate' => 'json:unicode',
         'sha256' => 'string',
         'size' => 'integer',
         'mime_type' => 'string',
