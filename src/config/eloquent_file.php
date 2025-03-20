@@ -26,20 +26,20 @@ return [
         'type' => [
             'simple' => [
                 'bind' => AnourValar\EloquentFile\Handlers\Models\FilePhysical\Type\SimpleType::class,
-                'rules' => ['max:10240', 'extensions:zip,rar,pdf,gz,jpg,jpeg,png,gif,webp,svg,ico,xls,xlsx,doc,docx,ppt,pptx,xml,mp3'],
-                'rules_validate_mime_by_extension' => true,
+                'rules' => ['max:10240', 'extensions:zip,rar,pdf,gz,jpg,jpeg,png,gif,webp,avif,heic,svg,ico,xls,xlsx,doc,docx,ppt,pptx,xml,mp3,mp4,mov'],
+                'rules_validate_mime_by_extension' => true, // "mimes" rule
             ],
 
             'image' => [
                 'bind' => AnourValar\EloquentFile\Handlers\Models\FilePhysical\Type\ImageType::class,
-                'rules' => ['max:10240', 'extensions:jpg,jpeg,png,gif,webp', 'image', 'dimensions:min_width=100,min_height=100'],
-                'rules_validate_mime_by_extension' => false,
+                'rules' => ['max:10240', 'extensions:jpg,jpeg,png,gif,webp,avif', 'dimensions:min_width=100,min_height=100'], // heic is not supported by "dimensions"
+                'rules_validate_mime_by_extension' => true,
 
                 'keep_original' => true,
                 'generate' => [
                     'preview' => [
-                        'max_height' => 500,
-                        'max_width' => 500,
+                        'max_height' => 1000,
+                        'max_width' => 1000,
                         'format' => 'jpg',
                         'quality' => 82,
                     ],

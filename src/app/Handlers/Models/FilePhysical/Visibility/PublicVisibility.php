@@ -47,6 +47,9 @@ class PublicVisibility implements VisibilityInterface, DirectAccessInterface
         }
 
         $extension = $file->getClientOriginalExtension();
+        //if (! mb_strlen($extension)) {
+        //     $extension = $file->extension();
+        //}
         if (mb_strlen($extension)) {
             $extension = ".$extension";
         }
