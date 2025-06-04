@@ -11,7 +11,7 @@ class RegenerateCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'eloquent-file:regenerate {--created_before=now}';
+    protected $signature = 'eloquent-file:regenerate {--created_before=-1 minute}';
 
     /**
      * The console command description.

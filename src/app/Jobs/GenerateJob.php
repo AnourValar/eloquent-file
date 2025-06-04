@@ -78,8 +78,8 @@ class GenerateJob implements ShouldQueue, ShouldBeUnique
             $filePhysical->save();
             $this->fireEvents($filePhysical);
 
-            \Atom::onCommit(
-                fn () => $this->cleanUp($filePhysical, $originalPathGenerate, $originalPath),
+            \Atom::onCommit( // frontend could use current files
+                fn () => AfterGenerateJob::dispatch($filePhysical, $originalPathGenerate, $originalPath)->delay(now()->addSeconds(10)),
                 $filePhysical->getConnectionName()
             );
         });
@@ -96,30 +96,5 @@ class GenerateJob implements ShouldQueue, ShouldBeUnique
         foreach ($class::where('file_physical_id', '=', $filePhysical->id)->cursor() as $item) {
             event(new \AnourValar\EloquentFile\Events\FileVirtualChanged($item));
         }
-    }
-
-    /**
-     * @param \AnourValar\EloquentFile\FilePhysical $filePhysical
-     * @param array $originalPathGenerate
-     * @param string $originalPath
-     * @return self
-     * @psalm-suppress UnusedMethod
-     */
-    private function cleanUp(FilePhysical $filePhysical, array $originalPathGenerate, string $originalPath): self
-    {
-        $new = (array) $filePhysical->path_generate;
-        foreach ($originalPathGenerate as $name => $item) {
-            if (isset($new[$name]) && $new[$name] == $item) {
-                continue;
-            }
-
-            \Storage::disk($item['disk'])->delete($item['path']); // alt: file_deletes [in db] + cron = eventual consistency
-        }
-
-        if ($filePhysical->path === null) {
-            \Storage::disk($filePhysical->disk)->delete($originalPath); // alt: file_deletes [in db] + cron = eventual consistency
-        }
-
-        return $this;
     }
 }

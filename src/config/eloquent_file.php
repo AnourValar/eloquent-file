@@ -10,13 +10,13 @@ return [
         'visibility' => [
             'public' => [
                 'bind' => AnourValar\EloquentFile\Handlers\Models\FilePhysical\Visibility\PublicVisibility::class,
-                'disks' => explode(',', env('ELOQUENT_FILE_PUBLIC', 'public')),
+                'disks' => explode(',', env('ELOQUENT_FILE_PUBLIC', 's3_public')),
             ],
 
             'private' => [
                 'bind' => AnourValar\EloquentFile\Handlers\Models\FilePhysical\Visibility\PrivateVisibility::class,
-                'disks' => explode(',', env('ELOQUENT_FILE_PRIVATE', 'private')),
-                'disks_generated' => explode(',', env('ELOQUENT_FILE_PUBLIC', 'public')),
+                'disks' => explode(',', env('ELOQUENT_FILE_PRIVATE', 's3_private')),
+                'disks_generated' => explode(',', env('ELOQUENT_FILE_PUBLIC', 's3_public')),
 
                 'proxy_route' => 'file.download',
                 'proxy_route_method' => AnourValar\EloquentFile\Handlers\Models\FilePhysical\Visibility\PrivateVisibility::METHOD_URL_SIGNED,

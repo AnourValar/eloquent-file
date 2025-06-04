@@ -67,10 +67,11 @@ trait ControllerTrait
      *
      * @param \Illuminate\Http\Request $request
      * @param mixed $data
+     * @param mixed $extraData
      * @throws \AnourValar\EloquentValidation\Exceptions\ValidationException
      * @return \AnourValar\EloquentFile\FileVirtual
      */
-    protected function uploadFileFrom(Request $request, mixed $data = []): \AnourValar\EloquentFile\FileVirtual
+    protected function uploadFileFrom(Request $request, $data = [], $extraData = []): \AnourValar\EloquentFile\FileVirtual
     {
         // FileVirtual
         if ($data instanceof \Illuminate\Database\Eloquent\Model) {
@@ -88,7 +89,8 @@ trait ControllerTrait
                 'title' => $request->input('title'),
                 'details' => $request->input('details'),
             ],
-            $data
+            $data,
+            $extraData
         );
 
         $fileVirtual = (new \App\FileVirtual())->forceFill($data);

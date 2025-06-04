@@ -237,6 +237,15 @@ abstract class FilePhysical extends Model
     }
 
     /**
+     * @return string|null
+     */
+    public function fileDataGenerate(string $name): ?string
+    {
+        $path = $this->path_generate[$name];
+        return \Storage::disk($path['disk'])->get($path['path']);
+    }
+
+    /**
      * Virtual attribute: visibility_details
      *
      * @return \Illuminate\Database\Eloquent\Casts\Attribute
