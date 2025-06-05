@@ -51,7 +51,7 @@ class AfterGenerateJob implements ShouldQueue
      */
     public function middleware()
     {
-        return [new \Illuminate\Queue\Middleware\WithoutOverlapping($this->filePhysical->id)];
+        return [];
     }
 
     /**
