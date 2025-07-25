@@ -12,7 +12,7 @@ use Illuminate\Http\UploadedFile;
 class FileService
 {
     /**
-     * Create UploadedFile from a buffer
+     * Create an UploadedFile from the buffer
      *
      * @param string $binary
      * @param string|null $fileName
@@ -22,7 +22,7 @@ class FileService
     public function prepareFromBuffer(string $binary, ?string $fileName = null, ?string $mimeType = null): UploadedFile
     {
         $temp = tmpfile();
-        \App::terminating(function () use (&$temp) {
+        \App::terminating(function () use (&$temp) { // friendly with fpm, octane, cli (success & exception)
             if (is_resource($temp)) {
                 fclose($temp);
             }
@@ -31,6 +31,25 @@ class FileService
 
         $fullPath = stream_get_meta_data($temp)['uri'];
 
+        return new UploadedFile(
+            $fullPath,
+            $fileName ?? basename($fullPath),
+            $mimeType, // mimeType
+            null, // error
+            true // mark as test (since it's not a real HTTP request)
+        );
+    }
+
+    /**
+     * Create an UploadedFile from the file path
+     *
+     * @param string $fullPath
+     * @param string|null $fileName
+     * @param string|null $mimeType
+     * @return \Illuminate\Http\UploadedFile
+     */
+    public function prepareFromPath(string $fullPath, ?string $fileName = null, ?string $mimeType = null): UploadedFile
+    {
         return new UploadedFile(
             $fullPath,
             $fileName ?? basename($fullPath),
@@ -186,7 +205,10 @@ class FileService
             // Fill: sha256, size, mime_type
             $model->sha256 = hash_file('sha256', $file->getRealPath());
             $model->size = $file->getSize();
-            $model->mime_type = mb_strtolower((string) $file->getMimeType());
+            $model->mime_type = mb_strtolower($file->getClientMimeType());
+            if (is_uploaded_file($file->getPathname()) || $model->mime_type == 'application/octet-stream') {
+                $model->mime_type = mb_strtolower((string) $file->getMimeType()); // memory consume...
+            }
 
             // Get the lock
             $this->lock($model);
@@ -228,7 +250,7 @@ class FileService
         if ($model->getVisibilityHandler() instanceof AdapterInterface) {
             $model->getVisibilityHandler()->putFile($file, $model);
         } else {
-            $file->storeAs(dirname($model->path), basename($model->path), $model->disk);
+            $file->storeAs(dirname($model->path), basename($model->path), $model->disk); // stream write
         }
 
         // Side files generation

@@ -25,7 +25,7 @@ class EloquentFileServiceProvider extends ServiceProvider
     public function boot()
     {
         // config
-        $this->publishes([ __DIR__.'/../../config/eloquent_file.php' => config_path('eloquent_file.php')], 'config');
+        $this->publishes([__DIR__.'/../../config/eloquent_file.php' => config_path('eloquent_file.php')], 'config');
 
         // migrations
         //$this->loadMigrationsFrom(__DIR__.'/../../database/migrations');
