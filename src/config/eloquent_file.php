@@ -26,8 +26,8 @@ return [
         'type' => [
             'simple' => [
                 'bind' => AnourValar\EloquentFile\Handlers\Models\FilePhysical\Type\SimpleType::class,
-                'rules' => ['max:10240', 'extensions:zip,rar,pdf,gz,jpg,jpeg,png,gif,webp,avif,heic,svg,ico,xls,xlsx,doc,docx,ppt,pptx,xml,mp3,mp4,mov'],
-                'rules_validate_mime_by_extension' => true, // "mimes" rule
+                'rules' => ['max:10240', 'extensions:zip,rar,pdf,gz,jpg,jpeg,png,gif,webp,avif,heic,svg,ico,txt,html,xls,xlsx,doc,docx,ppt,pptx,xml,mp3,mp4,mov'],
+                'rules_validate_mime_by_extension' => false, // "mimes" rule
             ],
 
             'image' => [
