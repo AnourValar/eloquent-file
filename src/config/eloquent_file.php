@@ -40,7 +40,7 @@ return [
                     'preview' => [
                         'max_height' => 1000,
                         'max_width' => 1000,
-                        'format' => 'jpg',
+                        'format' => 'jpg', // webp
                         'quality' => 82,
                     ],
                 ],
