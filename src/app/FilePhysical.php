@@ -80,7 +80,7 @@ abstract class FilePhysical extends Model
     /**
      * The model's attributes.
      *
-     * @var array
+     * @var array<string, mixed>
      */
     protected $attributes = [
         'linked' => false,

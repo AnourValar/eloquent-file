@@ -79,7 +79,7 @@ abstract class FileVirtual extends Model
     /**
      * The model's attributes.
      *
-     * @var array
+     * @var array<string, mixed>
      */
     protected $attributes = [
         'weight' => 0,

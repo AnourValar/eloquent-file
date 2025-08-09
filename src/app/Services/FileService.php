@@ -12,6 +12,23 @@ use Illuminate\Http\UploadedFile;
 class FileService
 {
     /**
+     * @var array
+     */
+    private array $resources = [];
+
+    /**
+     * GC
+     */
+    public function __destruct()
+    {
+        foreach ($this->resources as $resource) {
+            if (is_resource($resource)) {
+                fclose($resource);
+            }
+        }
+    }
+
+    /**
      * Create an UploadedFile from the buffer
      *
      * @param string $binary
@@ -21,15 +38,10 @@ class FileService
      */
     public function prepareFromBuffer(string $binary, ?string $fileName = null, ?string $mimeType = null): UploadedFile
     {
-        $temp = tmpfile();
-        \App::terminating(function () use (&$temp) { // friendly with fpm, octane, cli (success & exception)
-            if (is_resource($temp)) {
-                fclose($temp);
-            }
-        });
-        fwrite($temp, $binary);
-
-        $fullPath = stream_get_meta_data($temp)['uri'];
+        $resource = tmpfile();
+        fwrite($resource, $binary);
+        $fullPath = stream_get_meta_data($resource)['uri'];
+        $this->resources[] = &$resource;
 
         return new UploadedFile(
             $fullPath,
@@ -102,7 +114,16 @@ class FileService
             }
         }
 
-        $this->handleUpload($fileVirtual, $file, $visibility, $type, $fileValidationKey, $title, $acl);
+        try {
+            $this->handleUpload($fileVirtual, $file, $visibility, $type, $fileValidationKey, $title, $acl);
+        } finally {
+            foreach ($this->resources as $resource) {
+                if (is_resource($resource)) {
+                    fclose($resource);
+                }
+            }
+            $this->resources = [];
+        }
     }
 
     /**
