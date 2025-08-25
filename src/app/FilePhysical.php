@@ -194,9 +194,10 @@ abstract class FilePhysical extends Model
      * "Save" after-validation
      *
      * @param \Illuminate\Validation\Validator $validator
+     * @param bool $basic
      * @return void
      */
-    public function saveAfterValidation(\Illuminate\Validation\Validator $validator): void
+    public function saveAfterValidation(\Illuminate\Validation\Validator $validator, bool $basic): void
     {
         // ...
     }
@@ -205,9 +206,10 @@ abstract class FilePhysical extends Model
      * "Delete" after-validation
      *
      * @param \Illuminate\Validation\Validator $validator
+     * @param bool $basic
      * @return void
      */
-    public function deleteAfterValidation(\Illuminate\Validation\Validator $validator): void
+    public function deleteAfterValidation(\Illuminate\Validation\Validator $validator, bool $basic): void
     {
 
     }

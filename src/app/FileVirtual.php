@@ -202,9 +202,10 @@ abstract class FileVirtual extends Model
      * "Save" after-validation
      *
      * @param \Illuminate\Validation\Validator $validator
+     * @param bool $basic
      * @return void
      */
-    public function saveAfterValidation(\Illuminate\Validation\Validator $validator): void
+    public function saveAfterValidation(\Illuminate\Validation\Validator $validator, bool $basic): void
     {
         // name
         if (! $this->name_details) {
@@ -268,9 +269,10 @@ abstract class FileVirtual extends Model
      * "Delete" after-validation
      *
      * @param \Illuminate\Validation\Validator $validator
+     * @param bool $basic
      * @return void
      */
-    public function deleteAfterValidation(\Illuminate\Validation\Validator $validator): void
+    public function deleteAfterValidation(\Illuminate\Validation\Validator $validator, bool $basic): void
     {
         $this->getEntityHandler()->validateDelete($this, $validator);
     }
