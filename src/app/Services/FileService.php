@@ -164,6 +164,8 @@ class FileService
      */
     public function replicate(FileVirtual $fileVirtual, array $data, $prefix = null): FileVirtual
     {
+        $this->lock($fileVirtual->filePhysical);
+
         return tap(
             $fileVirtual
                 ->replicate(array_merge(['entity', 'entity_id'], $fileVirtual->getComputed()))
@@ -249,7 +251,7 @@ class FileService
             }
 
             // Technical create
-            $model->save();
+            $model->forceFill(['linked' => true])->save();
 
             // Fill: disk
             $disks = config('eloquent_file.file_physical.visibility')[$model->visibility]['disks'];

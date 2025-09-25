@@ -10,7 +10,6 @@ parameters:
         - '#Call to static method#'
         - '#Access to an undefined property#'
         - '#Call to an undefined method#'
-        - '#Call to an undefined static#'
         - '#is used zero times and is not analysed#'
 
     excludePaths:

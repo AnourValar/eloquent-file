@@ -93,7 +93,8 @@ trait ControllerTrait
             $extraData
         );
 
-        $fileVirtual = (new \App\FileVirtual())->forceFill($data);
+        $class = config('eloquent_file.models.file_virtual');
+        $fileVirtual = (new $class())->forceFill($data);
 
 
         // Request
@@ -131,7 +132,6 @@ trait ControllerTrait
     protected function deleteFileFrom(Request $request): \AnourValar\EloquentFile\FileVirtual
     {
         $fileVirtual = $this->extractFileVirtualFrom($request);
-        \App::make(\AnourValar\EloquentFile\Services\FileService::class)->lock($fileVirtual->filePhysical);
 
         if (! $fileVirtual->getEntityHandler()->canDelete($fileVirtual, $request->user())) {
             throw new \Illuminate\Auth\Access\AuthorizationException(trans('eloquent-file::auth.delete.not_authorized'));

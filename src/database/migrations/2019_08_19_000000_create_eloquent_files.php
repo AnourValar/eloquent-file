@@ -21,7 +21,7 @@ return new class extends Migration
             $table->string('sha256')->nullable();
             $table->unsignedInteger('size')->nullable();
             $table->string('mime_type')->nullable();
-            $table->boolean('linked')->nullable()->index();
+            $table->boolean('linked')->index();
             $table->timestamps();
 
             $table->index(['visibility', 'type', 'sha256']);

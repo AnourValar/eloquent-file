@@ -64,14 +64,21 @@ class OnZeroJob implements ShouldQueue, ShouldBeUnique
             $fileService->lock($this->filePhysical);
             $filePhysical = $this->filePhysical->fresh();
 
-            if (! $filePhysical || $filePhysical->linked || $filePhysical->updated_at >= now()->subHours(1)) {
+            if (! $filePhysical || $filePhysical->linked || $filePhysical->updated_at >= now()->subHours(2)) {
+                return;
+            }
+
+            $classVirtual = config('eloquent_file.models.file_virtual');
+            $classPhysical = config('eloquent_file.models.file_physical');
+            if ($classVirtual::where('file_physical_id', '=', $filePhysical->id)->first()) {
+                $classPhysical::where('id', '=', $filePhysical->id)->update(['linked' => true, 'updated_at' => now()]);
                 return;
             }
 
             try {
                 $filePhysical->getTypeHandler()->onZero($filePhysical);
 
-                if ($filePhysical->exists && isset($filePhysical->linked)) {
+                if ($filePhysical->exists) {
                     throw new \RuntimeException('Incorrect onZero behaviour.');
                 }
             } catch (\Illuminate\Validation\ValidationException $e) {

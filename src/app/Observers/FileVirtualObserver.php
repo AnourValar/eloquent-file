@@ -28,7 +28,7 @@ class FileVirtualObserver
      */
     public function created(FileVirtual $model)
     {
-        $this->recalc($model);
+        event(new \AnourValar\EloquentFile\Events\FileVirtualChanged($model));
 
         $model->getEntityPolicyHandler()->onCreated($model);
     }
@@ -41,7 +41,7 @@ class FileVirtualObserver
      */
     public function updated(FileVirtual $model)
     {
-        if ($model->isDirty('weight')) {
+        if ($model->isDirty('name', 'weight')) {
             event(new \AnourValar\EloquentFile\Events\FileVirtualChanged($model));
         }
     }
@@ -54,24 +54,8 @@ class FileVirtualObserver
      */
     public function deleted(FileVirtual $model)
     {
-        $this->recalc($model);
-    }
-
-    /**
-     * @param \AnourValar\EloquentFile\FileVirtual $model
-     * @return void
-     */
-    private function recalc(FileVirtual $model): void
-    {
-        if ($model->exists) {
-            $linked = true;
-        } else {
-            $class = config('eloquent_file.models.file_virtual');
-            $linked = $class::where('file_physical_id', '=', $model->file_physical_id)->select(['id'])->first() ? true : false;
-        }
-
         $class = config('eloquent_file.models.file_physical');
-        $class::where('id', '=', $model->file_physical_id)->update(['linked' => $linked, 'updated_at' => now()]);
+        $class::where('id', '=', $model->file_physical_id)->update(['linked' => false, 'updated_at' => now()]);
 
         event(new \AnourValar\EloquentFile\Events\FileVirtualChanged($model));
     }

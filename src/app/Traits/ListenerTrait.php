@@ -15,7 +15,8 @@ trait ListenerTrait
      */
     protected function avatarSchema(FileVirtual $fileVirtual, $generateKeys = 'preview'): ?array
     {
-        $model = \App\FileVirtual::query()
+        $class = config('eloquent_file.models.file_virtual');
+        $model = $class::query()
             ->with('filePhysical')
             ->where('entity', '=', $fileVirtual['entity'])
             ->where('entity_id', '=', $fileVirtual['entity_id'])

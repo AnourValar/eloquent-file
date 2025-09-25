@@ -12,11 +12,8 @@ class FilePhysicalObserver
      */
     public function deleting(\AnourValar\EloquentFile\FilePhysical $model)
     {
-        if ($model->linked) {
-            $class = config('eloquent_file.models.file_virtual');
-            foreach ($class::where('file_physical_id', '=', $model->id)->get() as $item) {
-                $item->delete();
-            }
+        if ($model->linked) { // non-consistance
+            throw new \RuntimeException('FilePhysical cannot be deleted before FileVirtuals.');
         }
     }
 

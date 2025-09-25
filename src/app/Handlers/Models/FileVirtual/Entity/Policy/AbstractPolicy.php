@@ -34,7 +34,8 @@ abstract class AbstractPolicy implements PolicyInterface
                 $collection = $this->getOriginalCollection($fileVirtual);
             }
 
-            $filePhysical = \App\FilePhysical::find($fileVirtual->file_physical_id);
+            $class = config('eloquent_file.models.file_physical');
+            $filePhysical = $class::find($fileVirtual->file_physical_id);
             if (($collection->sum('size') + $filePhysical->size) / 1024 > $fileVirtual->name_details['policy']['limit_size']) {
                 $validator->errors()->add(
                     'entity_id',

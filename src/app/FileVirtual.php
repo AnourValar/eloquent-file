@@ -142,7 +142,7 @@ abstract class FileVirtual extends Model
      * @var array
      */
     protected $unchangeable = [
-        'file_physical_id', 'entity', 'entity_id',
+        'file_physical_id', 'entity', 'entity_id', 'filename',
     ];
 
     /**
