@@ -134,12 +134,12 @@ trait ControllerTrait
     protected function downloadFileFrom(string $url, array $data, ?string $validationKey = null): callable
     {
         // Handle with input
-        $filename = mb_substr(basename(parse_url($url)['path'] ?? sha1($url)), -30);
+        $filename = mb_substr(basename(parse_url($url)['path'] ?? sha1($url)), -100);
         $data = array_replace(['filename' => $filename], $data);
 
 
         // Request
-        if (preg_match('#^https?://#u', $url)) {
+        if (preg_match('#^https?\:\/\/#u', $url)) {
             $file = $this->downloadProcedure($url);
         } else {
             $file = false;
