@@ -123,6 +123,62 @@ trait ControllerTrait
     }
 
     /**
+     * Download a file (in a 2 steps)
+     *
+     * @param string $url
+     * @param array $data
+     * @param string|null $validationKey
+     * @throws \AnourValar\EloquentValidation\Exceptions\ValidationException
+     * @return callable
+     */
+    protected function downloadFileFrom(string $url, array $data, ?string $validationKey = null): callable
+    {
+        // Handle with input
+        $filename = mb_substr(basename(parse_url($url)['path'] ?? sha1($url)), -30);
+        $data = array_replace(['filename' => $filename], $data);
+
+
+        // Request
+        if (preg_match('#^https?://#u', $url)) {
+            $file = $this->downloadProcedure($url);
+        } else {
+            $file = false;
+        }
+
+        if ($file === false) {
+            throw new \AnourValar\EloquentValidation\Exceptions\ValidationException(trans('eloquent-file::auth.upload.file_missed'));
+        }
+
+        $fileService = \App::make(\AnourValar\EloquentFile\Services\FileService::class);
+        $file = $fileService->prepareFromBuffer($file, $data['filename']);
+
+
+        // Closure to upload
+        return function () use ($data, $file, $validationKey, $fileService) {
+            $class = config('eloquent_file.models.file_virtual');
+            $fileVirtual = (new $class())->forceFill($data);
+
+            $acl = function ($fileVirtual) {
+                if (! $fileVirtual->getEntityHandler()->canUpload($fileVirtual, \Auth::user())) {
+                    throw new \Illuminate\Auth\Access\AuthorizationException(trans('eloquent-file::auth.upload.not_authorized'));
+                }
+            };
+            $fileService->upload($file, $fileVirtual, $validationKey, $acl);
+
+            return $fileVirtual;
+        };
+    }
+
+    /**
+     * @param string $url
+     * @return string|false
+     */
+    protected function downloadProcedure(string $url): string|false
+    {
+        return @file_get_contents($url);
+    }
+
+    /**
      * Delete a file
      *
      * @param \Illuminate\Http\Request $request

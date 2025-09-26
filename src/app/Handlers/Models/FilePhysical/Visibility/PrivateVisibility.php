@@ -57,12 +57,21 @@ class PrivateVisibility implements VisibilityInterface, DirectAccessInterface, P
             throw new \LogicException('Incorrect usage.');
         }
 
+        $extension = $file->getClientOriginalExtension();
+        //if (! mb_strlen($extension)) {
+        //     $extension = $file->extension();
+        //}
+        if (mb_strlen($extension)) {
+            $extension = ".$extension";
+        }
+
         return $filePhysical->type.'_'.$filePhysical->visibility.'/'
             .mb_substr($filePhysical->sha256, 0, 2).'/'
             .mb_substr($filePhysical->sha256, 2, 2).'/'
             .mb_substr($filePhysical->sha256, 4, 2).'/'
             .$filePhysical->sha256
-            .$filePhysical->id; // important!
+            .$filePhysical->id // important!
+            .$extension;
     }
 
     /**

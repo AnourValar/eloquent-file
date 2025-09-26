@@ -10,7 +10,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 
-class GenerateJob implements ShouldQueue, ShouldBeUnique
+class GenerateJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable;
 
@@ -41,16 +41,6 @@ class GenerateJob implements ShouldQueue, ShouldBeUnique
     }
 
     /**
-     * The unique ID of the job.
-     *
-     * @return string
-     */
-    public function uniqueId()
-    {
-        return (string) $this->filePhysical->id;
-    }
-
-    /**
      * Execute the job.
      *
      * @param \AnourValar\EloquentFile\Services\FileService $fileService
@@ -63,7 +53,7 @@ class GenerateJob implements ShouldQueue, ShouldBeUnique
             $fileService->lock($this->filePhysical);
             $filePhysical = $this->filePhysical->fresh();
 
-            if (! $filePhysical) {
+            if (! $filePhysical || ! $filePhysical->path) {
                 return;
             }
 

@@ -10,7 +10,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 
-class OnZeroJob implements ShouldQueue, ShouldBeUnique
+class OnZeroJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable;
 
@@ -38,16 +38,6 @@ class OnZeroJob implements ShouldQueue, ShouldBeUnique
     public function middleware()
     {
         return [];
-    }
-
-    /**
-     * The unique ID of the job.
-     *
-     * @return string
-     */
-    public function uniqueId()
-    {
-        return (string) $this->filePhysical->id;
     }
 
     /**

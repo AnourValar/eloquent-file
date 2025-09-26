@@ -164,8 +164,7 @@ class FileService
      */
     public function replicate(FileVirtual $fileVirtual, array $data, $prefix = null): FileVirtual
     {
-        $this->lock($fileVirtual->filePhysical);
-
+        // No lock is required
         return tap(
             $fileVirtual
                 ->replicate(array_merge(['entity', 'entity_id'], $fileVirtual->getComputed()))
