@@ -36,6 +36,15 @@ class UserEntity implements EntityInterface
 
     /**
      * {@inheritDoc}
+     * @see \AnourValar\EloquentFile\Handlers\Models\FileVirtual\Entity\EntityInterface::lockOnChange()
+     */
+    public function lockOnChange(FileVirtual $fileVirtual): void
+    {
+
+    }
+
+    /**
+     * {@inheritDoc}
      * @see \AnourValar\EloquentFile\Handlers\Models\FileVirtual\Entity\EntityInterface::validate()
      */
     public function validate(FileVirtual $fileVirtual, \Illuminate\Validation\Validator $validator): void

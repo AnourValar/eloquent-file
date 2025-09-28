@@ -112,6 +112,7 @@ trait ControllerTrait
 
 
         // Upload
+        $fileVirtual->getEntityHandler()->lockOnChange($fileVirtual);
         $acl = function ($fileVirtual) use ($request) {
             if (! $fileVirtual->getEntityHandler()->canUpload($fileVirtual, $request->user())) {
                 throw new \Illuminate\Auth\Access\AuthorizationException(trans('eloquent-file::auth.upload.not_authorized'));
@@ -158,6 +159,7 @@ trait ControllerTrait
             $class = config('eloquent_file.models.file_virtual');
             $fileVirtual = (new $class())->forceFill($data);
 
+            $fileVirtual->getEntityHandler()->lockOnChange($fileVirtual);
             $acl = function ($fileVirtual) {
                 if (! $fileVirtual->getEntityHandler()->canUpload($fileVirtual, \Auth::user())) {
                     throw new \Illuminate\Auth\Access\AuthorizationException(trans('eloquent-file::auth.upload.not_authorized'));
@@ -182,13 +184,15 @@ trait ControllerTrait
      * Delete a file
      *
      * @param \Illuminate\Http\Request $request
+     * @param array $where
      * @throws \Illuminate\Auth\Access\AuthorizationException
      * @return \AnourValar\EloquentFile\FileVirtual
      */
-    protected function deleteFileFrom(Request $request): \AnourValar\EloquentFile\FileVirtual
+    protected function deleteFileFrom(Request $request, array $where = []): \AnourValar\EloquentFile\FileVirtual
     {
-        $fileVirtual = $this->extractFileVirtualFrom($request);
+        $fileVirtual = $this->extractFileVirtualFrom($request, $where);
 
+        $fileVirtual->getEntityHandler()->lockOnChange($fileVirtual);
         if (! $fileVirtual->getEntityHandler()->canDelete($fileVirtual, $request->user())) {
             throw new \Illuminate\Auth\Access\AuthorizationException(trans('eloquent-file::auth.delete.not_authorized'));
         }
@@ -199,13 +203,14 @@ trait ControllerTrait
 
     /**
      * @param \Illuminate\Http\Request $request
+     * @param array $where
      * @return \AnourValar\EloquentFile\FileVirtual
      */
-    protected function extractFileVirtualFrom(Request $request): \AnourValar\EloquentFile\FileVirtual
+    protected function extractFileVirtualFrom(Request $request, array $where = []): \AnourValar\EloquentFile\FileVirtual
     {
         $id = ($request->route('file_virtual') ?? $request->input('file_virtual_id'));
         $class = config('eloquent_file.models.file_virtual');
 
-        return $class::findOrFail((int) is_scalar($id) ? $id : 0);
+        return $class::where($where)->findOrFail((int) is_scalar($id) ? $id : 0);
     }
 }

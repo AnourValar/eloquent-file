@@ -35,6 +35,14 @@ interface EntityInterface
     public function canDelete(FileVirtual $fileVirtual, ?Authenticatable $user): bool;
 
     /**
+     * Atomic lock (if required)
+     *
+     * @param \AnourValar\EloquentFile\FileVirtual $fileVirtual
+     * @return void
+     */
+    public function lockOnChange(FileVirtual $fileVirtual): void;
+
+    /**
      * Validation: entity, entity_id, name
      *
      * @param \AnourValar\EloquentFile\FileVirtual $fileVirtual
