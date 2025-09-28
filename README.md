@@ -63,6 +63,22 @@ Route::controller(App\Http\Controllers\FileController::class)->group(function ()
 ```
 
 
+## Route
+
+```php
+\Route::pattern('file_virtual', '[0-9]{1,18}'); // RouteServiceProvider
+\Route::pattern('entity_id', '[0-9]{1,18}'); // RouteServiceProvider
+
+Route::prefix('/file')
+    ->middleware('auth:sanctum')
+    ->controller(App\Http\Controllers\Api\FileController::class)
+    ->group(function () {
+        Route::post('/upload/{entity}/{entity_id}/{name}', 'upload'); // + middleware
+        Route::post('/delete/{file_virtual}', 'delete'); // + middleware
+    });
+```
+
+
 ## Controller
 
 ```php
