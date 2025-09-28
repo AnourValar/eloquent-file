@@ -61,3 +61,43 @@ Route::controller(App\Http\Controllers\FileController::class)->group(function ()
     // $this->proxyUserAuthorize($request, false);
 });
 ```
+
+
+## Controller
+
+```php
+class FileController extends Controller
+{
+    use \AnourValar\EloquentFile\Traits\ControllerTrait;
+
+    /**
+     * Web-service: Upload a file
+     *
+     * @param \Illuminate\Http\Request $request
+     * @return array
+     */
+    public function upload(Request $request): array
+    {
+        $fileVirtual = \DB::transaction(function () use ($request) {
+            return $this->uploadFileFrom($request);
+        });
+
+        return ['file_virtual' => ['id' => $fileVirtual->id]];
+    }
+
+    /**
+     * Web-service: Delete a file
+     *
+     * @param \Illuminate\Http\Request $request
+     * @return array
+     */
+    public function delete(Request $request)
+    {
+        \DB::transaction(function () use ($request) {
+            $this->deleteFileFrom($request);
+        });
+
+        return ['file_virtual' => ['id' => (int) $request->route('file_virtual')]];
+    }
+}
+```
