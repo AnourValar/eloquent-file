@@ -70,7 +70,6 @@ Route::controller(App\Http\Controllers\FileController::class)->group(function ()
 \Route::pattern('entity_id', '[0-9]{1,18}'); // RouteServiceProvider
 
 Route::prefix('/file')
-    ->middleware('auth:sanctum')
     ->controller(App\Http\Controllers\Api\FileController::class)
     ->group(function () {
         Route::post('/upload/{entity}/{entity_id}/{name}', 'upload'); // + middleware
