@@ -42,7 +42,7 @@ class PublicVisibility implements VisibilityInterface, DirectAccessInterface
      */
     public function getPath(FilePhysical $filePhysical, UploadedFile $file): string
     {
-        if (empty($filePhysical->sha256)) {
+        if (! isset($filePhysical->sha256, $filePhysical->id)) {
             throw new \LogicException('Incorrect usage.');
         }
 
@@ -54,8 +54,7 @@ class PublicVisibility implements VisibilityInterface, DirectAccessInterface
             $extension = ".$extension";
         }
 
-        return $filePhysical->type.'_'.$filePhysical->visibility.'/'
-            .mb_substr($filePhysical->sha256, 0, 2).'/'
+        return mb_substr($filePhysical->sha256, 0, 2).'/'
             .mb_substr($filePhysical->sha256, 2, 2).'/'
             .mb_substr($filePhysical->sha256, 4, 2).'/'
             .$filePhysical->sha256
