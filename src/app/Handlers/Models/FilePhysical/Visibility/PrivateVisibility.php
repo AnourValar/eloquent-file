@@ -161,7 +161,7 @@ class PrivateVisibility implements VisibilityInterface, DirectAccessInterface, P
                     echo $visibilityHandler->getFile($fileVirtual->filePhysical);
                 },
                 $this->getFileName($fileVirtual),
-                ['Content-Type' => $fileVirtual->filePhysical->mime_type],
+                ['Content-Type' => $fileVirtual->filePhysical->mime_type, 'Cache-Control' => 'public, max-age=86400'],
                 $disposition
             );
         }
@@ -170,7 +170,7 @@ class PrivateVisibility implements VisibilityInterface, DirectAccessInterface, P
             ->response(
                 $fileVirtual->filePhysical->path,
                 $this->getFileName($fileVirtual),
-                ['Content-Type' => $fileVirtual->filePhysical->mime_type],
+                ['Content-Type' => $fileVirtual->filePhysical->mime_type, 'Cache-Control' => 'public, max-age=86400'],
                 $disposition
             );
     }

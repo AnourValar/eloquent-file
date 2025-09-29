@@ -13,7 +13,9 @@ class PrivateEncryptVisibility extends PrivateVisibility implements AdapterInter
      */
     public function putFile(\Illuminate\Http\UploadedFile $file, FilePhysical $filePhysical): void
     {
-        \Storage::disk($filePhysical->disk)->put($filePhysical->path, encrypt($file->getContent()));
+        $stringHelper = \App::make(\AnourValar\LaravelAtom\Helpers\StringHelper::class);
+
+        \Storage::disk($filePhysical->disk)->put($filePhysical->path, $stringHelper->encryptBinary($file->getContent()));
     }
 
 
@@ -23,6 +25,8 @@ class PrivateEncryptVisibility extends PrivateVisibility implements AdapterInter
      */
     public function getFile(FilePhysical $filePhysical): string
     {
-        return decrypt(\Storage::disk($filePhysical->disk)->get($filePhysical->path));
+        $stringHelper = \App::make(\AnourValar\LaravelAtom\Helpers\StringHelper::class);
+
+        return $stringHelper->decryptBinary(\Storage::disk($filePhysical->disk)->get($filePhysical->path));
     }
 }
