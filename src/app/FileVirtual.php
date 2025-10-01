@@ -2,7 +2,7 @@
 
 namespace AnourValar\EloquentFile;
 
-use AnourValar\EloquentFile\Handlers\Models\FilePhysical\Visibility\ProxyAccessInterface;
+use AnourValar\EloquentFile\Handlers\Models\FilePhysical\Visibility\DirectAccessInterface;
 use AnourValar\EloquentFile\Handlers\Models\FileVirtual\Entity\EntityInterface;
 use AnourValar\EloquentFile\Handlers\Models\FileVirtual\Entity\Policy\PolicyInterface;
 use AnourValar\EloquentFile\Handlers\Models\FileVirtual\Name\NameInterface;
@@ -307,7 +307,7 @@ abstract class FileVirtual extends Model
                 'id', 'file_physical_id', 'entity', 'entity_id', 'name', 'filename', 'title', 'created_at',
             ])
             ->publishFields([
-                'id', 'name', 'filename', 'title', 'created_at', 'mime_type', 'size', 'url', 'url_generate', 'url_proxy',
+                'id', 'name', 'filename', 'title', 'created_at', 'mime_type', 'size', 'url', 'url_generate',
            ]);
     }
 
@@ -372,24 +372,6 @@ abstract class FileVirtual extends Model
     }
 
     /**
-     * Virtual attribute: file_data
-     *
-     * @return \Illuminate\Database\Eloquent\Casts\Attribute
-     */
-    protected function fileData(): Attribute
-    {
-        return Attribute::make(
-            get: function ($query) {
-                if (! $this->relationLoaded('filePhysical')) {
-                    throw new \LogicException('The filePhysical relation must be eager loaded.');
-                }
-
-                return $this->filePhysical->file_data;
-            }
-        );
-    }
-
-    /**
      * Virtual attribute: url
      *
      * @return \Illuminate\Database\Eloquent\Casts\Attribute
@@ -401,8 +383,18 @@ abstract class FileVirtual extends Model
                 if (! $this->relationLoaded('filePhysical')) {
                     throw new \LogicException('The filePhysical relation must be eager loaded.');
                 }
+                $filePhysical = $this->filePhysical;
 
-                return $this->filePhysical->url;
+                if (! $filePhysical->path) {
+                    return null;
+                }
+
+                $handler = $filePhysical->getVisibilityHandler();
+                if ($handler instanceof DirectAccessInterface) {
+                    return $handler->directUrl($this->filePhysical->disk, $this->filePhysical->path);
+                } else {
+                    return $handler->proxyUrl($this);
+                }
             }
         );
     }
@@ -419,35 +411,23 @@ abstract class FileVirtual extends Model
                 if (! $this->relationLoaded('filePhysical')) {
                     throw new \LogicException('The filePhysical relation must be eager loaded.');
                 }
+                $filePhysical = $this->filePhysical;
 
-                return $this->filePhysical->url_generate;
-            }
-        );
-    }
-
-    /**
-     * Virtual attribute: url_proxy
-     *
-     * @return \Illuminate\Database\Eloquent\Casts\Attribute
-     */
-    protected function urlProxy(): Attribute
-    {
-        return Attribute::make(
-            get: function ($query) {
-                if (! $this->relationLoaded('filePhysical')) {
-                    throw new \LogicException('The filePhysical relation must be eager loaded.');
-                }
-
-                $handler = $this->filePhysical->getVisibilityHandler();
-                if (! $handler instanceof ProxyAccessInterface) {
+                if (! $filePhysical->path_generate) {
                     return null;
                 }
 
-                if (! $this->filePhysical->path) {
-                    return null;
+                $result = [];
+                foreach ($filePhysical->path_generate as $name => $details) {
+                    $handler = \App::make(config("eloquent_file.file_physical.visibility.{$details['visibility']}.bind"));
+                    if ($handler instanceof DirectAccessInterface) {
+                        $result[$name] = $handler->directUrl($details['disk'], $details['path']);
+                    } else {
+                        $result[$name] = $handler->proxyUrl($this, $name);
+                    }
                 }
 
-                return $handler->proxyUrl($this);
+                return $result;
             }
         );
     }

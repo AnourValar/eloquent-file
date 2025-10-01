@@ -4,6 +4,7 @@ namespace AnourValar\EloquentFile\Traits;
 
 use AnourValar\EloquentFile\Handlers\Models\FilePhysical\Visibility\ProxyAccessInterface;
 use Illuminate\Http\Request;
+use AnourValar\EloquentFile\FileVirtual;
 
 trait ControllerTrait
 {
@@ -15,23 +16,26 @@ trait ControllerTrait
      * @throws \Illuminate\Auth\Access\AuthorizationException
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function proxyUserAuthorize(Request $request, bool $download = true)
+    public function proxyUserAuthorize(Request $request, bool $download = false)
     {
         $fileVirtual = $this->extractFileVirtualFrom($request);
-
-        $visibilityHandler = $fileVirtual->filePhysical->getVisibilityHandler();
-        if (! $visibilityHandler instanceof ProxyAccessInterface) {
-            throw new \Illuminate\Auth\Access\AuthorizationException(trans('eloquent-file::auth.download.unsupported'));
-        }
 
         if (! $fileVirtual->getEntityHandler()->canDownload($fileVirtual, $request->user())) {
             throw new \Illuminate\Auth\Access\AuthorizationException(trans('eloquent-file::auth.download.not_authorized'));
         }
 
-        if ($download) {
-            return $visibilityHandler->proxyDownload($fileVirtual);
+        $generate = $request->input('generate');
+        if ($generate && (! is_string($generate) || ! isset($fileVirtual->filePhysical->path_generate[$generate]))) {
+            throw new \Illuminate\Auth\Access\AuthorizationException(trans('eloquent-file::auth.download.unsupported'));
         }
-        return $visibilityHandler->proxyInline($fileVirtual);
+
+        $visibilityHandler = $generate ? $fileVirtual->filePhysical->path_generate[$generate]['visibility'] : $fileVirtual->filePhysical->visibility;
+        $visibilityHandler = \App::make(config("eloquent_file.file_physical.visibility.{$visibilityHandler}.bind"));
+        if (! $visibilityHandler instanceof ProxyAccessInterface) {
+            throw new \Illuminate\Auth\Access\AuthorizationException(trans('eloquent-file::auth.download.unsupported'));
+        }
+
+        return $this->proxy($fileVirtual, $request->route('filename'), $generate, $download ? 'attachment' : 'inline');
     }
 
     /**
@@ -43,23 +47,26 @@ trait ControllerTrait
      * @throws \Illuminate\Auth\Access\AuthorizationException
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function proxyUrlSigned(Request $request, bool $download = true)
+    public function proxyUrlSigned(Request $request, bool $download = false)
     {
         $fileVirtual = $this->extractFileVirtualFrom($request);
-
-        $visibilityHandler = $fileVirtual->filePhysical->getVisibilityHandler();
-        if (! $visibilityHandler instanceof ProxyAccessInterface) {
-            throw new \Illuminate\Auth\Access\AuthorizationException(trans('eloquent-file::auth.download.unsupported'));
-        }
 
         if (! $request->hasValidSignature()) {
             throw new \Illuminate\Auth\Access\AuthorizationException(trans('eloquent-file::auth.download.invalid'));
         }
 
-        if ($download) {
-            return $visibilityHandler->proxyDownload($fileVirtual);
+        $generate = $request->input('generate');
+        if ($generate && (! is_string($generate) || ! isset($fileVirtual->filePhysical->path_generate[$generate]))) {
+            throw new \Illuminate\Auth\Access\AuthorizationException(trans('eloquent-file::auth.download.unsupported'));
         }
-        return $visibilityHandler->proxyInline($fileVirtual);
+
+        $visibilityHandler = $generate ? $fileVirtual->filePhysical->path_generate[$generate]['visibility'] : $fileVirtual->filePhysical->visibility;
+        $visibilityHandler = \App::make(config("eloquent_file.file_physical.visibility.{$visibilityHandler}.bind"));
+        if (! $visibilityHandler instanceof ProxyAccessInterface) {
+            throw new \Illuminate\Auth\Access\AuthorizationException(trans('eloquent-file::auth.download.unsupported'));
+        }
+
+        return $this->proxy($fileVirtual, $request->route('filename'), $generate, $download ? 'attachment' : 'inline');
     }
 
     /**
@@ -212,5 +219,43 @@ trait ControllerTrait
         $class = config('eloquent_file.models.file_virtual');
 
         return $class::where($where)->findOrFail((int) is_scalar($id) ? $id : 0);
+    }
+
+    /**
+     * @param \AnourValar\EloquentFile\FileVirtual $fileVirtual
+     * @param string $filename
+     * @param string|null $generate
+     * @param string $disposition
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
+    private function proxy(FileVirtual $fileVirtual, string $filename, ?string $generate, string $disposition): \Symfony\Component\HttpFoundation\Response
+    {
+        if ($generate) {
+            $visibility = $fileVirtual->filePhysical->path_generate[$generate]['visibility'];
+            $disk = $fileVirtual->filePhysical->path_generate[$generate]['disk'];
+            $path = $fileVirtual->filePhysical->path_generate[$generate]['path'];
+            $mimeType = $fileVirtual->filePhysical->path_generate[$generate]['mime_type'];
+        } else {
+            $visibility = $fileVirtual->filePhysical->visibility;
+            $disk = $fileVirtual->filePhysical->disk;
+            $path = $fileVirtual->filePhysical->path;
+            $mimeType = $fileVirtual->filePhysical->mime_type;
+        }
+
+        $visibilityHandler = \App::make(config("eloquent_file.file_physical.visibility.{$visibility}.bind"));
+        $headers = ['Content-Type' => $mimeType, 'Cache-Control' => 'public, max-age=86400'];
+
+        if ($visibilityHandler instanceof \AnourValar\EloquentFile\Handlers\Models\FilePhysical\Visibility\AdapterInterface) {
+            return response()->streamDownload(
+                function () use (&$visibilityHandler, $disk, $path) {
+                    echo $visibilityHandler->getFile($disk, $path);
+                },
+                $filename,
+                $headers,
+                $disposition
+            );
+        }
+
+        return \Storage::disk($disk)->response($path, $filename, $headers, $disposition);
     }
 }

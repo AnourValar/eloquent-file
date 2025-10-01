@@ -2,20 +2,17 @@
 
 namespace AnourValar\EloquentFile\Handlers\Models\FilePhysical\Visibility;
 
-use AnourValar\EloquentFile\FilePhysical;
-use Illuminate\Http\UploadedFile;
-
 class PrivateEncryptVisibility extends PrivateVisibility implements AdapterInterface
 {
     /**
      * {@inheritDoc}
      * @see \AnourValar\EloquentFile\Handlers\Models\FilePhysical\Visibility\AdapterInterface::putFile()
      */
-    public function putFile(\Illuminate\Http\UploadedFile $file, FilePhysical $filePhysical): void
+    public function putFile(string $disk, string $path, string $content): void
     {
         $stringHelper = \App::make(\AnourValar\LaravelAtom\Helpers\StringHelper::class);
 
-        \Storage::disk($filePhysical->disk)->put($filePhysical->path, $stringHelper->encryptBinary($file->getContent()));
+        \Storage::disk($disk)->put($path, $stringHelper->encryptBinary($content));
     }
 
 
@@ -23,10 +20,10 @@ class PrivateEncryptVisibility extends PrivateVisibility implements AdapterInter
      * {@inheritDoc}
      * @see \AnourValar\EloquentFile\Handlers\Models\FilePhysical\Visibility\AdapterInterface::getFile()
      */
-    public function getFile(FilePhysical $filePhysical): string
+    public function getFile(string $disk, string $path): string
     {
         $stringHelper = \App::make(\AnourValar\LaravelAtom\Helpers\StringHelper::class);
 
-        return $stringHelper->decryptBinary(\Storage::disk($filePhysical->disk)->get($filePhysical->path));
+        return $stringHelper->decryptBinary(\Storage::disk($disk)->get($path));
     }
 }

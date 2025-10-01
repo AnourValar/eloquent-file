@@ -14,9 +14,8 @@ return [
             ],
 
             'private' => [
-                'bind' => AnourValar\EloquentFile\Handlers\Models\FilePhysical\Visibility\PrivateVisibility::class,
+                'bind' => AnourValar\EloquentFile\Handlers\Models\FilePhysical\Visibility\PrivateVisibility::class, // PrivateEncryptVisibility
                 'disks' => explode(',', env('ELOQUENT_FILE_PRIVATE', 's3_private')),
-                'disks_generated' => explode(',', env('ELOQUENT_FILE_PUBLIC', 's3_public')),
 
                 'proxy_route' => 'file.download',
                 'proxy_route_method' => AnourValar\EloquentFile\Handlers\Models\FilePhysical\Visibility\PrivateVisibility::METHOD_URL_SIGNED,
@@ -38,9 +37,10 @@ return [
                 'keep_original' => true,
                 'generate' => [
                     'preview' => [
+                        'visibility' => 'public',
                         'max_height' => 1000,
                         'max_width' => 1000,
-                        'format' => 'jpg', // webp
+                        'format' => 'webp',
                         'quality' => 82,
                     ],
                 ],

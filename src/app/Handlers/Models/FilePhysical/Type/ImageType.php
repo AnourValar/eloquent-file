@@ -3,6 +3,7 @@
 namespace AnourValar\EloquentFile\Handlers\Models\FilePhysical\Type;
 
 use AnourValar\EloquentFile\FilePhysical;
+use AnourValar\EloquentFile\Handlers\Models\FilePhysical\Visibility\AdapterInterface;
 
 class ImageType extends SimpleType implements GenerateInterface
 {
@@ -32,27 +33,41 @@ class ImageType extends SimpleType implements GenerateInterface
 
         foreach ($filePhysical->type_details['generate'] as $name => $details) {
             if (! $original) {
-                $original = $filePhysical->file_data;
+                $handler = $filePhysical->getVisibilityHandler();
+                if ($handler instanceof AdapterInterface) {
+                    $original = $handler->getFile($filePhysical->disk, $filePhysical->path);
+                } else {
+                    $original = \Storage::disk($filePhysical->disk)->get($filePhysical->path);
+                }
             }
 
-            $encoder = match (mb_strtolower($details['format'])) {
-                'jpg' => new \Intervention\Image\Encoders\JpegEncoder(quality: $details['quality']),
-                'png' => new \Intervention\Image\Encoders\PngEncoder(),
-                'webp' => new \Intervention\Image\Encoders\WebpEncoder(quality: $details['quality']),
-                'avif' => new \Intervention\Image\Encoders\AvifEncoder(quality: $details['quality']),
-                'heic' => new \Intervention\Image\Encoders\HeicEncoder(quality: $details['quality']),
+            $format = match (mb_strtolower($details['format'])) {
+                'jpg' => ['encoder' => new \Intervention\Image\Encoders\JpegEncoder(quality: $details['quality']), 'mime' => 'image/jpeg'],
+                'png' => ['encoder' => new \Intervention\Image\Encoders\PngEncoder(), 'mime' => 'image/png'],
+                'webp' => ['encoder' => new \Intervention\Image\Encoders\WebpEncoder(quality: $details['quality']), 'mime' => 'image/webp'],
+                'avif' => ['encoder' => new \Intervention\Image\Encoders\AvifEncoder(quality: $details['quality']), 'mime' => 'image/avif'],
+                'heic' => ['encoder' => new \Intervention\Image\Encoders\HeicEncoder(quality: $details['quality']), 'mime' => 'image/heic'],
                 default => throw new \LogicException('Format is not supported.'),
             };
 
             $generate = $this->image
                 ->read($original)
                 ->scaleDown($details['max_width'], $details['max_height'])
-                ->encode($encoder);
+                ->encode($format['encoder']);
 
-            $pathGenerate[$name]['disk'] = $filePhysical->getVisibilityHandler()->getDiskForGenerated($filePhysical, $name);
+            $visibility = config("eloquent_file.file_physical.visibility.{$details['visibility']}");
+            $handler = \App::make($visibility['bind']);
+
+            $pathGenerate[$name]['visibility'] = $details['visibility'];
+            $pathGenerate[$name]['disk'] = $handler->getDisk($visibility['disks']);
             $pathGenerate[$name]['path'] = $this->generatePath($filePhysical, sprintf('_%s.%s', $name, $details['format']));
+            $pathGenerate[$name]['mime_type'] = $format['mime'];
 
-            \Storage::disk($pathGenerate[$name]['disk'])->put($pathGenerate[$name]['path'], $generate);
+            if ($handler instanceof AdapterInterface) {
+                $handler->putFile($pathGenerate[$name]['disk'], $pathGenerate[$name]['path'], $generate);
+            } else {
+                \Storage::disk($pathGenerate[$name]['disk'])->put($pathGenerate[$name]['path'], $generate);
+            }
         }
 
         return $pathGenerate;

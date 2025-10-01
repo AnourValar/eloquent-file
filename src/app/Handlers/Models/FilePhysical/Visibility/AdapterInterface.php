@@ -2,24 +2,24 @@
 
 namespace AnourValar\EloquentFile\Handlers\Models\FilePhysical\Visibility;
 
-use AnourValar\EloquentFile\FilePhysical;
-
 interface AdapterInterface
 {
     /**
      * Store the uploaded file
      *
-     * @param \Illuminate\Http\UploadedFile $file
-     * @param \AnourValar\EloquentFile\FilePhysical $filePhysical
+     * @param string $disk
+     * @param string $path
+     * @param string $content
      * @return void
      */
-    public function putFile(\Illuminate\Http\UploadedFile $file, FilePhysical $filePhysical): void;
+    public function putFile(string $disk, string $path, string $content): void;
 
     /**
      * Get the stored file
      *
-     * @param \AnourValar\EloquentFile\FilePhysical $filePhysical
+     * @param string $disk
+     * @param string $path
      * @return string
      */
-    public function getFile(FilePhysical $filePhysical): string;
+    public function getFile(string $disk, string $path): string;
 }

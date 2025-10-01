@@ -20,20 +20,11 @@ class PublicVisibility implements VisibilityInterface, DirectAccessInterface
      * {@inheritDoc}
      * @see \AnourValar\EloquentFile\Handlers\Models\FilePhysical\Visibility\VisibilityInterface::getDisk()
      */
-    public function getDisk(array $disks, UploadedFile $file): string
+    public function getDisk(array $disks): string
     {
         shuffle($disks);
 
         return $disks[0];
-    }
-
-    /**
-     * {@inheritDoc}
-     * @see \AnourValar\EloquentFile\Handlers\Models\FilePhysical\Visibility\VisibilityInterface::getDiskForGenerated()
-     */
-    public function getDiskForGenerated(FilePhysical $filePhysical, string $generate): string
-    {
-        return $filePhysical->disk;
     }
 
     /**
@@ -66,16 +57,8 @@ class PublicVisibility implements VisibilityInterface, DirectAccessInterface
      * {@inheritDoc}
      * @see \AnourValar\EloquentFile\Handlers\Models\FilePhysical\Visibility\DirectAccessInterface::directUrl()
      */
-    public function directUrl(FilePhysical $filePhysical, ?string $generate = null): ?string
+    public function directUrl(string $disk, string $path): string
     {
-        if (is_null($generate)) {
-            $disk = $filePhysical->disk;
-            $path = $filePhysical->path;
-        } else {
-            $disk = $filePhysical->path_generate[$generate]['disk'];
-            $path = $filePhysical->path_generate[$generate]['path'];
-        }
-
         return url(\Storage::disk($disk)->url($path));
     }
 }

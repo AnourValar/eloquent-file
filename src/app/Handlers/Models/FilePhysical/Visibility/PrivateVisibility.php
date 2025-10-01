@@ -6,7 +6,7 @@ use AnourValar\EloquentFile\FilePhysical;
 use AnourValar\EloquentFile\FileVirtual;
 use Illuminate\Http\UploadedFile;
 
-class PrivateVisibility implements VisibilityInterface, DirectAccessInterface, ProxyAccessInterface
+class PrivateVisibility implements VisibilityInterface, ProxyAccessInterface
 {
     /**
      * @var string
@@ -28,20 +28,8 @@ class PrivateVisibility implements VisibilityInterface, DirectAccessInterface, P
      * {@inheritDoc}
      * @see \AnourValar\EloquentFile\Handlers\Models\FilePhysical\Visibility\VisibilityInterface::getDisk()
      */
-    public function getDisk(array $disks, UploadedFile $file): string
+    public function getDisk(array $disks): string
     {
-        shuffle($disks);
-
-        return $disks[0];
-    }
-
-    /**
-     * {@inheritDoc}
-     * @see \AnourValar\EloquentFile\Handlers\Models\FilePhysical\Visibility\VisibilityInterface::getDiskForGenerated()
-     */
-    public function getDiskForGenerated(FilePhysical $filePhysical, string $generate): string
-    {
-        $disks = $filePhysical->visibility_details['disks_generated'];
         shuffle($disks);
 
         return $disks[0];
@@ -75,104 +63,55 @@ class PrivateVisibility implements VisibilityInterface, DirectAccessInterface, P
 
     /**
      * {@inheritDoc}
-     * @see \AnourValar\EloquentFile\Handlers\Models\FilePhysical\Visibility\DirectAccessInterface::directUrl()
-     */
-    public function directUrl(FilePhysical $filePhysical, ?string $generate = null): ?string
-    {
-        if (is_null($generate)) {
-            return null;
-        } else {
-            $disk = $filePhysical->path_generate[$generate]['disk'];
-            $path = $filePhysical->path_generate[$generate]['path'];
-        }
-
-        return url(\Storage::disk($disk)->url($path));
-    }
-
-    /**
-     * {@inheritDoc}
      * @see \AnourValar\EloquentFile\Handlers\Models\FilePhysical\Visibility\ProxyAccessInterface::proxyUrl()
      */
-    public function proxyUrl(FileVirtual $fileVirtual): string
+    public function proxyUrl(FileVirtual $fileVirtual, ?string $generate = null): string
     {
-        $route = ($fileVirtual->filePhysical->visibility_details['proxy_route'] ?? null);
-        $method = $fileVirtual->filePhysical->visibility_details['proxy_route_method'];
+        if ($generate) {
+            $visibility = $fileVirtual->filePhysical->path_generate[$generate]['visibility'];
+            $route = config("eloquent_file.file_physical.visibility.{$visibility}.proxy_route");
+            $method = config("eloquent_file.file_physical.visibility.{$visibility}.proxy_route_method");
+
+            $disk = $fileVirtual->filePhysical->path_generate[$generate]['disk'];
+            $path = $fileVirtual->filePhysical->path_generate[$generate]['path'];
+            $filename = $this->getFileName($fileVirtual, $generate);
+        } else {
+            $route = ($fileVirtual->filePhysical->visibility_details['proxy_route'] ?? null);
+            $method = $fileVirtual->filePhysical->visibility_details['proxy_route_method'];
+
+            $disk = $fileVirtual->filePhysical->disk;
+            $path = $fileVirtual->filePhysical->path;
+            $filename = $this->getFileName($fileVirtual);
+        }
 
         if ($method === static::METHOD_URL_SIGNED) {
             return \URL::temporarySignedRoute(
                 $route,
                 now()->addMinutes($this->expireIn($fileVirtual)),
-                ['file_virtual' => $fileVirtual->id, 'filename' => $this->getFileName($fileVirtual)]
+                ['file_virtual' => $fileVirtual->id, 'filename' => $filename, 'generate' => $generate]
             );
         }
 
         if ($method === static::METHOD_URL_SIGNED_DIRECT) {
-            if (! \Storage::disk($fileVirtual->filePhysical->disk)->providesTemporaryUrls()) {
+            if (! \Storage::disk($disk)->providesTemporaryUrls()) {
                 throw new \LogicException('Disk driver does not support temporary urls.');
             }
 
             return url(
-                \Storage::disk($fileVirtual->filePhysical->disk)
+                \Storage::disk($disk)
                     ->temporaryUrl(
-                        $fileVirtual->filePhysical->path,
+                        $path,
                         now()->addMinutes($this->expireIn($fileVirtual)),
-                        ['ResponseContentDisposition' => 'inline; filename="'.$this->getFileName($fileVirtual).'"']
+                        ['ResponseContentDisposition' => 'inline; filename="'.$filename.'"']
                     )
             );
         }
 
         if ($method === static::METHOD_USER_AUTHORIZE) {
-            return route($route, ['file_virtual' => $fileVirtual->id, 'filename' => $this->getFileName($fileVirtual)]);
+            return route($route, ['file_virtual' => $fileVirtual->id, 'filename' => $filename, 'generate' => $generate]);
         }
 
         throw new \LogicException('Option "proxy_route_method" must be set properly.');
-    }
-
-    /**
-     * {@inheritDoc}
-     * @see \AnourValar\EloquentFile\Handlers\Models\FilePhysical\Visibility\ProxyAccessInterface::proxyDownload()
-     */
-    public function proxyDownload(FileVirtual $fileVirtual): \Symfony\Component\HttpFoundation\Response
-    {
-        return $this->proxy($fileVirtual, 'attachment');
-    }
-
-    /**
-     * {@inheritDoc}
-     * @see \AnourValar\EloquentFile\Handlers\Models\FilePhysical\Visibility\ProxyAccessInterface::proxyInline()
-     */
-    public function proxyInline(FileVirtual $fileVirtual): \Symfony\Component\HttpFoundation\Response
-    {
-        return $this->proxy($fileVirtual, 'inline');
-    }
-
-    /**
-     * @param \AnourValar\EloquentFile\FileVirtual $fileVirtual
-     * @param string $disposition
-     * @return \Symfony\Component\HttpFoundation\Response
-     */
-    protected function proxy(FileVirtual $fileVirtual, string $disposition): \Symfony\Component\HttpFoundation\Response
-    {
-        $visibilityHandler = $fileVirtual->filePhysical->getVisibilityHandler();
-
-        if ($visibilityHandler instanceof \AnourValar\EloquentFile\Handlers\Models\FilePhysical\Visibility\AdapterInterface) {
-            return response()->streamDownload(
-                function () use (&$visibilityHandler, &$fileVirtual) {
-                    echo $visibilityHandler->getFile($fileVirtual->filePhysical);
-                },
-                $this->getFileName($fileVirtual),
-                ['Content-Type' => $fileVirtual->filePhysical->mime_type, 'Cache-Control' => 'public, max-age=86400'],
-                $disposition
-            );
-        }
-
-        return \Storage::disk($fileVirtual->filePhysical->disk)
-            ->response(
-                $fileVirtual->filePhysical->path,
-                $this->getFileName($fileVirtual),
-                ['Content-Type' => $fileVirtual->filePhysical->mime_type, 'Cache-Control' => 'public, max-age=86400'],
-                $disposition
-            );
     }
 
     /**
@@ -188,17 +127,24 @@ class PrivateVisibility implements VisibilityInterface, DirectAccessInterface, P
 
     /**
      * @param \AnourValar\EloquentFile\FileVirtual $fileVirtual
+     * @param string|null $generate
      * @return string
      */
-    protected function getFileName(FileVirtual $fileVirtual): string
+    protected function getFileName(FileVirtual $fileVirtual, ?string $generate = null): string
     {
-        $pathInfo = pathinfo($fileVirtual->filename);
-        if (isset($pathInfo['extension']) && mb_strlen($pathInfo['extension'])) {
-            $fileName = \Str::slug($pathInfo['filename']) . '.' . \Str::slug($pathInfo['extension']);
+        $fileName = pathinfo($fileVirtual->filename)['filename'];
+        if ($generate) {
+            $extension = pathinfo($fileVirtual->filePhysical->path_generate[$generate]['path'])['extension'] ?? '';
+            $suffix = '_' . $generate;
         } else {
-            $fileName = \Str::slug($pathInfo['filename']);
+            $extension = pathinfo($fileVirtual->filename)['extension'] ?? '';
+            $suffix = '';
         }
 
-        return $fileName;
+        if (mb_strlen($extension)) {
+            return \Str::slug($fileName) . $suffix . '.' . \Str::slug($extension);
+        }
+
+        return \Str::slug($fileName) . $suffix;
     }
 }

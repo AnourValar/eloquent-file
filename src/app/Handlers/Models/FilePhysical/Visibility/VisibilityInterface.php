@@ -18,19 +18,9 @@ interface VisibilityInterface
      * Choose a disk
      *
      * @param array $disks
-     * @param \Illuminate\Http\UploadedFile $file
      * @return string
      */
-    public function getDisk(array $disks, UploadedFile $file): string;
-
-    /**
-     * Choose a disk for the generated file
-     *
-     * @param \AnourValar\EloquentFile\FilePhysical $filePhysical
-     * @param string $generate
-     * @return string
-     */
-    public function getDiskForGenerated(FilePhysical $filePhysical, string $generate): string;
+    public function getDisk(array $disks): string;
 
     /**
      * Choose a path (filename)

@@ -51,14 +51,14 @@ public function deleting(Model $model)
 Route::controller(App\Http\Controllers\FileController::class)->group(function () {
     Route::any('/file/{file_virtual}/download/{filename}', 'download')
         ->middleware('throttle:lax')->name('file.download');
-    // $this->proxyUrlSigned($request, false);
+    // $this->proxyUrlSigned($request);
 });
 
 // User authorized
 Route::controller(App\Http\Controllers\FileController::class)->group(function () {
     Route::any('/file/{file_virtual}/download/{filename}', 'download')
         ->middleware('auth:sanctum', 'throttle:lax')->name('file.download');
-    // $this->proxyUserAuthorize($request, false);
+    // $this->proxyUserAuthorize($request);
 });
 ```
 

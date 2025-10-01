@@ -254,7 +254,7 @@ class FileService
 
             // Fill: disk
             $disks = config('eloquent_file.file_physical.visibility')[$model->visibility]['disks'];
-            $model->disk = $model->getVisibilityHandler()->getDisk($disks, $file);
+            $model->disk = $model->getVisibilityHandler()->getDisk($disks);
 
             // Fill: path
             $model->path = $model->getVisibilityHandler()->getPath($model, $file);
@@ -264,13 +264,13 @@ class FileService
         $model->validate($fileValidationKey)->save();
         $this->link($fileVirtual, $model, $file, $fileValidationKey, $acl);
         \Atom::onRollBack(
-            fn () => $model->delete(), // for observers
+            fn () => $model->forceFill(['linked' => false])->delete(), // for observers
             $model->getConnectionName()
         );
 
         // Store file
         if ($model->getVisibilityHandler() instanceof AdapterInterface) {
-            $model->getVisibilityHandler()->putFile($file, $model);
+            $model->getVisibilityHandler()->putFile($model->disk, $model->path, $file->getContent());
         } else {
             $file->storeAs(dirname($model->path), basename($model->path), $model->disk); // stream write
         }
