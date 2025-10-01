@@ -392,9 +392,9 @@ abstract class FileVirtual extends Model
                 $handler = $filePhysical->getVisibilityHandler();
                 if ($handler instanceof DirectAccessInterface) {
                     return $handler->directUrl($this->filePhysical->disk, $this->filePhysical->path);
-                } else {
-                    return $handler->proxyUrl($this);
                 }
+
+                return $handler->proxyUrl($this);
             }
         );
     }

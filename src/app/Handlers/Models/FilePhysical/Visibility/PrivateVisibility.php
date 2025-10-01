@@ -9,10 +9,12 @@ use Illuminate\Http\UploadedFile;
 class PrivateVisibility implements VisibilityInterface, ProxyAccessInterface
 {
     /**
+     * All options are stateless & "offline"
+     *
      * @var string
      */
     public const METHOD_URL_SIGNED = 'url_signed';
-    public const METHOD_URL_SIGNED_DIRECT = 'url_signed_direct'; // working offline
+    public const METHOD_URL_SIGNED_DIRECT = 'url_signed_direct';
     public const METHOD_USER_AUTHORIZE = 'user_authorize';
 
     /**
@@ -93,10 +95,6 @@ class PrivateVisibility implements VisibilityInterface, ProxyAccessInterface
         }
 
         if ($method === static::METHOD_URL_SIGNED_DIRECT) {
-            if (! \Storage::disk($disk)->providesTemporaryUrls()) {
-                throw new \LogicException('Disk driver does not support temporary urls.');
-            }
-
             return url(
                 \Storage::disk($disk)
                     ->temporaryUrl(
