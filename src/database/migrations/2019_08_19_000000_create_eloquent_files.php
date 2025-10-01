@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string('type')->nullable();
             $table->string('disk')->nullable();
             $table->string('path')->nullable();
-            $table->string('path_generate')->nullable();
+            $table->jsonb('path_generate')->nullable();
             $table->string('sha256')->nullable();
             $table->unsignedInteger('size')->nullable();
             $table->string('mime_type')->nullable();
