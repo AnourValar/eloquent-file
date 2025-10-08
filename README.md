@@ -47,16 +47,16 @@ public function deleting(Model $model)
 ## Proxy download
 
 ```php
-// Url signed
+// Url signed (web_file group with file prefix)
 Route::controller(App\Http\Controllers\FileController::class)->group(function () {
-    Route::any('/file/{file_virtual}/download/{filename}', 'download')
+    Route::any('/{file_virtual}/download/{filename}', 'download')
         ->middleware('throttle:lax')->name('file.download');
     // $this->proxyUrlSigned($request);
 });
 
-// User authorized
+// User authorized (web_file group with file prefix)
 Route::controller(App\Http\Controllers\FileController::class)->group(function () {
-    Route::any('/file/{file_virtual}/download/{filename}', 'download')
+    Route::any('/{file_virtual}/download/{filename}', 'download')
         ->middleware('auth:sanctum', 'throttle:lax')->name('file.download');
     // $this->proxyUserAuthorize($request);
 });
