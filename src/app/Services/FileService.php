@@ -264,7 +264,13 @@ class FileService
         $model->validate($fileValidationKey)->save();
         $this->link($fileVirtual, $model, $file, $fileValidationKey, $acl);
         \Atom::onRollBack(
-            fn () => $model->forceFill(['linked' => false])->delete(), // for observers
+            function () use ($model) {
+                try {
+                    $model->forceFill(['linked' => false])->delete(); // for observers
+                } catch (\League\Flysystem\FilesystemException $e) {
+
+                }
+            },
             $model->getConnectionName()
         );
 
