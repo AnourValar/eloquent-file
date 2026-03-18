@@ -155,18 +155,6 @@ abstract class FileVirtual extends Model
     ];
 
     /**
-     * Bootstrap the model and its traits.
-     *
-     * @return void
-     */
-    protected static function boot()
-    {
-        parent::boot();
-
-        static::observe(\AnourValar\EloquentFile\Observers\FileVirtualObserver::class);
-    }
-
-    /**
      * @see \AnourValar\EloquentValidation\ModelTrait::getAttributeNamesFromModelLang()
      *
      * @return array

@@ -147,18 +147,6 @@ abstract class FilePhysical extends Model
     ];
 
     /**
-     * Bootstrap the model and its traits.
-     *
-     * @return void
-     */
-    protected static function boot()
-    {
-        parent::boot();
-
-        static::observe(\AnourValar\EloquentFile\Observers\FilePhysicalObserver::class);
-    }
-
-    /**
      * @see \AnourValar\EloquentValidation\ModelTrait::getAttributeNamesFromModelLang()
      *
      * @return array

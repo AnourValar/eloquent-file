@@ -45,5 +45,12 @@ class EloquentFileServiceProvider extends ServiceProvider
                 \AnourValar\EloquentFile\Console\Commands\RegenerateCommand::class,
             ]);
         }
+
+        // observers
+        $config = config('eloquent_file.models');
+        $class = $config['file_physical'];
+        $class::observe(\AnourValar\EloquentFile\Observers\FilePhysicalObserver::class);
+        $class = $config['file_virtual'];
+        $class::observe(\AnourValar\EloquentFile\Observers\FileVirtualObserver::class);
     }
 }
