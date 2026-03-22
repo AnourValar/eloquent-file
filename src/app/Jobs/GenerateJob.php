@@ -45,7 +45,6 @@ class GenerateJob implements ShouldQueue
      *
      * @param \AnourValar\EloquentFile\Services\FileService $fileService
      * @return void
-     * @psalm-suppress UnusedVariable
      */
     public function handle(\AnourValar\EloquentFile\Services\FileService $fileService)
     {

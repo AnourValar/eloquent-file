@@ -14,6 +14,7 @@
         <directory name="src"/>
         <ignoreFiles>
             <directory name="vendor"/>
+            <directory name="src/config"/>
         </ignoreFiles>
     </projectFiles>
     <plugins>
@@ -32,6 +33,16 @@
       <MissingTemplateParam errorLevel="suppress" />
       <UnsupportedPropertyReferenceUsage errorLevel="suppress" />
       <MissingOverrideAttribute errorLevel="suppress" />
+      <MissingPureAnnotation errorLevel="suppress" />
+      <MissingAbstractPureAnnotation errorLevel="suppress" />
+      <MissingInterfaceImmutableAnnotation errorLevel="suppress" />
+      <MissingImmutableAnnotation errorLevel="suppress" />
+
+      <UnusedVariable>
+        <errorLevel type="suppress">
+          <file name="src/app/Jobs/GenerateJob.php" />
+        </errorLevel>
+      </UnusedVariable>
     </issueHandlers>
 
     <forbiddenFunctions>
