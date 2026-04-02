@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Validation\Rule;
 
-abstract class FileVirtual extends Model
+class FileVirtual extends Model
 {
     use \AnourValar\EloquentValidation\ModelTrait;
 

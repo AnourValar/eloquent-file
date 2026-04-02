@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Validation\Rule;
 
-abstract class FilePhysical extends Model
+class FilePhysical extends Model
 {
     use \AnourValar\EloquentValidation\ModelTrait;
 
