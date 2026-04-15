@@ -166,7 +166,7 @@ trait ControllerTrait
             $class = config('eloquent_file.models.file_virtual');
             $fileVirtual = (new $class())->forceFill($data);
 
-            $fileVirtual->getEntityHandler()->lockOnChange($fileVirtual);
+            $fileVirtual->beforeValidate(['entity', 'entity_id', 'name'], $validationKey)->getEntityHandler()->lockOnChange($fileVirtual);
             $acl = function ($fileVirtual) {
                 if (! $fileVirtual->getEntityHandler()->canUpload($fileVirtual, \Auth::user())) {
                     throw new \Illuminate\Auth\Access\AuthorizationException(trans('eloquent-file::auth.upload.not_authorized'));
