@@ -119,7 +119,7 @@ trait ControllerTrait
 
 
         // Upload
-        $fileVirtual->getEntityHandler()->lockOnChange($fileVirtual);
+        $fileVirtual->beforeValidate(['entity', 'entity_id', 'name'], $key)->getEntityHandler()->lockOnChange($fileVirtual);
         $acl = function ($fileVirtual) use ($request) {
             if (! $fileVirtual->getEntityHandler()->canUpload($fileVirtual, $request->user())) {
                 throw new \Illuminate\Auth\Access\AuthorizationException(trans('eloquent-file::auth.upload.not_authorized'));
