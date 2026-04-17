@@ -247,4 +247,23 @@ class FilePhysical extends Model
             get: fn ($value) => config("eloquent_file.file_physical.type.{$this->type}"),
         );
     }
+
+    /**
+     * Virtual attribute: content
+     *
+     * @return \Illuminate\Database\Eloquent\Casts\Attribute
+     */
+    protected function content(): Attribute
+    {
+        return Attribute::make(
+            get: function () {
+                $handler = $this->getVisibilityHandler();
+                if ($handler instanceof \AnourValar\EloquentFile\Handlers\Models\FilePhysical\Visibility\AdapterInterface) {
+                    return $handler->getFile($this->disk, $this->path);
+                }
+
+                return \Storage::disk($this->disk)->get($this->path);
+            },
+        );
+    }
 }
