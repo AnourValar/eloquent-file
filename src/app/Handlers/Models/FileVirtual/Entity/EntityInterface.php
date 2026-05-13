@@ -35,7 +35,7 @@ interface EntityInterface
     public function canDelete(FileVirtual $fileVirtual, ?Authenticatable $user): bool;
 
     /**
-     * Atomic lock (if required)
+     * Atomic lock (if required) on upload, delete
      *
      * @param \AnourValar\EloquentFile\FileVirtual $fileVirtual
      * @return void
