@@ -21,7 +21,7 @@ return [
                 'proxy_route_method' => AnourValar\EloquentFile\Handlers\Models\FilePhysical\Visibility\PrivateVisibility::METHOD_URL_SIGNED,
             ],
 
-            'private_encrypted' => [
+            'private_encrypt' => [
                 'bind' => AnourValar\EloquentFile\Handlers\Models\FilePhysical\Visibility\PrivateEncryptVisibility::class,
                 'disks' => explode(',', env('ELOQUENT_FILE_PRIVATE', 's3_private')),
 
