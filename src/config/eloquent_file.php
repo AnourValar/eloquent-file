@@ -14,7 +14,15 @@ return [
             ],
 
             'private' => [
-                'bind' => AnourValar\EloquentFile\Handlers\Models\FilePhysical\Visibility\PrivateVisibility::class, // PrivateEncryptVisibility
+                'bind' => AnourValar\EloquentFile\Handlers\Models\FilePhysical\Visibility\PrivateVisibility::class,
+                'disks' => explode(',', env('ELOQUENT_FILE_PRIVATE', 's3_private')),
+
+                'proxy_route' => 'file.download',
+                'proxy_route_method' => AnourValar\EloquentFile\Handlers\Models\FilePhysical\Visibility\PrivateVisibility::METHOD_URL_SIGNED,
+            ],
+
+            'private_encrypted' => [
+                'bind' => AnourValar\EloquentFile\Handlers\Models\FilePhysical\Visibility\PrivateEncryptVisibility::class,
                 'disks' => explode(',', env('ELOQUENT_FILE_PRIVATE', 's3_private')),
 
                 'proxy_route' => 'file.download',
