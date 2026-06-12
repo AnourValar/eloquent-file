@@ -40,7 +40,7 @@ class UserEntity implements EntityInterface
      */
     public function lockOnChange(FileVirtual $fileVirtual): void
     {
-
+        \Atom::lockUser($fileVirtual->entitable->id ?? 0, 'user');
     }
 
     /**
