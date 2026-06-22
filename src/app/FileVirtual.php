@@ -161,7 +161,7 @@ class FileVirtual extends Model
      */
     protected function getAttributeNamesFromModelLang(): array
     {
-        $attributeNames = trans('eloquent-file::file_virtual.attributes');
+        $attributeNames = trans('eloquent_file::file_virtual.attributes');
 
         return is_array($attributeNames) ? $attributeNames : [];
     }
@@ -200,7 +200,7 @@ class FileVirtual extends Model
             $validator->errors()->add(
                 'name',
                 trans(
-                    'eloquent-validation::validation.config',
+                    'eloquent_validation::validation.config',
                     ['attribute' => $validator->getDisplayableAttribute('name')]
                 )
             );
@@ -216,7 +216,7 @@ class FileVirtual extends Model
             if (! $filePhysical) {
                 $validator->errors()->add(
                     'file_physical_id',
-                    trans('eloquent-file::file_virtual.file_physical_id_not_exists')
+                    trans('eloquent_file::file_virtual.file_physical_id_not_exists')
                 );
 
                 return;
@@ -225,7 +225,7 @@ class FileVirtual extends Model
             if ($filePhysical->visibility != $this->name_details['visibility']) {
                 $validator->errors()->add(
                     'file_physical_id',
-                    trans('eloquent-file::file_virtual.file_physical_id_incorrect_visibility')
+                    trans('eloquent_file::file_virtual.file_physical_id_incorrect_visibility')
                 );
 
                 return;
@@ -234,7 +234,7 @@ class FileVirtual extends Model
             if (! in_array($filePhysical->type, $this->name_details['types'], true)) {
                 $validator->errors()->add(
                     'file_physical_id',
-                    trans('eloquent-file::file_virtual.file_physical_id_incorrect_type')
+                    trans('eloquent_file::file_virtual.file_physical_id_incorrect_type')
                 );
 
                 return;

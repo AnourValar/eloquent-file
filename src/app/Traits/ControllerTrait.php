@@ -21,18 +21,18 @@ trait ControllerTrait
         $fileVirtual = $this->extractFileVirtualFrom($request);
 
         if (! $fileVirtual->getEntityHandler()->canDownload($fileVirtual, $request->user())) {
-            throw new \Illuminate\Auth\Access\AuthorizationException(trans('eloquent-file::auth.download.not_authorized'));
+            throw new \Illuminate\Auth\Access\AuthorizationException(trans('eloquent_file::auth.download.not_authorized'));
         }
 
         $generate = $request->input('generate');
         if ($generate && (! is_string($generate) || ! isset($fileVirtual->filePhysical->path_generate[$generate]))) {
-            throw new \Illuminate\Auth\Access\AuthorizationException(trans('eloquent-file::auth.download.unsupported'));
+            throw new \Illuminate\Auth\Access\AuthorizationException(trans('eloquent_file::auth.download.unsupported'));
         }
 
         $visibilityHandler = $generate ? $fileVirtual->filePhysical->path_generate[$generate]['visibility'] : $fileVirtual->filePhysical->visibility;
         $visibilityHandler = \App::make(config("eloquent_file.file_physical.visibility.{$visibilityHandler}.bind"));
         if (! $visibilityHandler instanceof ProxyAccessInterface) {
-            throw new \Illuminate\Auth\Access\AuthorizationException(trans('eloquent-file::auth.download.unsupported'));
+            throw new \Illuminate\Auth\Access\AuthorizationException(trans('eloquent_file::auth.download.unsupported'));
         }
 
         return $this->proxy($fileVirtual, $request->route('filename'), $generate, $download ? 'attachment' : 'inline');
@@ -52,18 +52,18 @@ trait ControllerTrait
         $fileVirtual = $this->extractFileVirtualFrom($request);
 
         if (! $request->hasValidSignature()) {
-            throw new \Illuminate\Auth\Access\AuthorizationException(trans('eloquent-file::auth.download.invalid'));
+            throw new \Illuminate\Auth\Access\AuthorizationException(trans('eloquent_file::auth.download.invalid'));
         }
 
         $generate = $request->input('generate');
         if ($generate && (! is_string($generate) || ! isset($fileVirtual->filePhysical->path_generate[$generate]))) {
-            throw new \Illuminate\Auth\Access\AuthorizationException(trans('eloquent-file::auth.download.unsupported'));
+            throw new \Illuminate\Auth\Access\AuthorizationException(trans('eloquent_file::auth.download.unsupported'));
         }
 
         $visibilityHandler = $generate ? $fileVirtual->filePhysical->path_generate[$generate]['visibility'] : $fileVirtual->filePhysical->visibility;
         $visibilityHandler = \App::make(config("eloquent_file.file_physical.visibility.{$visibilityHandler}.bind"));
         if (! $visibilityHandler instanceof ProxyAccessInterface) {
-            throw new \Illuminate\Auth\Access\AuthorizationException(trans('eloquent-file::auth.download.unsupported'));
+            throw new \Illuminate\Auth\Access\AuthorizationException(trans('eloquent_file::auth.download.unsupported'));
         }
 
         return $this->proxy($fileVirtual, $request->route('filename'), $generate, $download ? 'attachment' : 'inline');
@@ -108,11 +108,11 @@ trait ControllerTrait
         $files = $request->file();
 
         if (! count($files)) {
-            throw new \AnourValar\EloquentValidation\Exceptions\ValidationException(trans('eloquent-file::auth.upload.file_missed'));
+            throw new \AnourValar\EloquentValidation\Exceptions\ValidationException(trans('eloquent_file::auth.upload.file_missed'));
         }
 
         if (count($files) > 1) {
-            throw new \AnourValar\EloquentValidation\Exceptions\ValidationException(trans('eloquent-file::auth.upload.file_multi'));
+            throw new \AnourValar\EloquentValidation\Exceptions\ValidationException(trans('eloquent_file::auth.upload.file_multi'));
         }
 
         $key = array_key_last($files);
@@ -122,7 +122,7 @@ trait ControllerTrait
         $fileVirtual->beforeValidate(['entity', 'entity_id', 'name'], $key)->getEntityHandler()->lockOnChange($fileVirtual);
         $acl = function ($fileVirtual) use ($request) {
             if (! $fileVirtual->getEntityHandler()->canUpload($fileVirtual, $request->user())) {
-                throw new \Illuminate\Auth\Access\AuthorizationException(trans('eloquent-file::auth.upload.not_authorized'));
+                throw new \Illuminate\Auth\Access\AuthorizationException(trans('eloquent_file::auth.upload.not_authorized'));
             }
         };
         \App::make(\AnourValar\EloquentFile\Services\FileService::class)->upload($files[$key], $fileVirtual, $key, $acl);
@@ -154,7 +154,7 @@ trait ControllerTrait
         }
 
         if ($file === false) {
-            throw new \AnourValar\EloquentValidation\Exceptions\ValidationException(trans('eloquent-file::auth.upload.file_missed'));
+            throw new \AnourValar\EloquentValidation\Exceptions\ValidationException(trans('eloquent_file::auth.upload.file_missed'));
         }
 
         $fileService = \App::make(\AnourValar\EloquentFile\Services\FileService::class);
@@ -169,7 +169,7 @@ trait ControllerTrait
             $fileVirtual->beforeValidate(['entity', 'entity_id', 'name'], $validationKey)->getEntityHandler()->lockOnChange($fileVirtual);
             $acl = function ($fileVirtual) {
                 if (! $fileVirtual->getEntityHandler()->canUpload($fileVirtual, \Auth::user())) {
-                    throw new \Illuminate\Auth\Access\AuthorizationException(trans('eloquent-file::auth.upload.not_authorized'));
+                    throw new \Illuminate\Auth\Access\AuthorizationException(trans('eloquent_file::auth.upload.not_authorized'));
                 }
             };
             $fileService->upload($file, $fileVirtual, $validationKey, $acl);
@@ -201,7 +201,7 @@ trait ControllerTrait
 
         $fileVirtual->getEntityHandler()->lockOnChange($fileVirtual);
         if (! $fileVirtual->getEntityHandler()->canDelete($fileVirtual, $request->user())) {
-            throw new \Illuminate\Auth\Access\AuthorizationException(trans('eloquent-file::auth.delete.not_authorized'));
+            throw new \Illuminate\Auth\Access\AuthorizationException(trans('eloquent_file::auth.delete.not_authorized'));
         }
 
         $fileVirtual->validateDelete()->delete();

@@ -11,7 +11,7 @@ class OnZeroCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'eloquent-file:on-zero {--days=0}';
+    protected $signature = 'eloquent_file:on-zero {--days=0}';
 
     /**
      * The console command description.

@@ -13,7 +13,7 @@ class CommandTest extends AbstractSuite
     {
         Bus::fake();
 
-        $this->artisan('eloquent-file:on-zero')
+        $this->artisan('eloquent_file:on-zero')
             ->expectsOutputToContain('No jobs.')
             ->assertSuccessful();
 
@@ -33,7 +33,7 @@ class CommandTest extends AbstractSuite
         $fileVirtual->forceDelete();
         FilePhysical::where('id', $filePhysical->id)->update(['linked' => false, 'updated_at' => now()->subHours(3)]);
 
-        $this->artisan('eloquent-file:on-zero')
+        $this->artisan('eloquent_file:on-zero')
             ->expectsOutputToContain('job(s) created.')
             ->assertSuccessful();
 
@@ -53,7 +53,7 @@ class CommandTest extends AbstractSuite
         // 3 days ago -> selected by --days=2
         FilePhysical::where('id', $filePhysical->id)->update(['linked' => false, 'updated_at' => now()->subDays(3)]);
 
-        $this->artisan('eloquent-file:on-zero', ['--days' => 2])->assertSuccessful();
+        $this->artisan('eloquent_file:on-zero', ['--days' => 2])->assertSuccessful();
 
         Bus::assertDispatched(OnZeroJob::class);
     }
@@ -66,7 +66,7 @@ class CommandTest extends AbstractSuite
             'entity' => 'user', 'entity_id' => $user->id, 'name' => 'gallery',
         ]);
 
-        $this->artisan('eloquent-file:regenerate', ['--created_before' => '+1 minute'])
+        $this->artisan('eloquent_file:regenerate', ['--created_before' => '+1 minute'])
             ->assertSuccessful();
 
         Bus::assertDispatched(GenerateJob::class);
@@ -81,7 +81,7 @@ class CommandTest extends AbstractSuite
             'entity' => 'user', 'entity_id' => $user->id, 'name' => 'note',
         ]);
 
-        $this->artisan('eloquent-file:regenerate', ['--created_before' => '+1 minute'])
+        $this->artisan('eloquent_file:regenerate', ['--created_before' => '+1 minute'])
             ->assertSuccessful();
 
         Bus::assertNotDispatched(GenerateJob::class);

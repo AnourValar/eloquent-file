@@ -26,8 +26,8 @@ class ProviderFacadeTest extends AbstractSuite
     {
         $commands = array_keys(Artisan::all());
 
-        $this->assertContains('eloquent-file:on-zero', $commands);
-        $this->assertContains('eloquent-file:regenerate', $commands);
+        $this->assertContains('eloquent_file:on-zero', $commands);
+        $this->assertContains('eloquent_file:regenerate', $commands);
     }
 
     public function test_observers_are_registered(): void

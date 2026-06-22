@@ -135,7 +135,7 @@ abstract class AbstractSuite extends \Orchestra\Testbench\TestCase
         // ListPolicy + SimpleTitleName + private + simple (qty/size limits)
         $names['document'] = [
             'bind' => \AnourValar\EloquentFile\Handlers\Models\FileVirtual\Name\SimpleTitleName::class,
-            'title' => 'eloquent-file::file_virtual.entity.user.name.avatar',
+            'title' => 'eloquent_file::file_virtual.entity.user.name.avatar',
             'policy' => [
                 'bind' => \AnourValar\EloquentFile\Handlers\Models\FileVirtual\Entity\Policy\ListPolicy::class,
                 'limit_qty' => 2,
@@ -148,7 +148,7 @@ abstract class AbstractSuite extends \Orchestra\Testbench\TestCase
         // ListPolicy + SimpleName + public + image (no limits)
         $names['gallery'] = [
             'bind' => \AnourValar\EloquentFile\Handlers\Models\FileVirtual\Name\SimpleName::class,
-            'title' => 'eloquent-file::file_virtual.entity.user.name.avatar',
+            'title' => 'eloquent_file::file_virtual.entity.user.name.avatar',
             'policy' => [
                 'bind' => \AnourValar\EloquentFile\Handlers\Models\FileVirtual\Entity\Policy\ListPolicy::class,
                 'limit_qty' => 0,
@@ -161,7 +161,7 @@ abstract class AbstractSuite extends \Orchestra\Testbench\TestCase
         // ListPolicy + SimpleName + public + simple
         $names['note'] = [
             'bind' => \AnourValar\EloquentFile\Handlers\Models\FileVirtual\Name\SimpleName::class,
-            'title' => 'eloquent-file::file_virtual.entity.user.name.avatar',
+            'title' => 'eloquent_file::file_virtual.entity.user.name.avatar',
             'policy' => [
                 'bind' => \AnourValar\EloquentFile\Handlers\Models\FileVirtual\Entity\Policy\ListPolicy::class,
                 'limit_qty' => 0,
@@ -174,7 +174,7 @@ abstract class AbstractSuite extends \Orchestra\Testbench\TestCase
         // SimpleName + public + binary (no extension required) - used by buffer seeding
         $names['blob'] = [
             'bind' => \AnourValar\EloquentFile\Handlers\Models\FileVirtual\Name\SimpleName::class,
-            'title' => 'eloquent-file::file_virtual.entity.user.name.avatar',
+            'title' => 'eloquent_file::file_virtual.entity.user.name.avatar',
             'policy' => [
                 'bind' => \AnourValar\EloquentFile\Handlers\Models\FileVirtual\Entity\Policy\ListPolicy::class,
                 'limit_qty' => 0,
@@ -187,7 +187,7 @@ abstract class AbstractSuite extends \Orchestra\Testbench\TestCase
         // DetailsName (accepts "details") + public + simple
         $names['meta'] = [
             'bind' => \AnourValar\EloquentFile\Tests\Support\DetailsName::class,
-            'title' => 'eloquent-file::file_virtual.entity.user.name.avatar',
+            'title' => 'eloquent_file::file_virtual.entity.user.name.avatar',
             'policy' => [
                 'bind' => \AnourValar\EloquentFile\Handlers\Models\FileVirtual\Entity\Policy\ListPolicy::class,
                 'limit_qty' => 0,
@@ -200,7 +200,7 @@ abstract class AbstractSuite extends \Orchestra\Testbench\TestCase
         // ArchivePolicy + SimpleName + private_encrypt + simple
         $names['scan'] = [
             'bind' => \AnourValar\EloquentFile\Handlers\Models\FileVirtual\Name\SimpleName::class,
-            'title' => 'eloquent-file::file_virtual.entity.user.name.avatar',
+            'title' => 'eloquent_file::file_virtual.entity.user.name.avatar',
             'policy' => [
                 'bind' => \AnourValar\EloquentFile\Handlers\Models\FileVirtual\Entity\Policy\ArchivePolicy::class,
                 'limit_qty' => 0,

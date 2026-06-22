@@ -63,7 +63,7 @@ return [
                 'name' => [
                     'avatar' => [
                         'bind' => AnourValar\EloquentFile\Handlers\Models\FileVirtual\Name\SimpleName::class,
-                        'title' => 'eloquent-file::file_virtual.entity.user.name.avatar',
+                        'title' => 'eloquent_file::file_virtual.entity.user.name.avatar',
                         'policy' => [
                             'bind' => AnourValar\EloquentFile\Handlers\Models\FileVirtual\Entity\Policy\UniquePolicy::class,
                             'limit_qty' => 0,

@@ -153,7 +153,7 @@ class FilePhysical extends Model
      */
     protected function getAttributeNamesFromModelLang(): array
     {
-        $attributeNames = trans('eloquent-file::file_physical.attributes');
+        $attributeNames = trans('eloquent_file::file_physical.attributes');
 
         return is_array($attributeNames) ? $attributeNames : [];
     }

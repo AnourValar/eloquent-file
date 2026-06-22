@@ -32,8 +32,8 @@ class EloquentFileServiceProvider extends ServiceProvider
         $this->publishes([__DIR__.'/../../database/migrations/' => database_path('migrations')], 'migrations');
 
         // langs
-        $this->loadTranslationsFrom(__DIR__.'/../../resources/lang/', 'eloquent-file');
-        $this->publishes([__DIR__.'/../../resources/lang/' => lang_path('vendor/eloquent-file')]);
+        $this->loadTranslationsFrom(__DIR__.'/../../resources/lang/', 'eloquent_file');
+        $this->publishes([__DIR__.'/../../resources/lang/' => lang_path('vendor/eloquent_file')]);
 
         // models
         $this->publishes([__DIR__.'/../../resources/stubs/' => app_path()], 'models');
